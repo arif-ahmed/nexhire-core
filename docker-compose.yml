@@ -1,0 +1,35 @@
+services:
+  nexhire-db:
+    image: postgres:16-alpine
+    container_name: nexhire-postgres-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: nexhire_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d nexhire_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  nexhire-api:
+    image: nexhire-api:latest
+    build:
+      context: .
+      dockerfile: src/Host/Nexhire.Api/Dockerfile
+    container_name: nexhire-core-api
+    ports:
+      - "5001:5001"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__Database=Host=nexhire-db;Port=5432;Database=nexhire_db;Username=postgres;Password=postgres;Include Error Detail=true
+    depends_on:
+      nexhire-db:
+        condition: service_healthy
+
+volumes:
+  postgres_data:
