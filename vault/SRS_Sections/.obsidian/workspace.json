@@ -1,0 +1,198 @@
+{
+  "main": {
+    "id": "7c4cb3418412215a",
+    "type": "split",
+    "children": [
+      {
+        "id": "6e081b66d8141c47",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "2fab45bcb837516e",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "3_2_1_Job_Creation_and_Publishing.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "3_2_1_Job_Creation_and_Publishing"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "f6f64eda03504468",
+    "type": "split",
+    "children": [
+      {
+        "id": "bfe184c43c842494",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "91aaaa4a20aa4f8a",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Files"
+            }
+          },
+          {
+            "id": "cb22c0dcf73e1443",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "Search"
+            }
+          },
+          {
+            "id": "5ebf80130f57db80",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "Bookmarks"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "a29de512ecf018dd",
+    "type": "split",
+    "children": [
+      {
+        "id": "3b70e69772df0a2f",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "f2ce15e2914643ae",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "3_2_1_Job_Creation_and_Publishing.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "Backlinks for 3_2_1_Job_Creation_and_Publishing"
+            }
+          },
+          {
+            "id": "626ce2e70f08d5cb",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "3_2_1_Job_Creation_and_Publishing.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "Outgoing links from 3_2_1_Job_Creation_and_Publishing"
+            }
+          },
+          {
+            "id": "21faf3303fefe2a6",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "Tags"
+            }
+          },
+          {
+            "id": "c6fb29366597f3ca",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-archive",
+              "title": "All properties"
+            }
+          },
+          {
+            "id": "e5a744ba5d54f9b2",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "3_2_1_Job_Creation_and_Publishing.md",
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "Outline of 3_2_1_Job_Creation_and_Publishing"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false,
+      "bases:Create new base": false
+    }
+  },
+  "active": "2fab45bcb837516e",
+  "lastOpenFiles": [
+    "2_Overall_Description.md",
+    "2_3_User_Classes_Characteristics_and_Needs.md",
+    "2_2_Product_Functions.md",
+    "2_1_Product_Perspective.md",
+    "1_5_References.md",
+    "1_4_Project_Scope.md",
+    "1_3_Intended_Audience.md",
+    "1_2_Document_Conventions.md",
+    "1_1_Purpose.md"
+  ]
+}
