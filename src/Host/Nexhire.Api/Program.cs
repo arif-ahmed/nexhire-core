@@ -1,3 +1,5 @@
+using Nexhire.Modules.EmployerProfiles.Core.Domain.Aggregates;
+using Nexhire.Modules.EmployerProfiles.Infrastructure;
 using Nexhire.Modules.Users.Infrastructure;
 using Nexhire.Shared.Infrastructure;
 using Nexhire.Shared.Infrastructure.OpenApi;
@@ -8,7 +10,9 @@ var builder = WebApplication.CreateBuilder(args);
 var moduleAssemblies = new[]
 {
     typeof(Nexhire.Modules.Users.Core.Domain.User).Assembly,
-    typeof(UsersModule).Assembly
+    typeof(UsersModule).Assembly,
+    typeof(EmployerProfile).Assembly,
+    typeof(EmployerProfilesModule).Assembly
 };
 
 // 1. Register Shared Infrastructure layer
@@ -16,6 +20,7 @@ builder.Services.AddSharedInfrastructure(builder.Configuration, moduleAssemblies
 
 // 2. Register Active Modules (Injected as clean pluggable layers)
 builder.Services.AddUsersModule(builder.Configuration);
+builder.Services.AddEmployerProfilesModule(builder.Configuration);
 
 var app = builder.Build();
 
@@ -25,6 +30,7 @@ app.UseHttpsRedirection();
 
 // 4. Map Pluggable Module Routing
 app.MapUsersEndpoints();
+app.MapEmployerProfilesEndpoints();
 
 // Base System Health Endpoint
 app.MapGet("health", () => Results.Ok(new 

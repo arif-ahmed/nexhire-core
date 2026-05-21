@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Modules\EmployerProfiles\Nexhire.Modules.EmployerProfiles.Infrastructure\Nexhire.Modules.EmployerProfiles.Infrastructure.csproj" />
     <ProjectReference Include="..\..\Modules\Users\Nexhire.Modules.Users.Infrastructure\Nexhire.Modules.Users.Infrastructure.csproj" />
     <ProjectReference Include="..\..\Shared\Nexhire.Shared.Infrastructure\Nexhire.Shared.Infrastructure.csproj" />
   </ItemGroup>

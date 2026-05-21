@@ -4,6 +4,10 @@
     <Project Path="src/Host/Nexhire.Api/Nexhire.Api.csproj" />
   </Folder>
   <Folder Name="/src/Modules/" />
+  <Folder Name="/src/Modules/EmployerProfiles/">
+    <Project Path="src/Modules/EmployerProfiles/Nexhire.Modules.EmployerProfiles.Core/Nexhire.Modules.EmployerProfiles.Core.csproj" />
+    <Project Path="src/Modules/EmployerProfiles/Nexhire.Modules.EmployerProfiles.Infrastructure/Nexhire.Modules.EmployerProfiles.Infrastructure.csproj" />
+  </Folder>
   <Folder Name="/src/Modules/Users/">
     <Project Path="src/Modules/Users/Nexhire.Modules.Users.Core/Nexhire.Modules.Users.Core.csproj" />
     <Project Path="src/Modules/Users/Nexhire.Modules.Users.Infrastructure/Nexhire.Modules.Users.Infrastructure.csproj" />
@@ -16,6 +20,9 @@
     <Project Path="tests/Nexhire.ArchitectureTests/Nexhire.ArchitectureTests.csproj" />
   </Folder>
   <Folder Name="/tests/Modules/" />
+  <Folder Name="/tests/Modules/EmployerProfiles/">
+    <Project Path="tests/Modules/EmployerProfiles/Nexhire.Modules.EmployerProfiles.Tests.Unit/Nexhire.Modules.EmployerProfiles.Tests.Unit.csproj" />
+  </Folder>
   <Folder Name="/tests/Modules/Users/">
     <Project Path="tests/Modules/Users/Nexhire.Modules.Users.Tests.Unit/Nexhire.Modules.Users.Tests.Unit.csproj" />
   </Folder>
