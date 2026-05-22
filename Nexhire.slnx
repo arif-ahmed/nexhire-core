@@ -32,6 +32,10 @@
     <Project Path="src/Modules/SearchDiscovery/Nexhire.Modules.SearchDiscovery.Core/Nexhire.Modules.SearchDiscovery.Core.csproj" />
     <Project Path="src/Modules/SearchDiscovery/Nexhire.Modules.SearchDiscovery.Infrastructure/Nexhire.Modules.SearchDiscovery.Infrastructure.csproj" />
   </Folder>
+  <Folder Name="/src/Modules/RecommendationEngine/">
+    <Project Path="src/Modules/RecommendationEngine/Nexhire.Modules.RecommendationEngine.Core/Nexhire.Modules.RecommendationEngine.Core.csproj" />
+    <Project Path="src/Modules/RecommendationEngine/Nexhire.Modules.RecommendationEngine.Infrastructure/Nexhire.Modules.RecommendationEngine.Infrastructure.csproj" />
+  </Folder>
   <Folder Name="/src/Shared/">
     <Project Path="src/Shared/Nexhire.Shared.Core/Nexhire.Shared.Core.csproj" />
     <Project Path="src/Shared/Nexhire.Shared.Infrastructure/Nexhire.Shared.Infrastructure.csproj" />
@@ -61,5 +65,8 @@
   </Folder>
   <Folder Name="/tests/Modules/SearchDiscovery/">
     <Project Path="tests/Modules/SearchDiscovery/Nexhire.Modules.SearchDiscovery.Tests.Unit/Nexhire.Modules.SearchDiscovery.Tests.Unit.csproj" />
+  </Folder>
+  <Folder Name="/tests/Modules/RecommendationEngine/">
+    <Project Path="tests/Modules/RecommendationEngine/Nexhire.Modules.RecommendationEngine.Tests.Unit/Nexhire.Modules.RecommendationEngine.Tests.Unit.csproj" />
   </Folder>
 </Solution>

@@ -13,6 +13,7 @@
     <ProjectReference Include="..\..\Modules\JobSeekerProfile\Nexhire.Modules.JobSeekerProfile.Infrastructure\Nexhire.Modules.JobSeekerProfile.Infrastructure.csproj" />
     <ProjectReference Include="..\..\Modules\SearchDiscovery\Nexhire.Modules.SearchDiscovery.Infrastructure\Nexhire.Modules.SearchDiscovery.Infrastructure.csproj" />
     <ProjectReference Include="..\..\Modules\Users\Nexhire.Modules.Users.Infrastructure\Nexhire.Modules.Users.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\Modules\RecommendationEngine\Nexhire.Modules.RecommendationEngine.Infrastructure\Nexhire.Modules.RecommendationEngine.Infrastructure.csproj" />
     <ProjectReference Include="..\..\Shared\Nexhire.Shared.Infrastructure\Nexhire.Shared.Infrastructure.csproj" />
   </ItemGroup>
 
