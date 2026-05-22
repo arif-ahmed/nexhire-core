@@ -7,6 +7,7 @@ namespace Nexhire.ArchitectureTests;
 public class ArchitectureTests
 {
     private static readonly Assembly CoreAssembly = typeof(Nexhire.Modules.Users.Core.Domain.User).Assembly;
+    private static readonly Assembly JobPostingsCoreAssembly = typeof(Nexhire.Modules.JobPostings.Core.Domain.Aggregates.JobPosting).Assembly;
 
     [Fact]
     public void UsersCore_Should_Not_DependOn_UsersInfrastructure_Or_Api()
@@ -27,5 +28,23 @@ public class ArchitectureTests
 
         // Assert
         Assert.True(result.IsSuccessful, "The Domain & Core layer of the Users module has disallowed references to Infrastructure or Host API projects.");
+    }
+
+    [Fact]
+    public void JobPostingsCore_Should_Not_DependOn_JobPostingsInfrastructure_Or_Api()
+    {
+        var forbiddenDependencies = new[]
+        {
+            "Nexhire.Modules.JobPostings.Infrastructure",
+            "Nexhire.Shared.Infrastructure",
+            "Nexhire.Api"
+        };
+
+        var result = Types.InAssembly(JobPostingsCoreAssembly)
+            .ShouldNot()
+            .HaveDependencyOnAny(forbiddenDependencies)
+            .GetResult();
+
+        Assert.True(result.IsSuccessful, "The JobPostings Core layer has disallowed references to Infrastructure or Host API projects.");
     }
 }

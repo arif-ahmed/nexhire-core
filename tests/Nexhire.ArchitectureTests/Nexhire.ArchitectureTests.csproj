@@ -22,6 +22,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\Shared\Nexhire.Shared.Core\Nexhire.Shared.Core.csproj" />
     <ProjectReference Include="..\..\src\Shared\Nexhire.Shared.Infrastructure\Nexhire.Shared.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\src\Modules\JobPostings\Nexhire.Modules.JobPostings.Core\Nexhire.Modules.JobPostings.Core.csproj" />
     <ProjectReference Include="..\..\src\Modules\Users\Nexhire.Modules.Users.Core\Nexhire.Modules.Users.Core.csproj" />
     <ProjectReference Include="..\..\src\Modules\Users\Nexhire.Modules.Users.Infrastructure\Nexhire.Modules.Users.Infrastructure.csproj" />
     <ProjectReference Include="..\..\src\Host\Nexhire.Api\Nexhire.Api.csproj" />

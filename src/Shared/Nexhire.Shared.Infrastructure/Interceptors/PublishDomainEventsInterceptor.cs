@@ -2,12 +2,15 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Nexhire.Shared.Core.Domain;
+using Nexhire.Shared.Infrastructure.Messaging;
+using System.Text.Json;
 
 namespace Nexhire.Shared.Infrastructure.Interceptors;
 
 public class PublishDomainEventsInterceptor : SaveChangesInterceptor
 {
     private readonly IPublisher _publisher;
+    private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web);
 
     public PublishDomainEventsInterceptor(IPublisher publisher)
     {
@@ -66,6 +69,20 @@ public class PublishDomainEventsInterceptor : SaveChangesInterceptor
                 }
                 baseType = baseType.BaseType;
             }
+        }
+
+        if (context is IOutboxInboxDbContext outboxContext)
+        {
+            foreach (var domainEvent in domainEvents)
+            {
+                outboxContext.OutboxMessages.Add(new OutboxMessage(
+                    domainEvent.EventId,
+                    domainEvent.GetType().AssemblyQualifiedName ?? domainEvent.GetType().FullName ?? domainEvent.GetType().Name,
+                    JsonSerializer.Serialize(domainEvent, domainEvent.GetType(), JsonOptions),
+                    domainEvent.OccurredOnUtc));
+            }
+
+            return;
         }
 
         foreach (var domainEvent in domainEvents)

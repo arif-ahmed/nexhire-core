@@ -20,6 +20,18 @@
     <Project Path="src/Modules/IdentityAccess/Nexhire.Modules.IdentityAccess.Core/Nexhire.Modules.IdentityAccess.Core.csproj" />
     <Project Path="src/Modules/IdentityAccess/Nexhire.Modules.IdentityAccess.Infrastructure/Nexhire.Modules.IdentityAccess.Infrastructure.csproj" />
   </Folder>
+  <Folder Name="/src/Modules/JobPostings/">
+    <Project Path="src/Modules/JobPostings/Nexhire.Modules.JobPostings.Core/Nexhire.Modules.JobPostings.Core.csproj" />
+    <Project Path="src/Modules/JobPostings/Nexhire.Modules.JobPostings.Infrastructure/Nexhire.Modules.JobPostings.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/src/Modules/JobApplication/">
+    <Project Path="src/Modules/JobApplication/Nexhire.Modules.JobApplication.Core/Nexhire.Modules.JobApplication.Core.csproj" />
+    <Project Path="src/Modules/JobApplication/Nexhire.Modules.JobApplication.Infrastructure/Nexhire.Modules.JobApplication.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/src/Modules/SearchDiscovery/">
+    <Project Path="src/Modules/SearchDiscovery/Nexhire.Modules.SearchDiscovery.Core/Nexhire.Modules.SearchDiscovery.Core.csproj" />
+    <Project Path="src/Modules/SearchDiscovery/Nexhire.Modules.SearchDiscovery.Infrastructure/Nexhire.Modules.SearchDiscovery.Infrastructure.csproj" />
+  </Folder>
   <Folder Name="/src/Shared/">
     <Project Path="src/Shared/Nexhire.Shared.Core/Nexhire.Shared.Core.csproj" />
     <Project Path="src/Shared/Nexhire.Shared.Infrastructure/Nexhire.Shared.Infrastructure.csproj" />
@@ -34,11 +46,20 @@
   <Folder Name="/tests/Modules/JobSeekerProfile/">
     <Project Path="tests/Modules/JobSeekerProfile/Nexhire.Modules.JobSeekerProfile.Tests.Unit/Nexhire.Modules.JobSeekerProfile.Tests.Unit.csproj" />
   </Folder>
+  <Folder Name="/tests/Modules/JobPostings/">
+    <Project Path="tests/Modules/JobPostings/Nexhire.Modules.JobPostings.Tests.Unit/Nexhire.Modules.JobPostings.Tests.Unit.csproj" />
+  </Folder>
   <Folder Name="/tests/Modules/Users/">
     <Project Path="tests/Modules/Users/Nexhire.Modules.Users.Tests.Unit/Nexhire.Modules.Users.Tests.Unit.csproj" />
   </Folder>
   <Folder Name="/tests/Modules/IdentityAccess/">
     <Project Path="tests/Modules/IdentityAccess/Nexhire.Modules.IdentityAccess.Tests.Unit/Nexhire.Modules.IdentityAccess.Tests.Unit.csproj" />
     <Project Path="tests/Modules/IdentityAccess/Nexhire.Modules.IdentityAccess.Tests.Integration/Nexhire.Modules.IdentityAccess.Tests.Integration.csproj" />
+  </Folder>
+  <Folder Name="/tests/Modules/JobApplication/">
+    <Project Path="tests/Modules/JobApplication/Nexhire.Modules.JobApplication.Tests.Unit/Nexhire.Modules.JobApplication.Tests.Unit.csproj" />
+  </Folder>
+  <Folder Name="/tests/Modules/SearchDiscovery/">
+    <Project Path="tests/Modules/SearchDiscovery/Nexhire.Modules.SearchDiscovery.Tests.Unit/Nexhire.Modules.SearchDiscovery.Tests.Unit.csproj" />
   </Folder>
 </Solution>
