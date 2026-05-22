@@ -8,9 +8,17 @@
     <Project Path="src/Modules/EmployerProfiles/Nexhire.Modules.EmployerProfiles.Core/Nexhire.Modules.EmployerProfiles.Core.csproj" />
     <Project Path="src/Modules/EmployerProfiles/Nexhire.Modules.EmployerProfiles.Infrastructure/Nexhire.Modules.EmployerProfiles.Infrastructure.csproj" />
   </Folder>
+  <Folder Name="/src/Modules/JobSeekerProfile/">
+    <Project Path="src/Modules/JobSeekerProfile/Nexhire.Modules.JobSeekerProfile.Core/Nexhire.Modules.JobSeekerProfile.Core.csproj" />
+    <Project Path="src/Modules/JobSeekerProfile/Nexhire.Modules.JobSeekerProfile.Infrastructure/Nexhire.Modules.JobSeekerProfile.Infrastructure.csproj" />
+  </Folder>
   <Folder Name="/src/Modules/Users/">
     <Project Path="src/Modules/Users/Nexhire.Modules.Users.Core/Nexhire.Modules.Users.Core.csproj" />
     <Project Path="src/Modules/Users/Nexhire.Modules.Users.Infrastructure/Nexhire.Modules.Users.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/src/Modules/IdentityAccess/">
+    <Project Path="src/Modules/IdentityAccess/Nexhire.Modules.IdentityAccess.Core/Nexhire.Modules.IdentityAccess.Core.csproj" />
+    <Project Path="src/Modules/IdentityAccess/Nexhire.Modules.IdentityAccess.Infrastructure/Nexhire.Modules.IdentityAccess.Infrastructure.csproj" />
   </Folder>
   <Folder Name="/src/Shared/">
     <Project Path="src/Shared/Nexhire.Shared.Core/Nexhire.Shared.Core.csproj" />
@@ -23,7 +31,14 @@
   <Folder Name="/tests/Modules/EmployerProfiles/">
     <Project Path="tests/Modules/EmployerProfiles/Nexhire.Modules.EmployerProfiles.Tests.Unit/Nexhire.Modules.EmployerProfiles.Tests.Unit.csproj" />
   </Folder>
+  <Folder Name="/tests/Modules/JobSeekerProfile/">
+    <Project Path="tests/Modules/JobSeekerProfile/Nexhire.Modules.JobSeekerProfile.Tests.Unit/Nexhire.Modules.JobSeekerProfile.Tests.Unit.csproj" />
+  </Folder>
   <Folder Name="/tests/Modules/Users/">
     <Project Path="tests/Modules/Users/Nexhire.Modules.Users.Tests.Unit/Nexhire.Modules.Users.Tests.Unit.csproj" />
+  </Folder>
+  <Folder Name="/tests/Modules/IdentityAccess/">
+    <Project Path="tests/Modules/IdentityAccess/Nexhire.Modules.IdentityAccess.Tests.Unit/Nexhire.Modules.IdentityAccess.Tests.Unit.csproj" />
+    <Project Path="tests/Modules/IdentityAccess/Nexhire.Modules.IdentityAccess.Tests.Integration/Nexhire.Modules.IdentityAccess.Tests.Integration.csproj" />
   </Folder>
 </Solution>
