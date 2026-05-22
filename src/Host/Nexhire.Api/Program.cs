@@ -1,7 +1,13 @@
 using Nexhire.Modules.EmployerProfiles.Core.Domain.Aggregates;
 using Nexhire.Modules.EmployerProfiles.Infrastructure;
+using Nexhire.Modules.JobApplication.Core.Domain;
+using Nexhire.Modules.JobApplication.Infrastructure;
+using Nexhire.Modules.JobPostings.Core.Domain.Aggregates;
+using Nexhire.Modules.JobPostings.Infrastructure;
 using Nexhire.Modules.JobSeekerProfile.Core.Domain.Aggregates;
 using Nexhire.Modules.JobSeekerProfile.Infrastructure;
+using Nexhire.Modules.SearchDiscovery.Core.Domain.Aggregates;
+using Nexhire.Modules.SearchDiscovery.Infrastructure;
 using Nexhire.Modules.Users.Infrastructure;
 using Nexhire.Shared.Infrastructure;
 using Nexhire.Shared.Infrastructure.OpenApi;
@@ -15,8 +21,14 @@ var moduleAssemblies = new[]
     typeof(UsersModule).Assembly,
     typeof(EmployerProfile).Assembly,
     typeof(EmployerProfilesModule).Assembly,
+    typeof(JobPosting).Assembly,
+    typeof(JobPostingsModule).Assembly,
     typeof(JobSeekerProfile).Assembly,
-    typeof(JobSeekerProfileModule).Assembly
+    typeof(JobSeekerProfileModule).Assembly,
+    typeof(Application).Assembly,
+    typeof(JobApplicationModule).Assembly,
+    typeof(JobIndexEntry).Assembly,
+    typeof(SearchDiscoveryModule).Assembly
 };
 
 // 1. Register Shared Infrastructure layer
@@ -25,7 +37,10 @@ builder.Services.AddSharedInfrastructure(builder.Configuration, moduleAssemblies
 // 2. Register Active Modules (Injected as clean pluggable layers)
 builder.Services.AddUsersModule(builder.Configuration);
 builder.Services.AddEmployerProfilesModule(builder.Configuration);
+builder.Services.AddJobPostingsModule(builder.Configuration);
 builder.Services.AddJobSeekerProfileModule(builder.Configuration);
+builder.Services.AddJobApplicationModule(builder.Configuration);
+builder.Services.AddSearchDiscoveryModule(builder.Configuration);
 
 var app = builder.Build();
 
@@ -36,7 +51,10 @@ app.UseHttpsRedirection();
 // 4. Map Pluggable Module Routing
 app.MapUsersEndpoints();
 app.MapEmployerProfilesEndpoints();
+app.MapJobPostingsEndpoints();
 app.MapJobSeekerProfileEndpoints();
+app.MapJobApplicationEndpoints();
+app.MapSearchDiscoveryEndpoints();
 
 // Base System Health Endpoint
 app.MapGet("health", () => Results.Ok(new 
