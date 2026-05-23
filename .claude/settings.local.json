@@ -2,7 +2,11 @@
   "permissions": {
     "allow": [
       "Bash(Get-ChildItem -Path \"d:\\\\Workspace\\\\lab\\\\nexhire-core\\\\src\\\\Modules\" -Recurse -Directory)",
-      "Bash(Select-Object -ExpandProperty FullName)"
+      "Bash(Select-Object -ExpandProperty FullName)",
+      "Bash(git stash *)",
+      "Bash(dotnet run *)",
+      "Bash(curl -s http://localhost:5001/health)",
+      "Bash(kill %1)"
     ]
   }
 }
