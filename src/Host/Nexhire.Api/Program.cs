@@ -13,6 +13,8 @@ using Nexhire.Modules.Users.Infrastructure;
 using Nexhire.Modules.ExternalJobSync.Core.Domain.Aggregates.Partner;
 using Nexhire.Modules.ExternalJobSync.Infrastructure;
 using Nexhire.Modules.Reporting.Infrastructure;
+using Nexhire.Modules.AdministratorsConfiguration.Core.Domain.Aggregates;
+using Nexhire.Modules.AdministratorsConfiguration.Infrastructure;
 using Nexhire.Shared.Infrastructure;
 using Nexhire.Shared.Infrastructure.OpenApi;
 
@@ -38,7 +40,9 @@ var moduleAssemblies = new[]
     typeof(Partner).Assembly,
     typeof(ExternalJobSyncModule).Assembly,
     typeof(Nexhire.Modules.Reporting.Core.Domain.Aggregates.ReportDefinition).Assembly,
-    typeof(ReportingModule).Assembly
+    typeof(ReportingModule).Assembly,
+    typeof(Taxonomy).Assembly,
+    typeof(AdministratorsConfigurationModuleExtensions).Assembly
 };
 
 // 1. Register Shared Infrastructure layer
@@ -54,6 +58,7 @@ builder.Services.AddSearchDiscoveryModule(builder.Configuration);
 builder.Services.AddRecommendationEngineModule(builder.Configuration);
 builder.Services.AddExternalJobSyncModule(builder.Configuration);
 builder.Services.AddReportingModule(builder.Configuration);
+builder.Services.AddAdministratorsConfigurationModule(builder.Configuration);
 
 var app = builder.Build();
 
@@ -71,6 +76,7 @@ app.MapSearchDiscoveryEndpoints();
 app.MapRecommendationEngineEndpoints();
 app.MapExternalJobSyncEndpoints();
 app.MapReportingEndpoints();
+app.MapAdministratorsConfigurationEndpoints();
 
 // Base System Health Endpoint
 app.MapGet("health", () => Results.Ok(new 
