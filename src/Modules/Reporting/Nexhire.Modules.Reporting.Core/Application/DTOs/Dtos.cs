@@ -1,0 +1,30 @@
+using Nexhire.Modules.Reporting.Core.Domain.Enums;
+
+namespace Nexhire.Modules.Reporting.Core.Application.DTOs;
+
+public record ReportDefinitionSummaryDto(Guid Id, string Name, string Kind, string Category, string Status, int UsageCount, DateTime CreatedOnUtc);
+public record ReportDefinitionDto(Guid Id, string Name, string? Description, string Kind, string Category, string Status, int CurrentVersionNumber, int UsageCount, DateTime CreatedOnUtc, DateTime UpdatedOnUtc);
+public record ReportRunDto(Guid Id, Guid ReportDefinitionId, string Status, int? RowCount, string? FailureReason, DateTime QueuedOnUtc, DateTime? CompletedOnUtc, List<string> ArtifactFormats);
+public record ReportScheduleDto(Guid Id, Guid ReportDefinitionId, string Status, DateTime NextRunOnUtc, DateTime? LastRunOnUtc, List<string> DistributionList);
+public record RetentionPolicyDto(Guid Id, string Name, int RetentionDays, string Action, int WarningDays, string Status, DateTime EffectiveFromUtc);
+public record RetentionRunDto(Guid Id, Guid PolicyId, int PolicyVersionNumber, int RecordsAffected, string ActionTaken, DateTime CutoffUtc, DateTime ExecutedOnUtc);
+public record AlertRuleDto(Guid Id, string Name, string MetricKey, string Severity, string Status, bool AnomalyDetectionEnabled);
+public record AlertIncidentDto(Guid Id, Guid AlertRuleId, decimal ObservedValue, string Trigger, string State, DateTime TriggeredOnUtc);
+public record ActivityRecordDto(Guid Id, Guid UserId, string ActorRole, string ActivityType, DateTime OccurredOnUtc, string? TargetType, Guid? TargetId);
+public record SessionSnapshotDto(Guid UserId, string DisplayName, string ActorRole, DateTime? LastLoginOnUtc, int? LastSessionDurationSeconds, int ConcurrentSessionCount, bool IsCurrentlyActive);
+public record UserActivityDashboardDto(int ActiveLoginCount, List<SessionSnapshotDto> Sessions);
+public record ActivityReportDto(List<ActivityRecordDto> Records, int TotalCount, int Page, int PageSize);
+public record EmploymentStatsDto(List<TimeSeriesPoint> PostingVolume, List<TimeSeriesPoint> ApplicationCount, List<TimeSeriesPoint> HireCount);
+public record TimeSeriesPoint(DateTime BucketStart, decimal Value, string Grain);
+public record IndustryAnalyticsDto(string Industry, List<TimeSeriesPoint> PostingVolume, List<TimeSeriesPoint> CandidateSupply);
+public record SkillDemandDto(List<SkillDemandItem> Skills);
+public record SkillDemandItem(string SkillCode, int PostingCount, int CandidateSupplyCount, decimal? GrowthRatePct, bool IsEmerging);
+public record EmploymentOutcomesDto(int ApplicationCount, int OfferCount, int AcceptanceCount, decimal? PlacementRatePct);
+public record SystemPerformanceDto(List<MetricBucketDto> Buckets);
+public record MetricBucketDto(string MetricKey, DateTime BucketStart, decimal? P95, decimal? Avg, long Count);
+public record MatchingPerformanceDto(decimal? Accuracy, decimal? PrecisionScore, decimal? Recall, int RecommendationCount, int SelectedCount);
+public record PerformanceTrendDto(List<TimeSeriesPoint> Trend);
+public record ReportAccessLogDto(Guid Id, Guid UserId, string Role, Guid? ReportDefinitionId, Guid? ReportRunId, string Action, DateTime OccurredOnUtc);
+public record AdminReportsMenuDto(List<ReportDefinitionSummaryDto> Templates);
+public record PlatformSummaryDto(int ActiveUsersNow, long TotalRegistrations, long TotalPostings, decimal MatchSuccessRatePct, DateTime AsOfUtc);
+public record ReportRunStatusDto(Guid ReportRunId, string Status, int? RowCount, List<string> ArtifactFormats);

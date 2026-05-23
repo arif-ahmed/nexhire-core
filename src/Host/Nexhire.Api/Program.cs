@@ -10,6 +10,9 @@ using Nexhire.Modules.SearchDiscovery.Core.Domain.Aggregates;
 using Nexhire.Modules.SearchDiscovery.Infrastructure;
 using Nexhire.Modules.RecommendationEngine.Infrastructure;
 using Nexhire.Modules.Users.Infrastructure;
+using Nexhire.Modules.ExternalJobSync.Core.Domain.Aggregates.Partner;
+using Nexhire.Modules.ExternalJobSync.Infrastructure;
+using Nexhire.Modules.Reporting.Infrastructure;
 using Nexhire.Shared.Infrastructure;
 using Nexhire.Shared.Infrastructure.OpenApi;
 
@@ -31,7 +34,11 @@ var moduleAssemblies = new[]
     typeof(JobIndexEntry).Assembly,
     typeof(SearchDiscoveryModule).Assembly,
     typeof(Nexhire.Modules.RecommendationEngine.Core.Domain.ValueObjects.FactorWeights).Assembly,
-    typeof(RecommendationEngineModule).Assembly
+    typeof(RecommendationEngineModule).Assembly,
+    typeof(Partner).Assembly,
+    typeof(ExternalJobSyncModule).Assembly,
+    typeof(Nexhire.Modules.Reporting.Core.Domain.Aggregates.ReportDefinition).Assembly,
+    typeof(ReportingModule).Assembly
 };
 
 // 1. Register Shared Infrastructure layer
@@ -45,6 +52,8 @@ builder.Services.AddJobSeekerProfileModule(builder.Configuration);
 builder.Services.AddJobApplicationModule(builder.Configuration);
 builder.Services.AddSearchDiscoveryModule(builder.Configuration);
 builder.Services.AddRecommendationEngineModule(builder.Configuration);
+builder.Services.AddExternalJobSyncModule(builder.Configuration);
+builder.Services.AddReportingModule(builder.Configuration);
 
 var app = builder.Build();
 
@@ -60,6 +69,8 @@ app.MapJobSeekerProfileEndpoints();
 app.MapJobApplicationEndpoints();
 app.MapSearchDiscoveryEndpoints();
 app.MapRecommendationEngineEndpoints();
+app.MapExternalJobSyncEndpoints();
+app.MapReportingEndpoints();
 
 // Base System Health Endpoint
 app.MapGet("health", () => Results.Ok(new 

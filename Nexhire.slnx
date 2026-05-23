@@ -36,6 +36,18 @@
     <Project Path="src/Modules/RecommendationEngine/Nexhire.Modules.RecommendationEngine.Core/Nexhire.Modules.RecommendationEngine.Core.csproj" />
     <Project Path="src/Modules/RecommendationEngine/Nexhire.Modules.RecommendationEngine.Infrastructure/Nexhire.Modules.RecommendationEngine.Infrastructure.csproj" />
   </Folder>
+  <Folder Name="/src/Modules/ExternalJobSync/">
+    <Project Path="src/Modules/ExternalJobSync/Nexhire.Modules.ExternalJobSync.Core/Nexhire.Modules.ExternalJobSync.Core.csproj" />
+    <Project Path="src/Modules/ExternalJobSync/Nexhire.Modules.ExternalJobSync.Infrastructure/Nexhire.Modules.ExternalJobSync.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/src/Modules/Notification/">
+    <Project Path="src/Modules/Notification/Nexhire.Modules.Notification.Core/Nexhire.Modules.Notification.Core.csproj" />
+    <Project Path="src/Modules/Notification/Nexhire.Modules.Notification.Infrastructure/Nexhire.Modules.Notification.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/src/Modules/Reporting/">
+    <Project Path="src/Modules/Reporting/Nexhire.Modules.Reporting.Core/Nexhire.Modules.Reporting.Core.csproj" />
+    <Project Path="src/Modules/Reporting/Nexhire.Modules.Reporting.Infrastructure/Nexhire.Modules.Reporting.Infrastructure.csproj" />
+  </Folder>
   <Folder Name="/src/Shared/">
     <Project Path="src/Shared/Nexhire.Shared.Core/Nexhire.Shared.Core.csproj" />
     <Project Path="src/Shared/Nexhire.Shared.Infrastructure/Nexhire.Shared.Infrastructure.csproj" />
@@ -68,5 +80,14 @@
   </Folder>
   <Folder Name="/tests/Modules/RecommendationEngine/">
     <Project Path="tests/Modules/RecommendationEngine/Nexhire.Modules.RecommendationEngine.Tests.Unit/Nexhire.Modules.RecommendationEngine.Tests.Unit.csproj" />
+  </Folder>
+  <Folder Name="/tests/Modules/ExternalJobSync/">
+    <Project Path="tests/Modules/ExternalJobSync/Nexhire.Modules.ExternalJobSync.Tests.Unit/Nexhire.Modules.ExternalJobSync.Tests.Unit.csproj" />
+  </Folder>
+  <Folder Name="/tests/Modules/Notification/">
+    <Project Path="tests/Modules/Notification/Nexhire.Modules.Notification.Tests.Unit/Nexhire.Modules.Notification.Tests.Unit.csproj" />
+  </Folder>
+  <Folder Name="/tests/Modules/Reporting/">
+    <Project Path="tests/Modules/Reporting/Nexhire.Modules.Reporting.Tests.Unit/Nexhire.Modules.Reporting.Tests.Unit.csproj" />
   </Folder>
 </Solution>
