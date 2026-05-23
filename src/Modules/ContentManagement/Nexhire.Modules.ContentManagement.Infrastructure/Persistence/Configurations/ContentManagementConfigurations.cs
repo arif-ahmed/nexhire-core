@@ -62,44 +62,23 @@ internal sealed class ArticleConfiguration : IEntityTypeConfiguration<Article>
             schedule.Property(s => s.PublishAtUtc).HasColumnName("schedule_publish_at");
         });
 
-        // Media as JSON column (IReadOnlyList<MediaReference>)
-        var mediaComparer = new ValueComparer<List<MediaReference>>(
-            (c1, c2) => c1.SequenceEqual(c2),
-            c => c.Aggregate(0, (hash, v) => HashCode.Combine(hash, v.StorageKey)),
-            c => c.ToList());
-
+        // Media as JSON
         builder.Property(a => a.Media)
-            .HasColumnType("jsonb")
             .HasConversion(
                 v => JsonSerializer.Serialize(v, JsonOptions),
-                v => JsonSerializer.Deserialize<List<MediaReference>>(v, JsonOptions) ?? new())
-            .Metadata.SetValueComparer(mediaComparer);
+                v => JsonSerializer.Deserialize<List<MediaReference>>(v, JsonOptions) ?? new());
 
-        // Localizations as JSON column (IReadOnlyDictionary<Language, LocalizedContent>)
-        var localizationComparer = new ValueComparer<Dictionary<Language, LocalizedContent>>(
-            (c1, c2) => c1.SequenceEqual(c2),
-            c => c.Aggregate(0, (hash, kv) => HashCode.Combine(hash, kv.Key, kv.Value.Title)),
-            c => c.ToDictionary(kv => kv.Key, kv => kv.Value));
-
+        // Localizations as JSON
         builder.Property(a => a.Localizations)
-            .HasColumnType("jsonb")
             .HasConversion(
                 v => JsonConversions.SerializeLocalizations(v),
-                v => JsonConversions.DeserializeLocalizations(v))
-            .Metadata.SetValueComparer(localizationComparer);
+                v => JsonConversions.DeserializeLocalizations(v));
 
-        // Tags as JSON column (IReadOnlyList<ArticleTag> — ArticleTag is a ValueObject, not an entity)
-        var tagComparer = new ValueComparer<List<ArticleTag>>(
-            (c1, c2) => c1.SequenceEqual(c2),
-            c => c.Aggregate(0, (hash, v) => HashCode.Combine(hash, v.NormalizedLabel)),
-            c => c.ToList());
-
+        // Tags as JSON
         builder.Property(a => a.Tags)
-            .HasColumnType("jsonb")
             .HasConversion(
                 v => JsonSerializer.Serialize(v, JsonOptions),
-                v => JsonSerializer.Deserialize<List<ArticleTag>>(v, JsonOptions) ?? new())
-            .Metadata.SetValueComparer(tagComparer);
+                v => JsonSerializer.Deserialize<List<ArticleTag>>(v, JsonOptions) ?? new());
 
         builder.HasIndex(a => a.Status);
         builder.HasIndex(a => a.PrimaryCategoryId);
@@ -121,7 +100,7 @@ internal sealed class CategoryConfiguration : IEntityTypeConfiguration<Category>
 
         // Names as JSON column (IReadOnlyDictionary<Language, string>)
         builder.Property(c => c.Names)
-            .HasColumnType("jsonb")
+
             .HasConversion(
                 v => JsonConversions.SerializeNames(v),
                 v => JsonConversions.DeserializeNames(v));
@@ -143,7 +122,7 @@ internal sealed class FaqEntryConfiguration : IEntityTypeConfiguration<FaqEntry>
 
         // VisibleRoles as JSON column
         builder.Property(f => f.VisibleRoles)
-            .HasColumnType("jsonb")
+
             .HasConversion(
                 v => JsonSerializer.Serialize(v!.Roles.Select(r => r.ToString()).ToList(), JsonOptions),
                 v => VisibleRoleSet.Create(
@@ -152,28 +131,28 @@ internal sealed class FaqEntryConfiguration : IEntityTypeConfiguration<FaqEntry>
 
         // ContextKeys as JSON column
         builder.Property(f => f.ContextKeys)
-            .HasColumnType("jsonb")
+
             .HasConversion(
                 v => JsonSerializer.Serialize(v.ToList(), JsonOptions),
                 v => JsonSerializer.Deserialize<List<string>>(v, JsonOptions).AsReadOnly());
 
         // MultimediaBlocks as JSON column
         builder.Property(f => f.MultimediaBlocks)
-            .HasColumnType("jsonb")
+
             .HasConversion(
                 v => JsonSerializer.Serialize(v.ToList(), JsonOptions),
                 v => JsonSerializer.Deserialize<List<MultimediaBlock>>(v, JsonOptions).AsReadOnly());
 
         // Localizations as JSON column (IReadOnlyDictionary<Language, FaqContent>)
         builder.Property(f => f.Localizations)
-            .HasColumnType("jsonb")
+
             .HasConversion(
                 v => JsonConversions.SerializeFaqLocalizations(v),
                 v => JsonConversions.DeserializeFaqLocalizations(v));
 
         // TopicIds via JSON (simple GUID list)
         builder.Property(f => f.TopicIds)
-            .HasColumnType("jsonb")
+
             .HasConversion(
                 v => JsonSerializer.Serialize(v.ToList(), JsonOptions),
                 v => JsonSerializer.Deserialize<List<Guid>>(v, JsonOptions).AsReadOnly());
@@ -196,7 +175,7 @@ internal sealed class TopicConfiguration : IEntityTypeConfiguration<Topic>
 
         // Names as JSON column (IReadOnlyDictionary<Language, string>)
         builder.Property(t => t.Names)
-            .HasColumnType("jsonb")
+
             .HasConversion(
                 v => JsonConversions.SerializeNames(v),
                 v => JsonConversions.DeserializeNames(v));
@@ -220,7 +199,7 @@ internal sealed class GuidedTourConfiguration : IEntityTypeConfiguration<GuidedT
 
         // TargetAudience as JSON column
         builder.Property(t => t.TargetAudience)
-            .HasColumnType("jsonb")
+
             .HasConversion(
                 v => JsonSerializer.Serialize(v.Audiences.Select(a => a.ToString()).ToList(), JsonOptions),
                 v => AudienceSet.Create(
@@ -262,17 +241,17 @@ internal sealed class ContentPreferenceConfiguration : IEntityTypeConfiguration<
         builder.HasKey(p => p.Id);
         builder.Property(p => p.UserId).IsRequired();
         builder.HasIndex(p => p.UserId).IsUnique();
-        builder.Property(p => p.PreferredLanguage).HasConversion<string>().HasDefaultValue("En").IsRequired();
+        builder.Property(p => p.PreferredLanguage).HasConversion<string>().IsRequired();
         builder.Property(p => p.UpdatedOnUtc).IsRequired();
 
         builder.Property(p => p.IncludedCategoryIds)
-            .HasColumnType("jsonb")
+
             .HasConversion(
                 v => JsonSerializer.Serialize(v.ToList(), JsonOptions),
                 v => JsonSerializer.Deserialize<List<Guid>>(v, JsonOptions).AsReadOnly());
 
         builder.Property(p => p.HiddenCategoryIds)
-            .HasColumnType("jsonb")
+
             .HasConversion(
                 v => JsonSerializer.Serialize(v.ToList(), JsonOptions),
                 v => JsonSerializer.Deserialize<List<Guid>>(v, JsonOptions).AsReadOnly());
