@@ -6,7 +6,11 @@
       "Bash(git stash *)",
       "Bash(dotnet run *)",
       "Bash(curl -s http://localhost:5001/health)",
-      "Bash(kill %1)"
+      "Bash(kill %1)",
+      "Bash(start *)"
     ]
+  },
+  "enabledPlugins": {
+    "visual-explainer@visual-explainer-marketplace": true
   }
 }
