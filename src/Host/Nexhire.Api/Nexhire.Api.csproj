@@ -17,6 +17,7 @@
     <ProjectReference Include="..\..\Modules\ExternalJobSync\Nexhire.Modules.ExternalJobSync.Infrastructure\Nexhire.Modules.ExternalJobSync.Infrastructure.csproj" />
     <ProjectReference Include="..\..\Modules\Reporting\Nexhire.Modules.Reporting.Infrastructure\Nexhire.Modules.Reporting.Infrastructure.csproj" />
     <ProjectReference Include="..\..\Modules\AdministratorsConfiguration\Nexhire.Modules.AdministratorsConfiguration.Infrastructure\Nexhire.Modules.AdministratorsConfiguration.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\Modules\ContentManagement\Nexhire.Modules.ContentManagement.Infrastructure\Nexhire.Modules.ContentManagement.Infrastructure.csproj" />
     <ProjectReference Include="..\..\Shared\Nexhire.Shared.Infrastructure\Nexhire.Shared.Infrastructure.csproj" />
   </ItemGroup>
 

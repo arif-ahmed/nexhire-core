@@ -52,6 +52,10 @@
     <Project Path="src/Modules/AdministratorsConfiguration/Nexhire.Modules.AdministratorsConfiguration.Core/Nexhire.Modules.AdministratorsConfiguration.Core.csproj" />
     <Project Path="src/Modules/AdministratorsConfiguration/Nexhire.Modules.AdministratorsConfiguration.Infrastructure/Nexhire.Modules.AdministratorsConfiguration.Infrastructure.csproj" />
   </Folder>
+  <Folder Name="/src/Modules/ContentManagement/">
+    <Project Path="src/Modules/ContentManagement/Nexhire.Modules.ContentManagement.Core/Nexhire.Modules.ContentManagement.Core.csproj" />
+    <Project Path="src/Modules/ContentManagement/Nexhire.Modules.ContentManagement.Infrastructure/Nexhire.Modules.ContentManagement.Infrastructure.csproj" />
+  </Folder>
   <Folder Name="/src/Shared/">
     <Project Path="src/Shared/Nexhire.Shared.Core/Nexhire.Shared.Core.csproj" />
     <Project Path="src/Shared/Nexhire.Shared.Infrastructure/Nexhire.Shared.Infrastructure.csproj" />
@@ -97,5 +101,9 @@
   <Folder Name="/tests/Modules/AdministratorsConfiguration/">
     <Project Path="tests/Modules/AdministratorsConfiguration/Nexhire.Modules.AdministratorsConfiguration.Tests.Unit/Nexhire.Modules.AdministratorsConfiguration.Tests.Unit.csproj" />
     <Project Path="tests/Modules/AdministratorsConfiguration/Nexhire.Modules.AdministratorsConfiguration.Tests.Integration/Nexhire.Modules.AdministratorsConfiguration.Tests.Integration.csproj" />
+  </Folder>
+  <Folder Name="/tests/Modules/ContentManagement/">
+    <Project Path="tests/Modules/ContentManagement/Nexhire.Modules.ContentManagement.Tests.Unit/Nexhire.Modules.ContentManagement.Tests.Unit.csproj" />
+    <Project Path="tests/Modules/ContentManagement/Nexhire.Modules.ContentManagement.Tests.Integration/Nexhire.Modules.ContentManagement.Tests.Integration.csproj" />
   </Folder>
 </Solution>
