@@ -20,6 +20,8 @@ using Nexhire.Modules.ContentManagement.Infrastructure;
 using Nexhire.Modules.ContentManagement.Infrastructure.Startup;
 using Nexhire.Shared.Infrastructure;
 using Nexhire.Shared.Infrastructure.OpenApi;
+using Nexhire.Modules.ContentManagement.Core.Application.Ports;
+using Nexhire.Api;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -65,6 +67,8 @@ builder.Services.AddExternalJobSyncModule(builder.Configuration);
 builder.Services.AddReportingModule(builder.Configuration);
 builder.Services.AddAdministratorsConfigurationModule(builder.Configuration);
 builder.Services.AddContentManagementModule(builder.Configuration);
+
+builder.Services.AddScoped<IJobSeekerProfileQueryApi, JobSeekerProfileQueryApiAdapter>();
 
 var app = builder.Build();
 

@@ -20,16 +20,16 @@ graph TD
     end
 
     subgraph Pluggable Modules
-        UsersCore[Nexhire.Modules.Users.Core]
-        UsersInfra[Nexhire.Modules.Users.Infrastructure]
+        ModulesCore[Modules.*.Core]
+        ModulesInfra[Modules.*.Infrastructure]
     end
 
-    Api --> UsersInfra
+    Api --> ModulesInfra
     Api --> SharedInfra
 
-    UsersInfra --> UsersCore
-    UsersInfra --> SharedInfra
-    UsersCore --> SharedCore
+    ModulesInfra --> ModulesCore
+    ModulesInfra --> SharedInfra
+    ModulesCore --> SharedCore
     SharedInfra --> SharedCore
 ```
 
@@ -58,14 +58,28 @@ graph TD
 │   ├── Shared/
 │   │   ├── Nexhire.Shared.Core/           # Core DDD / CQRS interfaces and result types
 │   │   └── Nexhire.Shared.Infrastructure/  # Pipeline behaviors, Db interceptors, OpenAPI/Scalar
-│   └── Modules/
+│   └── Modules/               # Pluggable Feature Modules
+│       ├── AdministratorsConfiguration/
+│       ├── ContentManagement/
+│       ├── EmployerProfiles/
+│       ├── ExternalJobSync/
+│       ├── IdentityAccess/
+│       ├── JobApplication/
+│       ├── JobPostings/
+│       ├── JobSeekerProfile/
+│       ├── Notification/
+│       ├── RecommendationEngine/
+│       ├── Reporting/
+│       ├── SearchDiscovery/
 │       └── Users/
-│           ├── Nexhire.Modules.Users.Core/           # Users domain aggregates & application logic
-│           └── Nexhire.Modules.Users.Infrastructure/ # EF Core persistence, PostgreSQL schema, Minimal APIs
+│           ├── Nexhire.Modules.*.Core/           # Domain aggregates & application logic
+│           └── Nexhire.Modules.*.Infrastructure/ # EF Core persistence, API endpoints
 └── tests/
     ├── Nexhire.ArchitectureTests/                    # Compile-time dependency boundary checks
-    └── Modules/Users/
-        └── Nexhire.Modules.Users.Tests.Unit/         # Unit test suite for Users CQRS business rules
+    └── Modules/                                      # Test suites for each module
+        └── */
+            ├── Nexhire.Modules.*.Tests.Unit/         # Unit test suite for CQRS business rules
+            └── Nexhire.Modules.*.Tests.Integration/  # Integration test suite
 ```
 
 ---
