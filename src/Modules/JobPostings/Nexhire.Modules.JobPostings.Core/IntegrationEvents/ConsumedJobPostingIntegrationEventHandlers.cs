@@ -12,7 +12,8 @@ namespace Nexhire.Modules.JobPostings.Core.IntegrationEvents;
 public sealed class EmployerStandingProjectionHandlers :
     INotificationHandler<EmployerVerifiedIntegrationEvent>,
     INotificationHandler<EmployerVerificationFailedIntegrationEvent>,
-    INotificationHandler<EmployerAccountReinstatedIntegrationEvent>
+    INotificationHandler<EmployerAccountReinstatedIntegrationEvent>,
+    INotificationHandler<EmployerRegisteredIntegrationEvent>
 {
     private readonly IEmployerStandingStore _standings;
     private readonly IJobPostingsUnitOfWork _unitOfWork;
@@ -41,6 +42,13 @@ public sealed class EmployerStandingProjectionHandlers :
     {
         var current = await _standings.GetAsync(notification.EmployerId, cancellationToken);
         await _standings.UpsertAsync(new EmployerStanding(notification.EmployerId, current?.IsVerified ?? false, true, notification.OccurredOnUtc), cancellationToken);
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task Handle(EmployerRegisteredIntegrationEvent notification, CancellationToken cancellationToken)
+    {
+        // On registration, employer is not verified but is active.
+        await _standings.UpsertAsync(new EmployerStanding(notification.EmployerProfileId, false, true, notification.OccurredOnUtc), cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
     }
 }

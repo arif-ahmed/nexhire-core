@@ -27,6 +27,13 @@ public class UserRegisteredIntegrationEvent : IntegrationEventBase
     public string Email { get; init; } = string.Empty;
 }
 
+public class EmployerRegisteredIntegrationEvent : IntegrationEventBase
+{
+    public Guid UserId { get; init; }
+    public Guid EmployerProfileId { get; init; }
+    public string CompanyName { get; init; } = string.Empty;
+}
+
 public class JobPostingPublishedIntegrationEvent : IntegrationEventBase
 {
     public Guid PostingId { get; init; }
@@ -115,6 +122,9 @@ public class ProjectorService
             case UserRegisteredIntegrationEvent e:
                 await ProjectUserRegistered(e, ct);
                 break;
+            case EmployerRegisteredIntegrationEvent e:
+                await ProjectEmployerRegistered(e, ct);
+                break;
             case JobPostingPublishedIntegrationEvent e:
                 await ProjectJobPostingPublished(e, ct);
                 break;
@@ -167,6 +177,22 @@ public class ProjectorService
             {
                 Id = Guid.NewGuid(), UserId = e.UserId, ActorRole = ActorRole.JobSeeker,
                 ActivityType = ActivityType.UserRegistered, OccurredOnUtc = e.OccurredOnUtc,
+                SourceEventId = e.EventId, ProjectedOnUtc = DateTime.UtcNow
+            }, ct);
+        }
+
+        foreach (var grain in new[] { RollupGrain.Day, RollupGrain.Week, RollupGrain.Month })
+            await _analyticsStore.UpsertAnalyticsRollupAsync("registration.count", grain, BucketStart(e.OccurredOnUtc, grain), null, null, null, null, null, 1, ct);
+    }
+
+    private async Task ProjectEmployerRegistered(EmployerRegisteredIntegrationEvent e, CancellationToken ct)
+    {
+        if (!await _activityStore.ActivityRecordExistsAsync(e.EventId, ActivityType.EmployerRegistered, ct))
+        {
+            await _activityStore.InsertActivityRecordAsync(new ActivityRecord
+            {
+                Id = Guid.NewGuid(), UserId = e.UserId, ActorRole = ActorRole.Employer,
+                ActivityType = ActivityType.EmployerRegistered, OccurredOnUtc = e.OccurredOnUtc,
                 SourceEventId = e.EventId, ProjectedOnUtc = DateTime.UtcNow
             }, ct);
         }

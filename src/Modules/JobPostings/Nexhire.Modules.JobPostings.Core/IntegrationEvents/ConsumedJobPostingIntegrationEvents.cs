@@ -13,3 +13,4 @@ public sealed record TaxonomyUpdatedIntegrationEvent(IReadOnlyCollection<string>
 public sealed record JobPostingApplicationsCountChangedIntegrationEvent(Guid JobPostingId, int ApplicationsCount, DateTime OccurredOnUtc) : INotification;
 public sealed record JobPostingMatchesCountChangedIntegrationEvent(Guid JobPostingId, int MatchesCount, DateTime OccurredOnUtc) : INotification;
 public sealed record JobPostingViewsCountChangedIntegrationEvent(Guid JobPostingId, int ViewsCount, DateTime OccurredOnUtc) : INotification;
+public sealed record EmployerRegisteredIntegrationEvent(Guid EventId, Guid EmployerProfileId, Guid UserId, string CompanyName, DateTime At, DateTime OccurredOnUtc) : INotification;

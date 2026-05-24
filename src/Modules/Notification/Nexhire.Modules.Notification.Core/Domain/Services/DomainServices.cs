@@ -147,6 +147,7 @@ public sealed class ChannelFanoutPlanner : IChannelFanoutPlanner
         { "PasswordResetIntegrationEvent", (NotificationType.AccountSecurity, Priority.High) },
         { "OtpRequestedIntegrationEvent", (NotificationType.Transactional, Priority.High) },
         { "RoleAssignedIntegrationEvent", (NotificationType.AccountSecurity, Priority.Normal) },
+        { "EmployerRegisteredIntegrationEvent", (NotificationType.ApplicationUpdate, Priority.Normal) },
         { "EmployerVerifiedIntegrationEvent", (NotificationType.ApplicationUpdate, Priority.Normal) },
         { "EmployerVerificationFailedIntegrationEvent", (NotificationType.ApplicationUpdate, Priority.High) },
         { "CandidateSavedToTalentPoolIntegrationEvent", (NotificationType.RecruiterActivity, Priority.Normal) },
