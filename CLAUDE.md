@@ -60,3 +60,9 @@ This codebase is a **Modular Monolith** applying **Clean Architecture** within e
 * **Implicit Usings**: Enabled solution-wide; avoid duplicate `using` directives where global namespaces are active.
 * **Nullability**: All projects must enforce `<Nullable>enable</Nullable>`. Design types explicitly around potential null states.
 * **Domain Events**: Declare aggregate-emitted domain events as lightweight C# `record` types implementing `IDomainEvent` inside the `Events` directory.
+* **DebuggerDisplay**: Apply `[DebuggerDisplay("...")]` only when it materially improves debugging clarity — not mechanically on every class. For simple, stable display strings, use the attribute directly on the class referencing public properties. Do not force a private `DebuggerDisplay` property on every type.
+
+  ```csharp
+  [DebuggerDisplay("Order {OrderNumber} - {CustomerName} - {TotalAmount}")]
+  public class Order { ... }
+  ```

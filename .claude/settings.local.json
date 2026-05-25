@@ -7,7 +7,24 @@
       "Bash(dotnet run *)",
       "Bash(curl -s http://localhost:5001/health)",
       "Bash(kill %1)",
-      "Bash(start *)"
+      "Bash(start *)",
+      "Bash(codegraph --help)",
+      "Bash(codegraph_status)",
+      "Bash(where codegraph *)",
+      "PowerShell(codegraph --help 2>&1)",
+      "PowerShell(codegraph status 2>&1)",
+      "PowerShell(codegraph files 2>&1)",
+      "PowerShell(codegraph context \"architecture overview: Program.cs setup, endpoints, DbContexts, repositories, background services, external API clients\" 2>&1)",
+      "PowerShell(codegraph query \"Background\" --kind class 2>&1)",
+      "PowerShell(codegraph query \"DbContext\" --kind class 2>&1)",
+      "PowerShell(codegraph query \"Endpoints\" --kind class 2>&1)",
+      "PowerShell(codegraph query \"IHostedService\" 2>&1)",
+      "PowerShell(codegraph query \"HttpClient\" 2>&1)",
+      "PowerShell(codegraph query \"BackgroundService\" 2>&1)",
+      "PowerShell(codegraph query \"IHttpClientFactory\" 2>&1)",
+      "PowerShell(codegraph query \"AddHttpClient\" 2>&1)",
+      "PowerShell(codegraph query \"SearchDiscovery\" --kind class 2>&1)",
+      "PowerShell(codegraph query \"Notification\" --kind class 2>&1)"
     ]
   },
   "enabledPlugins": {
