@@ -41,8 +41,10 @@
     <Project Path="src/Modules/ExternalJobSync/Nexhire.Modules.ExternalJobSync.Infrastructure/Nexhire.Modules.ExternalJobSync.Infrastructure.csproj" />
   </Folder>
   <Folder Name="/src/Modules/Notification/">
-    <Project Path="src/Modules/Notification/Nexhire.Modules.Notification.Core/Nexhire.Modules.Notification.Core.csproj" />
+    <Project Path="src/Modules/Notification/Nexhire.Modules.Notification.Domain/Nexhire.Modules.Notification.Domain.csproj" />
+    <Project Path="src/Modules/Notification/Nexhire.Modules.Notification.Application/Nexhire.Modules.Notification.Application.csproj" />
     <Project Path="src/Modules/Notification/Nexhire.Modules.Notification.Infrastructure/Nexhire.Modules.Notification.Infrastructure.csproj" />
+    <Project Path="src/Modules/Notification/Nexhire.Modules.Notification.Presentation/Nexhire.Modules.Notification.Presentation.csproj" />
   </Folder>
   <Folder Name="/src/Modules/Reporting/">
     <Project Path="src/Modules/Reporting/Nexhire.Modules.Reporting.Core/Nexhire.Modules.Reporting.Core.csproj" />

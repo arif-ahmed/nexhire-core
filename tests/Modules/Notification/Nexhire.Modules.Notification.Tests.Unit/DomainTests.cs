@@ -3,12 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using FluentAssertions;
 using Xunit;
-using Nexhire.Modules.Notification.Core.Domain;
-using Nexhire.Modules.Notification.Core.Domain.Aggregates;
-using NotificationAggregate = Nexhire.Modules.Notification.Core.Domain.Aggregates.Notification;
-using Nexhire.Modules.Notification.Core.Domain.Events;
-using Nexhire.Modules.Notification.Core.Domain.Services;
-using Nexhire.Modules.Notification.Core.Domain;
+using Nexhire.Modules.Notification.Domain;
+using Nexhire.Modules.Notification.Domain.Aggregates;
+using NotificationAggregate = Nexhire.Modules.Notification.Domain.Aggregates.Notification;
+using Nexhire.Modules.Notification.Domain.Events;
+using Nexhire.Modules.Notification.Domain.Services;
 
 namespace Nexhire.Modules.Notification.Tests.Unit;
 

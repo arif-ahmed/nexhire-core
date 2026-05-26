@@ -1,11 +1,11 @@
-using System;
+﻿using System;
 using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Nexhire.Shared.Infrastructure.Messaging;
-using Nexhire.Modules.Notification.Core.Domain.Aggregates;
-using Nexhire.Modules.Notification.Core.Domain;
-using NotificationAggregate = Nexhire.Modules.Notification.Core.Domain.Aggregates.Notification;
+using Nexhire.Modules.Notification.Domain.Aggregates;
+using Nexhire.Modules.Notification.Domain;
+using NotificationAggregate = Nexhire.Modules.Notification.Domain.Aggregates.Notification;
 
 namespace Nexhire.Modules.Notification.Infrastructure.Persistence;
 

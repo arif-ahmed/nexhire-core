@@ -1,13 +1,13 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using Nexhire.Modules.Notification.Core.Domain.Aggregates;
-using Nexhire.Modules.Notification.Core.Domain.Repositories;
-using Nexhire.Modules.Notification.Core.Domain;
-using NotificationAggregate = Nexhire.Modules.Notification.Core.Domain.Aggregates.Notification;
+using Nexhire.Modules.Notification.Domain.Aggregates;
+using Nexhire.Modules.Notification.Domain.Repositories;
+using Nexhire.Modules.Notification.Domain;
+using NotificationAggregate = Nexhire.Modules.Notification.Domain.Aggregates.Notification;
 
 namespace Nexhire.Modules.Notification.Infrastructure.Persistence.Repositories;
 

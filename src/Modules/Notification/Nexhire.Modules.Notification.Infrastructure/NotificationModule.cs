@@ -1,12 +1,12 @@
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Nexhire.Modules.Notification.Core.Domain.Ports;
-using Nexhire.Modules.Notification.Core.Domain.Repositories;
-using Nexhire.Modules.Notification.Core.Domain.Services;
-using Nexhire.Modules.Notification.Core.PublicApi;
+using Nexhire.Modules.Notification.Domain.Ports;
+using Nexhire.Modules.Notification.Domain.Repositories;
+using Nexhire.Modules.Notification.Domain.Services;
+using Nexhire.Modules.Notification.Application.PublicApi;
 using Nexhire.Modules.Notification.Infrastructure.Adapters;
 using Nexhire.Modules.Notification.Infrastructure.Background;
 using Nexhire.Modules.Notification.Infrastructure.Endpoints;

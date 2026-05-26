@@ -7,13 +7,9 @@
 
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.2" />
-    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Nexhire.Modules.Notification.Application\Nexhire.Modules.Notification.Application.csproj" />
-    <ProjectReference Include="..\Nexhire.Modules.Notification.Presentation\Nexhire.Modules.Notification.Presentation.csproj" />
-    <ProjectReference Include="..\..\..\Shared\Nexhire.Shared.Infrastructure\Nexhire.Shared.Infrastructure.csproj" />
   </ItemGroup>
 </Project>

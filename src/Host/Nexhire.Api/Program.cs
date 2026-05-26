@@ -21,6 +21,7 @@ using Nexhire.Modules.ContentManagement.Infrastructure.Startup;
 using Nexhire.Shared.Infrastructure;
 using Nexhire.Shared.Infrastructure.OpenApi;
 using Nexhire.Modules.ContentManagement.Core.Application.Ports;
+using Nexhire.Modules.Notification.Infrastructure;
 using Nexhire.Api;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -49,7 +50,10 @@ var moduleAssemblies = new[]
     typeof(Taxonomy).Assembly,
     typeof(AdministratorsConfigurationModuleExtensions).Assembly,
     typeof(Article).Assembly,
-    typeof(ContentManagementModuleExtensions).Assembly
+    typeof(ContentManagementModuleExtensions).Assembly,
+    typeof(Nexhire.Modules.Notification.Domain.Aggregates.Notification).Assembly,
+    typeof(Nexhire.Modules.Notification.Application.CQRS.Commands.SendImmediateNotificationCommand).Assembly,
+    typeof(NotificationModule).Assembly
 };
 
 // 1. Register Shared Infrastructure layer
@@ -67,6 +71,7 @@ builder.Services.AddExternalJobSyncModule(builder.Configuration);
 builder.Services.AddReportingModule(builder.Configuration);
 builder.Services.AddAdministratorsConfigurationModule(builder.Configuration);
 builder.Services.AddContentManagementModule(builder.Configuration);
+builder.Services.AddNotificationModule(builder.Configuration);
 
 builder.Services.AddScoped<IJobSeekerProfileQueryApi, JobSeekerProfileQueryApiAdapter>();
 
@@ -88,6 +93,7 @@ app.MapExternalJobSyncEndpoints();
 app.MapReportingEndpoints();
 app.MapAdministratorsConfigurationEndpoints();
 app.MapContentManagementEndpoints();
+app.MapNotificationEndpoints();
 
 // Base System Health Endpoint
 app.MapGet("health", () => Results.Ok(new 

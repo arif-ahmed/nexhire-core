@@ -20,7 +20,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\src\Modules\Notification\Nexhire.Modules.Notification.Core\Nexhire.Modules.Notification.Core.csproj" />
+    <ProjectReference Include="..\..\..\..\src\Modules\Notification\Nexhire.Modules.Notification.Domain\Nexhire.Modules.Notification.Domain.csproj" />
+    <ProjectReference Include="..\..\..\..\src\Modules\Notification\Nexhire.Modules.Notification.Application\Nexhire.Modules.Notification.Application.csproj" />
     <ProjectReference Include="..\..\..\..\src\Modules\Notification\Nexhire.Modules.Notification.Infrastructure\Nexhire.Modules.Notification.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\..\..\src\Modules\Notification\Nexhire.Modules.Notification.Presentation\Nexhire.Modules.Notification.Presentation.csproj" />
   </ItemGroup>
 </Project>

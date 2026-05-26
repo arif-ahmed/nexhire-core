@@ -1,11 +1,11 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Nexhire.Shared.Core.Results;
-using Nexhire.Modules.Notification.Core.Domain.Ports;
-using Nexhire.Modules.Notification.Core.Domain.Repositories;
-using Nexhire.Modules.Notification.Core.PublicApi;
+using Nexhire.Modules.Notification.Domain.Ports;
+using Nexhire.Modules.Notification.Domain.Repositories;
+using Nexhire.Modules.Notification.Application.PublicApi;
 
 namespace Nexhire.Modules.Notification.Infrastructure.Adapters;
 

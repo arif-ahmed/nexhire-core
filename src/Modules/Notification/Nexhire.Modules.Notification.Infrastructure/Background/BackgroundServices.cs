@@ -7,10 +7,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
-using Nexhire.Modules.Notification.Core.CQRS.Commands;
-using Nexhire.Modules.Notification.Core.Domain.Repositories;
-using Nexhire.Modules.Notification.Core.Domain.Aggregates;
-using Nexhire.Modules.Notification.Core.Domain;
+using Nexhire.Modules.Notification.Application.CQRS.Commands;
+using Nexhire.Modules.Notification.Domain.Repositories;
+using Nexhire.Modules.Notification.Domain.Aggregates;
+using Nexhire.Modules.Notification.Domain;
 using Nexhire.Modules.Notification.Infrastructure.Persistence;
 
 namespace Nexhire.Modules.Notification.Infrastructure.Background;
@@ -166,9 +166,9 @@ public class SoftBounceRetryWorker : BackgroundService
                 // Fetch Sent notifications that have a SoftBounce and attempts < 3
                 var softBounced = dbContext.Notifications
                     .Include(n => n.Attempts)
-                    .Where(n => n.DeliveryStatus == Core.Domain.DeliveryStatus.Sent)
+                    .Where(n => n.DeliveryStatus == DeliveryStatus.Sent)
                     .ToList()
-                    .Where(n => n.Attempts.Any() && n.Attempts.Last().Outcome == Core.Domain.AttemptOutcome.SoftBounce && n.Attempts.Count < 3)
+                    .Where(n => n.Attempts.Any() && n.Attempts.Last().Outcome == AttemptOutcome.SoftBounce && n.Attempts.Count < 3)
                     .ToList();
 
                 foreach (var notif in softBounced)
@@ -226,7 +226,7 @@ public class RetentionWorker : BackgroundService
 
                 // 1. Soft-archive InApp notifications older than 90 days
                 var oldInApp = dbContext.Notifications
-                    .Where(n => n.Channel == Core.Domain.Channel.InApp && n.CreatedOnUtc < cutoff90Days && !n.IsArchived)
+                    .Where(n => n.Channel == Channel.InApp && n.CreatedOnUtc < cutoff90Days && !n.IsArchived)
                     .ToList();
 
                 foreach (var notif in oldInApp)
@@ -244,7 +244,7 @@ public class RetentionWorker : BackgroundService
                 }
 
                 // 3. Purge expired digest items older than 30 days
-                var openDigests = dbContext.Digests.Include(d => d.Items).Where(d => d.Status == Core.Domain.DigestStatus.Open).ToList();
+                var openDigests = dbContext.Digests.Include(d => d.Items).Where(d => d.Status == DigestStatus.Open).ToList();
                 foreach (var digest in openDigests)
                 {
                     digest.RemoveExpiredItems(DateTime.UtcNow.AddDays(-30));
