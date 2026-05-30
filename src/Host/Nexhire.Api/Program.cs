@@ -86,7 +86,8 @@ builder.Services.AddScoped<IIdentityProvisioningApi, IdentityProvisioningApiAdap
 builder.Services.AddScoped<ITokenValidationApi, TokenValidationApiAdapter>();
 
 builder.Services.AddAuthorization();
-builder.Services.AddAuthentication();
+builder.Services.AddAuthentication("Bearer")
+    .AddJwtBearer("Bearer", options => { });
 
 var app = builder.Build();
 
