@@ -9,17 +9,19 @@ public class Credential : ValueObject
     public MobileNumber Mobile { get; }
     public PasswordHash PasswordHash { get; }
 
+    private Credential() { } // EF Core
+
     private Credential(EmailAddress email, MobileNumber mobile, PasswordHash passwordHash)
     {
-        Email = email;
+        Email = email!;
         Mobile = mobile;
         PasswordHash = passwordHash;
     }
 
-    public static Result<Credential> Create(EmailAddress? email, MobileNumber? mobile, PasswordHash? passwordHash)
+    public static Result<Credential> Create(EmailAddress email, MobileNumber mobile, PasswordHash passwordHash)
     {
         if (email == null || mobile == null || passwordHash == null)
-            return Result.Failure<Credential>(new Error("Credential.InvalidComponent", "All credential components must be provided."));
+            return Result.Failure<Credential>(new Error("Credential.InvalidComponent", "Components cannot be null."));
 
         return new Credential(email, mobile, passwordHash);
     }

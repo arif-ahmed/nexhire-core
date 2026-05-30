@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using Nexhire.Modules.IdentityAccess.Domain;
+using Nexhire.Modules.IdentityAccess.Domain.Domain;
 using Nexhire.Shared.Infrastructure.Interceptors;
 
 namespace Nexhire.Modules.IdentityAccess.Infrastructure.Persistence;
@@ -16,6 +16,9 @@ public class IdentityAccessDbContext : DbContext
     }
 
     public DbSet<UserAccount> UserAccounts => Set<UserAccount>();
+    public DbSet<OtpChallenge> OtpChallenges => Set<OtpChallenge>();
+    public DbSet<AdminActionLog> AdminActionLogs => Set<AdminActionLog>();
+    public DbSet<RevokedToken> RevokedTokens => Set<RevokedToken>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

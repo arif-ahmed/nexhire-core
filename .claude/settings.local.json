@@ -24,7 +24,20 @@
       "PowerShell(codegraph query \"IHttpClientFactory\" 2>&1)",
       "PowerShell(codegraph query \"AddHttpClient\" 2>&1)",
       "PowerShell(codegraph query \"SearchDiscovery\" --kind class 2>&1)",
-      "PowerShell(codegraph query \"Notification\" --kind class 2>&1)"
+      "PowerShell(codegraph query \"Notification\" --kind class 2>&1)",
+      "Bash(dotnet build *)",
+      "Bash(dotnet --list-sdks)",
+      "Bash(dotnet --list-runtimes)",
+      "Bash(xargs sed -i 's|<TargetFramework>net9.0</TargetFramework>|<TargetFramework>net10.0</TargetFramework>|g')",
+      "PowerShell(Get-ChildItem *)",
+      "Bash(xargs sed -i -e 's|\"Microsoft.EntityFrameworkCore\" Version=\"9\\\\.0\\\\.[0-9]*\"|\"Microsoft.EntityFrameworkCore\" Version=\"10.0.8\"|g' -e 's|\"Microsoft.EntityFrameworkCore.InMemory\" Version=\"9\\\\.0\\\\.[0-9]*\"|\"Microsoft.EntityFrameworkCore.InMemory\" Version=\"10.0.8\"|g' -e 's|\"Microsoft.EntityFrameworkCore.Design\" Version=\"9\\\\.0\\\\.[0-9]*\"|\"Microsoft.EntityFrameworkCore.Design\" Version=\"10.0.8\"|g' -e 's|\"Microsoft.AspNetCore.OpenApi\" Version=\"9\\\\.0\\\\.[0-9]*\"|\"Microsoft.AspNetCore.OpenApi\" Version=\"10.0.8\"|g' -e 's|\"Npgsql.EntityFrameworkCore.PostgreSQL\" Version=\"9\\\\.0\\\\.[0-9]*\"|\"Npgsql.EntityFrameworkCore.PostgreSQL\" Version=\"10.0.2\"|g')",
+      "Bash(dotnet restore *)",
+      "Bash(xargs sed -i -e 's|\"Microsoft.EntityFrameworkCore\" Version=\"9\\\\.0\\\\.[0-9]*\"|\"Microsoft.EntityFrameworkCore\" Version=\"10.0.8\"|g' -e 's|\"Microsoft.EntityFrameworkCore.Relational\" Version=\"9\\\\.0\\\\.[0-9]*\"|\"Microsoft.EntityFrameworkCore.Relational\" Version=\"10.0.8\"|g' -e 's|\"Microsoft.EntityFrameworkCore.InMemory\" Version=\"9\\\\.0\\\\.[0-9]*\"|\"Microsoft.EntityFrameworkCore.InMemory\" Version=\"10.0.8\"|g' -e 's|\"Microsoft.Extensions.DependencyInjection\" Version=\"9\\\\.0\\\\.[0-9]*\"|\"Microsoft.Extensions.DependencyInjection\" Version=\"10.0.8\"|g' -e 's|\"Npgsql.EntityFrameworkCore.PostgreSQL\" Version=\"9\\\\.0\\\\.[0-9]*\"|\"Npgsql.EntityFrameworkCore.PostgreSQL\" Version=\"10.0.2\"|g')",
+      "Bash(git checkout *)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git push *)",
+      "Bash(gh pr create --title '⬆️ chore: upgrade solution to .NET 10 / C# 14 and fix build errors' --body ' *)"
     ]
   },
   "enabledPlugins": {

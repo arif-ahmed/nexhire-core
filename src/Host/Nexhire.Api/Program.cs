@@ -1,4 +1,5 @@
 using Nexhire.Modules.EmployerProfiles.Core.Domain.Aggregates;
+using Nexhire.Modules.IdentityAccess.Infrastructure.Persistence;
 using Nexhire.Modules.EmployerProfiles.Infrastructure;
 using Nexhire.Modules.JobApplication.Core.Domain;
 using Nexhire.Modules.JobApplication.Infrastructure;
@@ -24,15 +25,20 @@ using Nexhire.Shared.Infrastructure.OpenApi;
 using Nexhire.Modules.ContentManagement.Core.Application.Ports;
 using Nexhire.Modules.Notification.Infrastructure;
 using Nexhire.Api;
+using Nexhire.Api.Adapters.IdentityAccess;
+using Nexhire.Api.Middleware;
+using Nexhire.Modules.IdentityAccess.Contracts;
+using Microsoft.AspNetCore.Authorization;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Define active module assemblies for dynamic scanning (MediatR CQRS and FluentValidation schemas)
 var moduleAssemblies = new[]
 {
-    typeof(Nexhire.Modules.IdentityAccess.Domain.UserAccount).Assembly,
-    typeof(Nexhire.Modules.IdentityAccess.Application.Accounts.Commands.CreateUser.CreateUserCommand).Assembly,
+    typeof(Nexhire.Modules.IdentityAccess.Domain.Domain.UserAccount).Assembly,
+    typeof(Nexhire.Modules.IdentityAccess.Application.Accounts.Commands.ProvisionCredential.ProvisionCredentialCommand).Assembly,
     typeof(IdentityAccessModule).Assembly,
+    typeof(Nexhire.Modules.IdentityAccess.Contracts.Events.UserRegisteredIntegrationEvent).Assembly,
     typeof(EmployerProfile).Assembly,
     typeof(EmployerProfilesModule).Assembly,
     typeof(JobPosting).Assembly,
@@ -76,12 +82,23 @@ builder.Services.AddContentManagementModule(builder.Configuration);
 builder.Services.AddNotificationModule(builder.Configuration);
 
 builder.Services.AddScoped<IJobSeekerProfileQueryApi, JobSeekerProfileQueryApiAdapter>();
+builder.Services.AddScoped<IIdentityProvisioningApi, IdentityProvisioningApiAdapter>();
+builder.Services.AddScoped<ITokenValidationApi, TokenValidationApiAdapter>();
+
+builder.Services.AddAuthorization();
+builder.Services.AddAuthentication();
 
 var app = builder.Build();
 
 // 3. Configure HTTP Pipeline and Middleware
 app.UseOpenApiDocumentation();
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
+app.UseNexhireAuthentication();
+app.UseAuthorization();
+
+await app.Services.SeedIdentityAccessDataAsync();
 
 // 4. Map Pluggable Module Routing
 app.MapIdentityAccessEndpoints();
@@ -108,3 +125,5 @@ app.MapGet("health", () => Results.Ok(new
 .WithTags("System");
 
 app.Run();
+
+public partial class Program { }
