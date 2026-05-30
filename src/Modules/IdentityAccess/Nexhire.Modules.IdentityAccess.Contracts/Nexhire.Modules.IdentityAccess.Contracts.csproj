@@ -1,17 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
-
   <ItemGroup>
-    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <ProjectReference Include="..\..\..\Shared\Nexhire.Shared.Core\Nexhire.Shared.Core.csproj" />
   </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Nexhire.Modules.IdentityAccess.Application\Nexhire.Modules.IdentityAccess.Application.csproj" />
-  </ItemGroup>
-
 </Project>

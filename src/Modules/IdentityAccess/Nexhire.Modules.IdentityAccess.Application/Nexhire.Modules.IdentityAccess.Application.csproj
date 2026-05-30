@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
@@ -9,6 +9,11 @@
   <ItemGroup>
     <ProjectReference Include="..\Nexhire.Modules.IdentityAccess.Domain\Nexhire.Modules.IdentityAccess.Domain.csproj" />
     <ProjectReference Include="..\..\..\Shared\Nexhire.Shared.Core\Nexhire.Shared.Core.csproj" />
+    <ProjectReference Include="..\Nexhire.Modules.IdentityAccess.Contracts\Nexhire.Modules.IdentityAccess.Contracts.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
   </ItemGroup>
 
 </Project>

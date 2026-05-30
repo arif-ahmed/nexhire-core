@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
 using Nexhire.Modules.JobApplication.Core.Domain;
 using Nexhire.Modules.JobApplication.Core.Domain.ValueObjects;
@@ -25,7 +26,9 @@ public class PersistenceTests
     public PersistenceTests()
     {
         _publisherMock = Substitute.For<IPublisher>();
-        var interceptor = new PublishDomainEventsInterceptor(_publisherMock);
+        var services = new ServiceCollection();
+        services.AddSingleton(_publisherMock);
+        var interceptor = new PublishDomainEventsInterceptor(services.BuildServiceProvider());
 
         var options = new DbContextOptionsBuilder<JobApplicationDbContext>()
             .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
@@ -184,7 +187,9 @@ public class PersistenceTests
         var options = new DbContextOptionsBuilder<JobApplicationDbContext>()
             .UseInMemoryDatabase(databaseName: dbName)
             .Options;
-        var interceptor = new PublishDomainEventsInterceptor(_publisherMock);
+        var svc2 = new ServiceCollection();
+        svc2.AddSingleton(_publisherMock);
+        var interceptor = new PublishDomainEventsInterceptor(svc2.BuildServiceProvider());
 
         var candidateSnapshot = CandidateSnapshot.Create(
             "Arif Ahmed", "arif@nexhire.com", "+12345", "Dhaka",

@@ -1,6 +1,6 @@
 # Nexhire Core
 
-Core backend for **NexHire** — a premium modular monolith API designed around Domain-Driven Design (DDD), CQRS, and Clean Architecture principles, targeting **.NET 9.0**.
+Core backend for **NexHire** — a premium modular monolith API designed around Domain-Driven Design (DDD), CQRS, and Clean Architecture principles, targeting **.NET 10.0**.
 
 ---
 
@@ -46,7 +46,7 @@ graph TD
 
 ```text
 /
-├── Nexhire.slnx               # Unified XML-based .NET 9 solution configuration
+├── Nexhire.slnx               # Unified XML-based .NET 10 solution configuration
 ├── docker-compose.yml         # Container orchestration (API + PostgreSQL)
 ├── docs/                      # Technical architectural designs
 ├── scripts/                   # Migration & helper shell scripts
@@ -86,9 +86,9 @@ graph TD
 
 ## 🛠️ Technology Stack
 
-* **Runtime & Framework**: .NET 9.0 SDK, C# 13
-* **API Documentation**: Native .NET 9 OpenAPI document generation mapped onto the dark-themed **Scalar API Explorer** (`/scalar/v1`) with built-in client SDK generators.
-* **Database & ORM**: **PostgreSQL** running on **EF Core 9** with dedicated Postgres schema segregation (`users`).
+* **Runtime & Framework**: .NET 10.0 SDK, C# 14
+* **API Documentation**: Native .NET 10 OpenAPI document generation mapped onto the dark-themed **Scalar API Explorer** (`/scalar/v1`) with built-in client SDK generators.
+* **Database & ORM**: **PostgreSQL** running on **EF Core 10** with dedicated Postgres schema segregation per module.
 * **CQRS Dispatcher**: **MediatR**
 * **Validation Engine**: **FluentValidation** integrated directly into the MediatR request pipeline.
 * **Testing Stack**: **xUnit**, **NSubstitute** (mocking), **FluentAssertions**, and **NetArchTest.Rules** (architectural rules checking).
@@ -98,7 +98,7 @@ graph TD
 ## 🚀 Getting Started
 
 ### Prerequisites
-* [.NET 9.0 SDK](https://dotnet.microsoft.com/download/dotnet/9.0)
+* [.NET 10.0 SDK](https://dotnet.microsoft.com/download/dotnet/10.0)
 * [Docker Desktop](https://www.docker.com/products/docker-desktop/)
 
 ### 1. Run the Complete Infrastructure

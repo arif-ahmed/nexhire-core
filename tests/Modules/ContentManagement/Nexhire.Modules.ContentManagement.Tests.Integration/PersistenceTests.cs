@@ -1,5 +1,6 @@
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Nexhire.Modules.ContentManagement.Core.Domain.Aggregates;
 using Nexhire.Modules.ContentManagement.Core.Domain.Enums;
 using Nexhire.Modules.ContentManagement.Core.Domain.ValueObjects;
@@ -19,7 +20,9 @@ public class PersistenceTests
             .Options;
 
         var publisher = Substitute.For<MediatR.IPublisher>();
-        var interceptor = new PublishDomainEventsInterceptor(publisher);
+        var services = new ServiceCollection();
+        services.AddSingleton(publisher);
+        var interceptor = new PublishDomainEventsInterceptor(services.BuildServiceProvider());
 
         return new ContentManagementDbContext(options, interceptor);
     }
