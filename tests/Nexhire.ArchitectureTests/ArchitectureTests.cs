@@ -6,16 +6,16 @@ namespace Nexhire.ArchitectureTests;
 
 public class ArchitectureTests
 {
-    private static readonly Assembly CoreAssembly = typeof(Nexhire.Modules.Users.Core.Domain.User).Assembly;
+    private static readonly Assembly CoreAssembly = typeof(Nexhire.Modules.IdentityAccess.Domain.UserAccount).Assembly;
     private static readonly Assembly JobPostingsCoreAssembly = typeof(Nexhire.Modules.JobPostings.Core.Domain.Aggregates.JobPosting).Assembly;
 
     [Fact]
-    public void UsersCore_Should_Not_DependOn_UsersInfrastructure_Or_Api()
+    public void IdentityAccessDomain_Should_Not_DependOn_Infrastructure_Or_Api()
     {
         // Arrange
         var forbiddenDependencies = new[]
         {
-            "Nexhire.Modules.Users.Infrastructure",
+            "Nexhire.Modules.IdentityAccess.Infrastructure",
             "Nexhire.Shared.Infrastructure",
             "Nexhire.Api"
         };
@@ -27,7 +27,7 @@ public class ArchitectureTests
             .GetResult();
 
         // Assert
-        Assert.True(result.IsSuccessful, "The Domain & Core layer of the Users module has disallowed references to Infrastructure or Host API projects.");
+        Assert.True(result.IsSuccessful, "The Domain layer of the IdentityAccess module has disallowed references to Infrastructure or Host API projects.");
     }
 
     [Fact]

@@ -7,9 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Nexhire.Modules.IdentityAccess.Domain\Nexhire.Modules.IdentityAccess.Domain.csproj" />
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Nexhire.Modules.IdentityAccess.Application\Nexhire.Modules.IdentityAccess.Application.csproj" />
-    <ProjectReference Include="..\..\..\Shared\Nexhire.Shared.Infrastructure\Nexhire.Shared.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

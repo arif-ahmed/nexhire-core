@@ -9,7 +9,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 | Restore | `dotnet restore` |
 | Build | `dotnet build` |
 | Test all | `dotnet test` |
-| Test single module | `dotnet test tests/Modules/Users/Nexhire.Modules.Users.Tests.Unit` |
+| Test single module | `dotnet test tests/Modules/IdentityAccess/Nexhire.Modules.IdentityAccess.Tests.Unit` |
 | Test single method | `dotnet test --filter "FullyQualifiedName.TestMethodName"` |
 | Architecture tests | `dotnet test tests/Nexhire.ArchitectureTests` |
 | Run API | `dotnet run --project src/Host/Nexhire.Api` |
@@ -39,7 +39,7 @@ Core projects must never reference EF Core, routing, or host types. Architecture
 
 ### Module structure
 
-Each module (Users, JobPostings, JobSeekerProfile, etc.) follows:
+Each module (IdentityAccess, JobPostings, JobSeekerProfile, etc.) follows:
 
 - **`.Core`**: Aggregates, Entities, Value Objects, Domain Events, Repository interfaces, CQRS handlers, FluentValidation validators.
 - **`.Infrastructure`**: EF Core DbContext, repository implementations, Minimal API endpoints, DI registration.
@@ -76,7 +76,7 @@ Two open behaviors registered in order (outermost first):
 
 Two dispatch modes:
 
-- **Direct** (e.g. Users): publishes via `IPublisher.Publish()` immediately inside the save transaction.
+- **Direct** (e.g. IdentityAccess): publishes via `IPublisher.Publish()` immediately inside the save transaction.
 - **Outbox** (e.g. JobPostings): serializes events to `OutboxMessage` rows in the DB. A `PeriodicTimer`-based background service (`*OutboxRelayBackgroundService`, 15s interval) picks them up and publishes via MediatR. At-least-once delivery. Modules using outbox implement `IOutboxInboxDbContext` (exposes `DbSet<OutboxMessage>` + `DbSet<InboxMessage>`).
 
 ### Cross-module communication
@@ -115,4 +115,4 @@ No controllers. Each module's `Endpoints/` directory contains static classes wit
 
 ## Registered modules
 
-Users, EmployerProfiles, JobPostings, JobSeekerProfile, JobApplication, SearchDiscovery, RecommendationEngine, ExternalJobSync, Reporting, AdministratorsConfiguration, ContentManagement, Notification, IdentityAccess.
+IdentityAccess, EmployerProfiles, JobPostings, JobSeekerProfile, JobApplication, SearchDiscovery, RecommendationEngine, ExternalJobSync, Reporting, AdministratorsConfiguration, ContentManagement, Notification.

@@ -8,8 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Nexhire.Modules.IdentityAccess.Domain\Nexhire.Modules.IdentityAccess.Domain.csproj" />
-    <ProjectReference Include="..\Nexhire.Modules.IdentityAccess.Application\Nexhire.Modules.IdentityAccess.Application.csproj" />
-    <ProjectReference Include="..\..\..\Shared\Nexhire.Shared.Infrastructure\Nexhire.Shared.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\..\Shared\Nexhire.Shared.Core\Nexhire.Shared.Core.csproj" />
   </ItemGroup>
 
 </Project>

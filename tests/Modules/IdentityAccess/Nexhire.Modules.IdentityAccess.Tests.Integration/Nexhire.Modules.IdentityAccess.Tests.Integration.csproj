@@ -23,7 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\src\Modules\IdentityAccess\Nexhire.Modules.IdentityAccess.Core\Nexhire.Modules.IdentityAccess.Core.csproj" />
+    <ProjectReference Include="..\..\..\..\src\Modules\IdentityAccess\Nexhire.Modules.IdentityAccess.Domain\Nexhire.Modules.IdentityAccess.Domain.csproj" />
     <ProjectReference Include="..\..\..\..\src\Modules\IdentityAccess\Nexhire.Modules.IdentityAccess.Infrastructure\Nexhire.Modules.IdentityAccess.Infrastructure.csproj" />
   </ItemGroup>
 

@@ -12,13 +12,11 @@
     <Project Path="src/Modules/JobSeekerProfile/Nexhire.Modules.JobSeekerProfile.Core/Nexhire.Modules.JobSeekerProfile.Core.csproj" />
     <Project Path="src/Modules/JobSeekerProfile/Nexhire.Modules.JobSeekerProfile.Infrastructure/Nexhire.Modules.JobSeekerProfile.Infrastructure.csproj" />
   </Folder>
-  <Folder Name="/src/Modules/Users/">
-    <Project Path="src/Modules/Users/Nexhire.Modules.Users.Core/Nexhire.Modules.Users.Core.csproj" />
-    <Project Path="src/Modules/Users/Nexhire.Modules.Users.Infrastructure/Nexhire.Modules.Users.Infrastructure.csproj" />
-  </Folder>
   <Folder Name="/src/Modules/IdentityAccess/">
-    <Project Path="src/Modules/IdentityAccess/Nexhire.Modules.IdentityAccess.Core/Nexhire.Modules.IdentityAccess.Core.csproj" />
+    <Project Path="src/Modules/IdentityAccess/Nexhire.Modules.IdentityAccess.Domain/Nexhire.Modules.IdentityAccess.Domain.csproj" />
+    <Project Path="src/Modules/IdentityAccess/Nexhire.Modules.IdentityAccess.Application/Nexhire.Modules.IdentityAccess.Application.csproj" />
     <Project Path="src/Modules/IdentityAccess/Nexhire.Modules.IdentityAccess.Infrastructure/Nexhire.Modules.IdentityAccess.Infrastructure.csproj" />
+    <Project Path="src/Modules/IdentityAccess/Nexhire.Modules.IdentityAccess.Presentation/Nexhire.Modules.IdentityAccess.Presentation.csproj" />
   </Folder>
   <Folder Name="/src/Modules/JobPostings/">
     <Project Path="src/Modules/JobPostings/Nexhire.Modules.JobPostings.Core/Nexhire.Modules.JobPostings.Core.csproj" />
@@ -74,9 +72,6 @@
   </Folder>
   <Folder Name="/tests/Modules/JobPostings/">
     <Project Path="tests/Modules/JobPostings/Nexhire.Modules.JobPostings.Tests.Unit/Nexhire.Modules.JobPostings.Tests.Unit.csproj" />
-  </Folder>
-  <Folder Name="/tests/Modules/Users/">
-    <Project Path="tests/Modules/Users/Nexhire.Modules.Users.Tests.Unit/Nexhire.Modules.Users.Tests.Unit.csproj" />
   </Folder>
   <Folder Name="/tests/Modules/IdentityAccess/">
     <Project Path="tests/Modules/IdentityAccess/Nexhire.Modules.IdentityAccess.Tests.Unit/Nexhire.Modules.IdentityAccess.Tests.Unit.csproj" />

@@ -1,5 +1,5 @@
 using FluentAssertions;
-using Nexhire.Modules.IdentityAccess.Core.Domain.ValueObjects;
+using Nexhire.Modules.IdentityAccess.Domain.ValueObjects;
 
 namespace Nexhire.Modules.IdentityAccess.Tests.Unit.Domain.ValueObjects;
 
