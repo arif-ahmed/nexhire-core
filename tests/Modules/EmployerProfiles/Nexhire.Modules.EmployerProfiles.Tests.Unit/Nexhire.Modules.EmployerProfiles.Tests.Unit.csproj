@@ -24,7 +24,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\src\Modules\EmployerProfiles\Nexhire.Modules.EmployerProfiles.Contracts\Nexhire.Modules.EmployerProfiles.Contracts.csproj" />
-    <ProjectReference Include="..\..\..\..\src\Modules\EmployerProfiles\Nexhire.Modules.EmployerProfiles.Domain\Nexhire.Modules.EmployerProfiles.Domain.csproj" />
     <ProjectReference Include="..\..\..\..\src\Modules\EmployerProfiles\Nexhire.Modules.EmployerProfiles.Application\Nexhire.Modules.EmployerProfiles.Application.csproj" />
     <ProjectReference Include="..\..\..\..\src\Modules\EmployerProfiles\Nexhire.Modules.EmployerProfiles.Infrastructure\Nexhire.Modules.EmployerProfiles.Infrastructure.csproj" />
     <ProjectReference Include="..\..\..\..\src\Modules\EmployerProfiles\Nexhire.Modules.EmployerProfiles.Presentation\Nexhire.Modules.EmployerProfiles.Presentation.csproj" />
