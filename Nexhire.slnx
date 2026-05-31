@@ -13,6 +13,7 @@
     <Project Path="src/Modules/JobSeekerProfile/Nexhire.Modules.JobSeekerProfile.Infrastructure/Nexhire.Modules.JobSeekerProfile.Infrastructure.csproj" />
   </Folder>
   <Folder Name="/src/Modules/IdentityAccess/">
+    <Project Path="src/Modules/IdentityAccess/Nexhire.Modules.IdentityAccess.Contracts/Nexhire.Modules.IdentityAccess.Contracts.csproj" />
     <Project Path="src/Modules/IdentityAccess/Nexhire.Modules.IdentityAccess.Domain/Nexhire.Modules.IdentityAccess.Domain.csproj" />
     <Project Path="src/Modules/IdentityAccess/Nexhire.Modules.IdentityAccess.Application/Nexhire.Modules.IdentityAccess.Application.csproj" />
     <Project Path="src/Modules/IdentityAccess/Nexhire.Modules.IdentityAccess.Infrastructure/Nexhire.Modules.IdentityAccess.Infrastructure.csproj" />
@@ -32,7 +33,6 @@
   </Folder>
   <Folder Name="/src/Modules/RecommendationEngine/">
     <Project Path="src/Modules/RecommendationEngine/Nexhire.Modules.RecommendationEngine.Core/Nexhire.Modules.RecommendationEngine.Core.csproj" />
-    <Project Path="src/Modules/RecommendationEngine/Nexhire.Modules.RecommendationEngine.Infrastructure/Nexhire.Modules.RecommendationEngine.Infrastructure.csproj" />
   </Folder>
   <Folder Name="/src/Modules/ExternalJobSync/">
     <Project Path="src/Modules/ExternalJobSync/Nexhire.Modules.ExternalJobSync.Core/Nexhire.Modules.ExternalJobSync.Core.csproj" />

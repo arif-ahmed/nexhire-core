@@ -4,17 +4,18 @@ using Microsoft.EntityFrameworkCore.Diagnostics;
 using Nexhire.Shared.Core.Domain;
 using Nexhire.Shared.Infrastructure.Messaging;
 using System.Text.Json;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Nexhire.Shared.Infrastructure.Interceptors;
 
 public class PublishDomainEventsInterceptor : SaveChangesInterceptor
 {
-    private readonly IPublisher _publisher;
+    private readonly IServiceProvider _serviceProvider;
     private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web);
 
-    public PublishDomainEventsInterceptor(IPublisher publisher)
+    public PublishDomainEventsInterceptor(IServiceProvider serviceProvider)
     {
-        _publisher = publisher;
+        _serviceProvider = serviceProvider;
     }
 
     public override InterceptionResult<int> SavingChanges(
@@ -58,14 +59,16 @@ public class PublishDomainEventsInterceptor : SaveChangesInterceptor
 
                     if (domainEventsProperty != null && clearMethod != null)
                     {
-                        var events = domainEventsProperty.GetValue(entry.Entity) as IReadOnlyCollection<IDomainEvent>;
-                        if (events != null && events.Any())
+                        var events = (IEnumerable<IDomainEvent>?)domainEventsProperty.GetValue(entry.Entity);
+
+                        if (events != null)
                         {
                             domainEvents.AddRange(events);
-                            clearMethod.Invoke(entry.Entity, null);
                         }
+
+                        clearMethod.Invoke(entry.Entity, null);
+                        break;
                     }
-                    break;
                 }
                 baseType = baseType.BaseType;
             }
@@ -85,9 +88,14 @@ public class PublishDomainEventsInterceptor : SaveChangesInterceptor
             return;
         }
 
-        foreach (var domainEvent in domainEvents)
+        if (domainEvents.Any())
         {
-            await _publisher.Publish(domainEvent);
+            using var scope = _serviceProvider.CreateScope();
+            var publisher = scope.ServiceProvider.GetRequiredService<IPublisher>();
+            foreach (var domainEvent in domainEvents)
+            {
+                await publisher.Publish(domainEvent);
+            }
         }
     }
 }

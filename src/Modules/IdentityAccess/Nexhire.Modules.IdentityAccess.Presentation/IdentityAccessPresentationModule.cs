@@ -5,9 +5,9 @@ namespace Nexhire.Modules.IdentityAccess.Presentation;
 
 public static class IdentityAccessPresentationModule
 {
-    public static IEndpointRouteBuilder MapIdentityAccessEndpoints(this IEndpointRouteBuilder endpoints)
+    public static IEndpointRouteBuilder MapIdentityAccessEndpoints(this IEndpointRouteBuilder app)
     {
-        UserEndpoints.MapEndpoints(endpoints);
-        return endpoints;
+        IdentityEndpoints.MapEndpoints(app);
+        return app;
     }
 }

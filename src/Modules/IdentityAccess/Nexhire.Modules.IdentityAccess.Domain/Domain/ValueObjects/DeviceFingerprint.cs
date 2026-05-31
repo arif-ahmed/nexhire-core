@@ -7,9 +7,11 @@ public class DeviceFingerprint : ValueObject
 {
     public string Value { get; }
 
+    private DeviceFingerprint() { } // EF Core
+
     private DeviceFingerprint(string value)
     {
-        Value = value;
+        Value = value!;
     }
 
     public static Result<DeviceFingerprint> Create(string fingerprint)

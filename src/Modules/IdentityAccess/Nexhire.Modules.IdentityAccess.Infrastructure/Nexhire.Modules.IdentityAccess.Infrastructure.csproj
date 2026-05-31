@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
@@ -10,6 +10,14 @@
     <ProjectReference Include="..\Nexhire.Modules.IdentityAccess.Domain\Nexhire.Modules.IdentityAccess.Domain.csproj" />
     <ProjectReference Include="..\Nexhire.Modules.IdentityAccess.Application\Nexhire.Modules.IdentityAccess.Application.csproj" />
     <ProjectReference Include="..\..\..\Shared\Nexhire.Shared.Infrastructure\Nexhire.Shared.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Konscious.Security.Cryptography.Argon2" Version="1.3.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.8" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="10.0.8" />
+    <PackageReference Include="Otp.NET" Version="1.4.1" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.18.0" />
   </ItemGroup>
 
 </Project>

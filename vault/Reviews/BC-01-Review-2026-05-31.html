@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BC-01 IAM &amp; UAM — Pull Request Review</title>
+  <style>
+    :root {
+      --fail: #dc2626;
+      --fail-bg: #fef2f2;
+      --fail-border: #fca5a5;
+      --warn: #d97706;
+      --warn-bg: #fffbeb;
+      --warn-border: #fcd34d;
+      --pass: #16a34a;
+      --pass-bg: #f0fdf4;
+      --pass-border: #86efac;
+      --info: #2563eb;
+      --info-bg: #eff6ff;
+      --info-border: #93c5fd;
+      --neutral: #374151;
+      --neutral-light: #6b7280;
+      --surface: #f9fafb;
+      --border: #e5e7eb;
+      --code-bg: #1e293b;
+      --code-fg: #e2e8f0;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--neutral);
+      background: #fff;
+    }
+
+    /* ── Header ── */
+    header {
+      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+      color: #f8fafc;
+      padding: 36px 48px 32px;
+      border-bottom: 3px solid var(--fail);
+    }
+    header .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--fail);
+      color: #fff;
+      font-weight: 700;
+      font-size: 15px;
+      letter-spacing: .04em;
+      padding: 6px 16px;
+      border-radius: 99px;
+      margin-bottom: 16px;
+    }
+    header h1 { font-size: 26px; font-weight: 700; margin-bottom: 6px; }
+    header .meta { font-size: 13px; color: #94a3b8; display: flex; flex-wrap: wrap; gap: 20px; margin-top: 10px; }
+    header .meta span { display: flex; align-items: center; gap: 5px; }
+
+    /* ── Layout ── */
+    .container { max-width: 1100px; margin: 0 auto; padding: 36px 48px 80px; }
+
+    /* ── Section titles ── */
+    h2 {
+      font-size: 18px; font-weight: 700; color: #0f172a;
+      margin: 40px 0 16px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid var(--border);
+      display: flex; align-items: center; gap: 10px;
+    }
+    h2 .icon { font-size: 20px; }
+    h3 { font-size: 15px; font-weight: 700; color: #1e293b; margin: 20px 0 8px; }
+
+    /* ── Verdict banner ── */
+    .verdict {
+      display: flex;
+      align-items: flex-start;
+      gap: 20px;
+      background: var(--fail-bg);
+      border: 2px solid var(--fail-border);
+      border-left: 5px solid var(--fail);
+      border-radius: 8px;
+      padding: 24px 28px;
+      margin: 28px 0;
+    }
+    .verdict .v-icon { font-size: 40px; flex-shrink: 0; }
+    .verdict .v-body { }
+    .verdict .v-title { font-size: 22px; font-weight: 800; color: var(--fail); }
+    .verdict .v-sub { font-size: 13px; color: #7f1d1d; margin-top: 4px; }
+
+    /* ── Issue cards ── */
+    .issue-list { display: flex; flex-direction: column; gap: 16px; }
+    .issue {
+      border-radius: 8px;
+      border: 1px solid;
+      overflow: hidden;
+    }
+    .issue.critical { border-color: var(--fail-border); }
+    .issue.moderate { border-color: var(--warn-border); }
+    .issue.minor    { border-color: var(--info-border); }
+
+    .issue-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 18px;
+      font-weight: 700;
+      font-size: 14px;
+    }
+    .issue.critical .issue-header { background: var(--fail-bg); color: var(--fail); }
+    .issue.moderate .issue-header { background: var(--warn-bg); color: var(--warn); }
+    .issue.minor    .issue-header { background: var(--info-bg); color: var(--info); }
+
+    .issue-body { padding: 16px 18px; background: #fff; }
+    .issue-body p { margin-bottom: 8px; }
+    .issue-body p:last-child { margin-bottom: 0; }
+    .issue-body ul { padding-left: 18px; margin-top: 6px; }
+    .issue-body li { margin-bottom: 4px; }
+
+    .tag {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .03em;
+      padding: 2px 8px;
+      border-radius: 4px;
+      margin-right: 4px;
+    }
+    .tag.spec    { background: #e0e7ff; color: #4338ca; }
+    .tag.actual  { background: #fee2e2; color: #991b1b; }
+    .tag.impact  { background: #fef9c3; color: #713f12; }
+    .tag.file    { background: #f3f4f6; color: #374151; font-family: monospace; }
+
+    code {
+      font-family: "Fira Code", "Cascadia Code", Consolas, monospace;
+      font-size: 12.5px;
+      background: #f1f5f9;
+      padding: 1px 5px;
+      border-radius: 3px;
+      color: #1e3a5f;
+    }
+
+    /* ── Coverage table ── */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+      font-size: 13px;
+    }
+    thead tr { background: #f1f5f9; }
+    th { padding: 9px 12px; text-align: left; font-weight: 600; border-bottom: 2px solid var(--border); }
+    td { padding: 8px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+    tr:last-child td { border-bottom: none; }
+    .num { text-align: right; font-variant-numeric: tabular-nums; }
+    .gap-cell { color: var(--fail); font-weight: 600; }
+    .ok-cell  { color: var(--pass); font-weight: 600; }
+
+    /* ── Positives grid ── */
+    .positive-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .positive-item {
+      background: var(--pass-bg);
+      border: 1px solid var(--pass-border);
+      border-radius: 6px;
+      padding: 8px 14px;
+      font-size: 13px;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+    .positive-item .tick { color: var(--pass); font-size: 15px; flex-shrink: 0; margin-top: 1px; }
+
+    /* ── Remediation table ── */
+    .remed-table td:first-child { font-weight: 600; white-space: nowrap; }
+    .pri-1 { color: var(--fail); font-weight: 700; }
+    .pri-2 { color: var(--warn); font-weight: 700; }
+    .pri-3 { color: var(--info); font-weight: 700; }
+
+    /* ── Summary bar ── */
+    .summary-bar {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin: 24px 0 0;
+    }
+    .summary-pill {
+      border-radius: 99px;
+      padding: 6px 18px;
+      font-size: 13px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .pill-fail { background: var(--fail-bg); color: var(--fail); border: 1px solid var(--fail-border); }
+    .pill-warn { background: var(--warn-bg); color: var(--warn); border: 1px solid var(--warn-border); }
+    .pill-info { background: var(--info-bg); color: var(--info); border: 1px solid var(--info-border); }
+    .pill-pass { background: var(--pass-bg); color: var(--pass); border: 1px solid var(--pass-border); }
+
+    footer {
+      margin-top: 60px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+      font-size: 12px;
+      color: var(--neutral-light);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    @media (max-width: 720px) {
+      header, .container { padding-left: 20px; padding-right: 20px; }
+      .positive-grid { grid-template-columns: 1fr; }
+      .summary-bar { gap: 8px; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="badge">⛔ FAIL — DO NOT MERGE</div>
+  <h1>BC-01 IAM &amp; UAM — Pull Request Review</h1>
+  <div class="meta">
+    <span>📅 Reviewed: 2026-05-31</span>
+    <span>🌿 Branch: <code style="background:#334155;color:#e2e8f0">chore/upgrade-dotnet10-fix-build-errors</code></span>
+    <span>🎯 Target: <code style="background:#334155;color:#e2e8f0">main</code></span>
+    <span>📋 Spec: BC-01-IAM-and-UAM.md + Implementation_Plan_BC-01.md</span>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- Verdict -->
+  <div class="verdict">
+    <div class="v-icon">🚫</div>
+    <div class="v-body">
+      <div class="v-title">FAIL — Not Ready to Merge</div>
+      <div class="v-sub">
+        5 critical blockers identified: a security-invariant violation (HS256 instead of RS256), a stubbed domain service, missing outbox/inbox wiring, absent inbound event handlers, and test coverage at &lt;5% of what the spec mandates. All critical issues must be resolved before this branch can be merged to <strong>main</strong>.
+      </div>
+    </div>
+  </div>
+
+  <!-- Summary pills -->
+  <div class="summary-bar">
+    <div class="summary-pill pill-fail">⛔ 5 Critical Blockers</div>
+    <div class="summary-pill pill-warn">⚠️ 5 Moderate Issues</div>
+    <div class="summary-pill pill-info">ℹ️ 6 Minor / Tech Debt</div>
+    <div class="summary-pill pill-pass">✅ 20+ Items Done Well</div>
+  </div>
+
+  <!-- ─────────────────────────────────────────── -->
+  <h2><span class="icon">⛔</span> Critical Issues — Block Merge</h2>
+  <div class="issue-list">
+
+    <!-- C-1 -->
+    <div class="issue critical">
+      <div class="issue-header">
+        C-1 &nbsp;·&nbsp; RS256 Required — HS256 Implemented (Invariant #12 Violation)
+      </div>
+      <div class="issue-body">
+        <p>
+          <span class="tag spec">Spec §6.2 inv #12</span>
+          <span class="tag spec">Spec §9.2 JwtSigner port</span>
+          <span class="tag file">JwtSigner.cs</span>
+        </p>
+        <p>
+          <span class="tag spec">Required</span>
+          Access tokens must be signed with <strong>RS256</strong> (asymmetric, private-key signing). The spec states this explicitly in invariant #12, in the port definition for <code>JwtSigner</code>, and in the acceptance criteria for US-3.4.3-04.
+        </p>
+        <p>
+          <span class="tag actual">Actual</span>
+          <code>JwtSigner.cs</code> uses <code>SecurityAlgorithms.HmacSha256</code> — a symmetric HMAC-SHA256 algorithm — with a shared secret read from configuration (<code>JwtSettings.Secret</code>).
+        </p>
+        <p>
+          <span class="tag impact">Impact</span>
+          Any process that has access to the shared secret can forge valid tokens. All services that call <code>TokenValidationApi.Validate()</code> would be vulnerable. The public contract stability guarantee (referenced in BC-2, BC-3 packages) is broken. This is the most severe security defect in the PR.
+        </p>
+        <p><strong>Fix:</strong> Replace the <code>HmacSha256</code> key with an RSA key pair. Load the private key (PEM/PKCS8) from <code>appsettings.Development.json</code> for dev; use a key vault reference for production. Sign with <code>SecurityAlgorithms.RsaSha256</code> and validate with the public key only.</p>
+      </div>
+    </div>
+
+    <!-- C-2 -->
+    <div class="issue critical">
+      <div class="issue-header">
+        C-2 &nbsp;·&nbsp; PasswordPolicyService.Validate() Always Returns Success (Invariant #4 Violation)
+      </div>
+      <div class="issue-body">
+        <p>
+          <span class="tag spec">Spec §7.1</span>
+          <span class="tag spec">Spec §6.2 inv #4</span>
+          <span class="tag file">PasswordPolicyService.cs</span>
+        </p>
+        <p>
+          <span class="tag spec">Required</span>
+          <code>PasswordPolicyService.Validate(candidate)</code> is a pure domain service that must enforce: min length 10, ≥3 character classes, no trivial sequences. Returns <code>Error("E-REG-INVALID-PASSWORD", …)</code> on failure.
+        </p>
+        <p>
+          <span class="tag actual">Actual</span>
+          The method body contains TODO comments and unconditionally returns <code>Result.Success</code>. The FluentValidation validator on <code>ProvisionCredentialCommand</code> provides a partial check at the command level, but the domain service — which is also called on the password-change and password-reset paths — is inert.
+        </p>
+        <p>
+          <span class="tag impact">Impact</span>
+          A password with fewer than 10 characters or a single character class can be set via the change-password or complete-reset handlers, which bypass the command validator and rely on the domain service. Domain invariant #4 is violated.
+        </p>
+        <p><strong>Fix:</strong> Implement the body: check <code>candidate.Value.Length &gt;= 10</code>, count character-class presence (lowercase, uppercase, digit, symbol), detect trivial sequences (e.g. "aaaaaaaaaa", "1234567890"). Map to <code>E-REG-INVALID-PASSWORD</code> or the caller-supplied prefix (<code>E-RESET-INVALID-PASSWORD</code> on the reset path).</p>
+      </div>
+    </div>
+
+    <!-- C-3 -->
+    <div class="issue critical">
+      <div class="issue-header">
+        C-3 &nbsp;·&nbsp; No Outbox / Inbox Integration — Integration Events Not Durably Persisted
+      </div>
+      <div class="issue-body">
+        <p>
+          <span class="tag spec">Spec §8.1</span>
+          <span class="tag spec">Plan Phase 8.1</span>
+          <span class="tag file">IdentityAccessDbContext.cs</span>
+        </p>
+        <p>
+          <span class="tag spec">Required</span>
+          <code>IdentityAccessDbContext</code> must implement <code>IOutboxInboxDbContext</code> and expose <code>DbSet&lt;OutboxMessage&gt;</code> + <code>DbSet&lt;InboxMessage&gt;</code>. Integration events (<code>UserRegisteredIntegrationEvent</code>, <code>UserAccountSuspendedIntegrationEvent</code>, etc.) must be written into the outbox table in the <strong>same transaction</strong> as the aggregate change.
+        </p>
+        <p>
+          <span class="tag actual">Actual</span>
+          <code>IdentityAccessDbContext : DbContext</code> — no <code>IOutboxInboxDbContext</code>, no outbox/inbox <code>DbSet</code>s. Integration events raised via <code>RaiseDomainEvent()</code> are dispatched in-process by the <code>PublishDomainEventsInterceptor</code> (direct mode), with no durable persistence.
+        </p>
+        <p>
+          <span class="tag impact">Impact</span>
+          If the process crashes between the <code>SaveChanges</code> returning and the in-process MediatR publish completing, integration events are silently dropped. At-least-once delivery is not guaranteed. BC-9 (Notification), BC-10 (Reporting), and BC-12 (Content Management) consume these events and will miss events during crashes or restarts.
+        </p>
+        <p><strong>Fix:</strong> Implement <code>IOutboxInboxDbContext</code> on the DbContext. Configure <code>OutboxMessage</code> and <code>InboxMessage</code> entities in <code>OnModelCreating</code> under schema <code>identity_access</code>. Ensure the <code>PublishDomainEventsInterceptor</code> writes integration events to the outbox table instead of publishing directly.</p>
+      </div>
+    </div>
+
+    <!-- C-4 -->
+    <div class="issue critical">
+      <div class="issue-header">
+        C-4 &nbsp;·&nbsp; Consumed Integration Event Handlers Not Implemented (§9.1 Gap)
+      </div>
+      <div class="issue-body">
+        <p>
+          <span class="tag spec">Spec §9.1</span>
+          <span class="tag spec">Plan Phase 13</span>
+        </p>
+        <p>
+          <span class="tag spec">Required</span>
+          Two inbound integration event handlers with inbox idempotency:
+        </p>
+        <ul>
+          <li><code>IdentityVerifiedByGovernmentIntegrationEvent</code> → load account, call <code>account.ApplyGovernmentIdentityVerified(registry)</code>, save. Idempotent (inbox check).</li>
+          <li><code>IdentityVerificationFailedIntegrationEvent</code> → record failure for audit. No status change. Idempotent.</li>
+        </ul>
+        <p>
+          <span class="tag actual">Actual</span>
+          No handler classes found in the Application or Infrastructure layers. The events are defined in <code>IntegrationEvents.cs</code> in the Contracts project but nothing reacts to them within this module.
+        </p>
+        <p>
+          <span class="tag impact">Impact</span>
+          When BC-8 publishes <code>IdentityVerifiedByGovernmentIntegrationEvent</code>, the <code>UserAccount.IdentityVerified</code> flag will never be set. The <code>AdminUserDetailDto</code> will always show <code>IdentityVerified = false</code> regardless of actual verification status. Acceptance criteria for government-identity verification cannot pass.
+        </p>
+        <p><strong>Fix:</strong> Add <code>IdentityVerifiedByGovernmentEventHandler : INotificationHandler&lt;IdentityVerifiedByGovernmentIntegrationEvent&gt;</code> and <code>IdentityVerificationFailedEventHandler</code> in <code>Application/IntegrationEvents/</code>. Each handler must check <code>inbox_messages</code> before processing (idempotency per Shared Foundations §6.3).</p>
+      </div>
+    </div>
+
+    <!-- C-5 -->
+    <div class="issue critical">
+      <div class="issue-header">
+        C-5 &nbsp;·&nbsp; Severely Insufficient Test Coverage (&lt;5% of Spec Requirement)
+      </div>
+      <div class="issue-body">
+        <p>
+          <span class="tag spec">Spec §13 — full test strategy</span>
+          <span class="tag spec">Plan Phase 14</span>
+        </p>
+        <p>The spec and implementation plan define precise minimum test counts. The table below shows the current state:</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Test Category</th>
+              <th class="num">Required</th>
+              <th class="num">Implemented</th>
+              <th class="num">Gap</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>UserAccount</code> behaviour tests (21 behaviours + all invariants)</td>
+              <td class="num">~100</td>
+              <td class="num ok-cell">6</td>
+              <td class="num gap-cell">~94</td>
+            </tr>
+            <tr>
+              <td><code>OtpChallenge</code> aggregate (Issue, Verify×4, MarkExpired)</td>
+              <td class="num">~15</td>
+              <td class="num ok-cell">0</td>
+              <td class="num gap-cell">15</td>
+            </tr>
+            <tr>
+              <td><code>AccountStateMachine</code> exhaustive 4×4 transition matrix</td>
+              <td class="num">16</td>
+              <td class="num ok-cell">0</td>
+              <td class="num gap-cell">16</td>
+            </tr>
+            <tr>
+              <td><code>PasswordPolicyService</code> table-driven cases</td>
+              <td class="num">6+</td>
+              <td class="num ok-cell">0</td>
+              <td class="num gap-cell">6+</td>
+            </tr>
+            <tr>
+              <td><code>PermissionResolver</code> — each role + union with grants</td>
+              <td class="num">6+</td>
+              <td class="num ok-cell">0</td>
+              <td class="num gap-cell">6+</td>
+            </tr>
+            <tr>
+              <td><code>TokenClaimsBuilder</code> — claims structure, no secrets</td>
+              <td class="num">4+</td>
+              <td class="num ok-cell">0</td>
+              <td class="num gap-cell">4+</td>
+            </tr>
+            <tr>
+              <td>Application handler tests (7 handler files × 4–10 cases each)</td>
+              <td class="num">~50</td>
+              <td class="num ok-cell">0</td>
+              <td class="num gap-cell">~50</td>
+            </tr>
+            <tr>
+              <td>Integration tests (9 test files: repository, API lifecycle, outbox, token)</td>
+              <td class="num">9 files</td>
+              <td class="num ok-cell">1 file (1 test)</td>
+              <td class="num gap-cell">8 files</td>
+            </tr>
+          </tbody>
+        </table>
+        <p style="margin-top: 12px;">
+          The single existing integration test (<code>Login_Should_Return_Success_When_Valid_Credentials</code>) validates a happy-path HTTP 200 against a seeded in-memory DB — it does not cover unique-index enforcement, outbox transactions, token lifecycle, MFA flows, or the password-reset flow. The acceptance-criteria coverage table (§14.4) cannot be satisfied with the current test suite.
+        </p>
+        <p><strong>Fix:</strong> Complete all test files listed in Plan Phase 14. At minimum, all application handler tests and the domain behaviour tests must be added before merge. Integration tests against a real DB (or Testcontainers) should follow immediately after.</p>
+      </div>
+    </div>
+
+  </div><!-- /critical -->
+
+
+  <!-- ─────────────────────────────────────────── -->
+  <h2><span class="icon">⚠️</span> Moderate Issues — Should Fix Before Merge</h2>
+  <div class="issue-list">
+
+    <div class="issue moderate">
+      <div class="issue-header">M-1 &nbsp;·&nbsp; Credential VO — Nullable Parameters Not Updated (Plan §1.3)</div>
+      <div class="issue-body">
+        <p><span class="tag spec">Plan §1.3</span> The implementation plan notes: "Minor update to <code>Credential.Create</code>: Change nullable params to non-nullable for cleaner design." This change should be confirmed; if the factory still accepts nullable arguments, callers can pass <code>null</code> through without a compile-time error, relying entirely on runtime checks.</p>
+      </div>
+    </div>
+
+    <div class="issue moderate">
+      <div class="issue-header">M-2 &nbsp;·&nbsp; IUserAccountRepository Missing Explicit Update Method</div>
+      <div class="issue-body">
+        <p><span class="tag spec">Spec §11.3</span> The repository contract in §11.3 lists <code>Update</code> and a <code>UnitOfWork (SaveChanges)</code>. The interface exposes <code>SaveChangesAsync</code> but no <code>UpdateAsync</code>. While EF Core change-tracking handles this implicitly for tracked entities, the interface contract should match the spec so that future non-tracked scenarios (e.g. projection repositories) work correctly.</p>
+      </div>
+    </div>
+
+    <div class="issue moderate">
+      <div class="issue-header">M-3 &nbsp;·&nbsp; PasswordHistory SHA-256 Verifier — Confirm Keeps Last 3 Only</div>
+      <div class="issue-body">
+        <p><span class="tag spec">Plan Appendix</span> The design issue around Argon2id + PasswordHistory is well-documented and the SHA-256 verifier approach is correct. However, the implementation must be confirmed to: (1) use <code>SHA256.HashData</code> on the raw password before any Argon2id hashing, (2) cap the list at 3 entries by removing the oldest on overflow, and (3) store only the SHA-256 hex string, never the raw password. Without tests (see C-5), this cannot be verified.</p>
+      </div>
+    </div>
+
+    <div class="issue moderate">
+      <div class="issue-header">M-4 &nbsp;·&nbsp; AdminActionLog Not Verified in Same Unit of Work</div>
+      <div class="issue-body">
+        <p><span class="tag spec">Spec §6.4, Invariant #11</span> Every admin command (Suspend, Reinstate, Deactivate, Unlock, PasswordResetIssued, RoleAssigned, Viewed, ApprovedEmployer, RejectedEmployer) must write an <code>AdminActionLog</code> row <strong>in the same unit of work</strong> as the aggregate change. Since no application handler tests exist (C-5), this atomicity guarantee is currently unverified. A crash between the aggregate save and the log insert would produce a silent audit gap.</p>
+      </div>
+    </div>
+
+    <div class="issue moderate">
+      <div class="issue-header">M-5 &nbsp;·&nbsp; IssueOAuthTokenCommand — PKCE Validation Completeness</div>
+      <div class="issue-body">
+        <p><span class="tag spec">Spec §10.1, US-3.4.3-04</span> The OAuth 2.0 Authorization-Code flow with PKCE capability is listed as in-scope. The command and handler exist, but the PKCE <code>code_verifier</code> / <code>code_challenge</code> validation logic requires explicit review. Without this, the PKCE protection against authorization-code interception is absent, undermining the security model for third-party portal integrations.</p>
+      </div>
+    </div>
+
+  </div><!-- /moderate -->
+
+
+  <!-- ─────────────────────────────────────────── -->
+  <h2><span class="icon">ℹ️</span> Minor Issues — Acceptable Tech Debt (Post-Merge)</h2>
+  <div class="issue-list">
+
+    <div class="issue minor">
+      <div class="issue-header">N-1 &nbsp;·&nbsp; Stub Adapters: BreachCheck, OtpDelivery, RateLimiter</div>
+      <div class="issue-body">
+        <p>All three stubs are explicitly approved by the spec for the dev/exercise phase. <code>BreachCheckPortStub</code> uses an in-memory blocklist, <code>OtpDeliveryPortStub</code> logs the plaintext code, and <code>RateLimiterPortStub</code> uses an in-process <code>ConcurrentDictionary</code>. Port shapes match spec exactly — production adapters drop in without changing application code. Acceptable, documented.</p>
+      </div>
+    </div>
+
+    <div class="issue minor">
+      <div class="issue-header">N-2 &nbsp;·&nbsp; In-Memory Database — No EF Migrations</div>
+      <div class="issue-body">
+        <p>The spec explicitly permits starting with <code>UseInMemoryDatabase</code>. The implementation plan documents the one-line switch to <code>UseNpgsql</code>/<code>UseSqlServer</code> when a real DB is needed. Acceptable as a first iteration.</p>
+      </div>
+    </div>
+
+    <div class="issue minor">
+      <div class="issue-header">N-3 &nbsp;·&nbsp; RateLimiterStub Does Not Survive Restarts</div>
+      <div class="issue-body">
+        <p>The in-memory sliding window resets on process restart. Acceptable for dev; document as a known limitation and flag for Redis replacement before production deployment.</p>
+      </div>
+    </div>
+
+    <div class="issue minor">
+      <div class="issue-header">N-4 &nbsp;·&nbsp; BreachCheck Blocklist Is Minimal</div>
+      <div class="issue-body">
+        <p>The stub likely covers only a handful of known-bad passwords. Not a security risk in dev, but the production adapter should implement the k-anonymity range query against HaveIBeenPwned before any real user traffic.</p>
+      </div>
+    </div>
+
+    <div class="issue minor">
+      <div class="issue-header">N-5 &nbsp;·&nbsp; No OtpIssued Handler Wired to OtpDeliveryPort</div>
+      <div class="issue-body">
+        <p><span class="tag spec">Plan Phase 3.5 / 5</span> The spec says the internal <code>OtpIssued</code> domain event should trigger a call to <code>OtpDeliveryPort.Send()</code> inside the <code>ProvisionCredentialCommandHandler</code> (or a dedicated domain event handler). This wiring needs to be confirmed — if the handler calls the port directly after <code>OtpChallenge.Issue()</code>, it is fine. If it relies on a missing <code>INotificationHandler&lt;OtpIssuedEvent&gt;</code>, the delivery call will be silently absent.</p>
+      </div>
+    </div>
+
+    <div class="issue minor">
+      <div class="issue-header">N-6 &nbsp;·&nbsp; PR Scope Mixing — .NET 10 Upgrade + Feature Work</div>
+      <div class="issue-body">
+        <p>The branch mixes two unrelated concerns: the .NET 9 → .NET 10 / C# 14 upgrade (build fixes, JwtBearer reference updates) and the full BC-01 feature implementation. For traceability and bisect-ability, these should be in separate PRs. Not a functional blocker, but worth noting for future practice.</p>
+      </div>
+    </div>
+
+  </div><!-- /minor -->
+
+
+  <!-- ─────────────────────────────────────────── -->
+  <h2><span class="icon">✅</span> What Is Done Well</h2>
+  <div class="positive-grid">
+    <div class="positive-item"><span class="tick">✓</span>5-project Clean Architecture layout (Domain, Application, Infrastructure, Presentation, Contracts)</div>
+    <div class="positive-item"><span class="tick">✓</span>All 25 commands and 7 queries have corresponding handler files</div>
+    <div class="positive-item"><span class="tick">✓</span>All 6 port interfaces defined with correct signatures (PasswordHasher, BreachCheck, JwtSigner, OtpDelivery, TotpProvider, RateLimiter)</div>
+    <div class="positive-item"><span class="tick">✓</span>Rich <code>UserAccount</code> aggregate with all 21 behaviours implemented</div>
+    <div class="positive-item"><span class="tick">✓</span><code>OtpChallenge</code> modelled as a separate aggregate root with its own lifecycle</div>
+    <div class="positive-item"><span class="tick">✓</span><code>AdminActionLog</code> as append-only factory record — no mutators</div>
+    <div class="positive-item"><span class="tick">✓</span>All 8 internal domain events + 9 integration events defined correctly</div>
+    <div class="positive-item"><span class="tick">✓</span>Strongly-typed IDs for all aggregates and entities</div>
+    <div class="positive-item"><span class="tick">✓</span><code>AccountStateMachine</code> with correct 7-transition table</div>
+    <div class="positive-item"><span class="tick">✓</span><code>PermissionResolver</code> with correct role → permission baseline map</div>
+    <div class="positive-item"><span class="tick">✓</span><code>TokenClaimsBuilder</code> as pure domain service (Domain stays crypto-ignorant)</div>
+    <div class="positive-item"><span class="tick">✓</span>All value objects: EmailAddress, MobileNumber, RawPassword, LockState, MfaConfiguration, Credential, AccessTokenSpec, DeviceFingerprint</div>
+    <div class="positive-item"><span class="tick">✓</span><code>IIdentityProvisioningApi</code> and <code>ITokenValidationApi</code> signatures match spec exactly — BC-2/BC-3 contract is stable</div>
+    <div class="positive-item"><span class="tick">✓</span>All 26 HTTP endpoints mapped under <code>/api/identity</code> with correct verbs and routes</div>
+    <div class="positive-item"><span class="tick">✓</span>Admin endpoints protected with <code>users:manage</code> claim check</div>
+    <div class="positive-item"><span class="tick">✓</span>Error-to-HTTP mapping covers 400 / 401 / 403 / 404 / 409 / 410 / 423 / 429</div>
+    <div class="positive-item"><span class="tick">✓</span>All 3 background services present (OtpExpirySweep, SessionExpirySweep, Cleanup)</div>
+    <div class="positive-item"><span class="tick">✓</span>Real Argon2id password hashing (Konscious library, memory=65536, iterations=3, parallelism=4)</div>
+    <div class="positive-item"><span class="tick">✓</span>Real TOTP via Otp.NET (RFC 6238, 6-digit, 30s step)</div>
+    <div class="positive-item"><span class="tick">✓</span>Data seeding (Phase 12): 7 accounts covering all status states — admin, employer, seeker, pending, suspended, deactivated, portal</div>
+    <div class="positive-item"><span class="tick">✓</span>Value object tests for EmailAddress, MobileNumber, RawPassword, PasswordHash, LockState, MfaConfiguration, AccessTokenSpec, DeviceFingerprint, Credential</div>
+    <div class="positive-item"><span class="tick">✓</span>No plaintext passwords, OTP codes, refresh-token hashes, or MFA secrets in any DTO</div>
+  </div>
+
+
+  <!-- ─────────────────────────────────────────── -->
+  <h2><span class="icon">🗂️</span> Remediation Checklist</h2>
+  <p>Issues to resolve in priority order before re-submitting for review:</p>
+  <table class="remed-table">
+    <thead>
+      <tr>
+        <th>Ref</th>
+        <th>Priority</th>
+        <th>Action Required</th>
+        <th>Owner</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>C-1</td>
+        <td class="pri-1">P0 — Security</td>
+        <td>Replace HS256 symmetric key with RS256 asymmetric key pair in <code>JwtSigner.cs</code>; load RSA private key from config</td>
+        <td>Infrastructure</td>
+      </tr>
+      <tr>
+        <td>C-2</td>
+        <td class="pri-1">P0 — Domain</td>
+        <td>Implement <code>PasswordPolicyService.Validate()</code> — remove TODO, add min-10 + ≥3-class + trivial-sequence checks</td>
+        <td>Domain</td>
+      </tr>
+      <tr>
+        <td>C-3</td>
+        <td class="pri-1">P0 — Reliability</td>
+        <td>Implement <code>IOutboxInboxDbContext</code> on <code>IdentityAccessDbContext</code>; add <code>OutboxMessages</code> + <code>InboxMessages</code> DbSets; configure entity mapping</td>
+        <td>Infrastructure</td>
+      </tr>
+      <tr>
+        <td>C-4</td>
+        <td class="pri-1">P0 — Behaviour</td>
+        <td>Add <code>IdentityVerifiedByGovernmentEventHandler</code> + <code>IdentityVerificationFailedEventHandler</code> with inbox idempotency checks</td>
+        <td>Application</td>
+      </tr>
+      <tr>
+        <td>C-5</td>
+        <td class="pri-1">P0 — Quality Gate</td>
+        <td>Add all unit tests per Plan Phase 14 (UserAccount behaviours ~100, OtpChallenge ~15, StateMachine 16, domain services, all 7 application handler test files)</td>
+        <td>Tests</td>
+      </tr>
+      <tr>
+        <td>M-1</td>
+        <td class="pri-2">P1</td>
+        <td>Confirm / update <code>Credential.Create</code> params to non-nullable</td>
+        <td>Domain</td>
+      </tr>
+      <tr>
+        <td>M-2</td>
+        <td class="pri-2">P1</td>
+        <td>Add <code>UpdateAsync</code> to <code>IUserAccountRepository</code> interface</td>
+        <td>Application</td>
+      </tr>
+      <tr>
+        <td>M-3</td>
+        <td class="pri-2">P1</td>
+        <td>Add unit test confirming SHA-256 verifier approach and last-3 cap for PasswordHistory</td>
+        <td>Tests</td>
+      </tr>
+      <tr>
+        <td>M-4</td>
+        <td class="pri-2">P1</td>
+        <td>Add application handler test verifying <code>AdminActionLog</code> written in same UoW for each admin command</td>
+        <td>Tests</td>
+      </tr>
+      <tr>
+        <td>M-5</td>
+        <td class="pri-2">P1</td>
+        <td>Review and confirm <code>IssueOAuthTokenCommand</code> handler implements PKCE <code>code_verifier</code> validation</td>
+        <td>Application</td>
+      </tr>
+      <tr>
+        <td>N-5</td>
+        <td class="pri-3">P2</td>
+        <td>Confirm <code>OtpDeliveryPort.Send()</code> is called on the <code>OtpIssued</code> path in <code>ProvisionCredentialCommandHandler</code></td>
+        <td>Application</td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <footer>
+    <span>BC-01 IAM &amp; UAM — PR Review Report</span>
+    <span>Generated: 2026-05-31 &nbsp;·&nbsp; Reviewed against: BC-01-IAM-and-UAM.md + Implementation_Plan_BC-01.md</span>
+  </footer>
+
+</div><!-- /container -->
+</body>
+</html>

@@ -1,6 +1,7 @@
 using FluentAssertions;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
 using Nexhire.Modules.EmployerProfiles.Core.Domain.Aggregates;
 using Nexhire.Modules.EmployerProfiles.Core.Domain.Projections;
@@ -21,7 +22,9 @@ public class PersistenceTests
     public PersistenceTests()
     {
         _publisherMock = Substitute.For<IPublisher>();
-        var interceptor = new PublishDomainEventsInterceptor(_publisherMock);
+        var services = new ServiceCollection();
+        services.AddSingleton(_publisherMock);
+        var interceptor = new PublishDomainEventsInterceptor(services.BuildServiceProvider());
 
         var options = new DbContextOptionsBuilder<EmployerProfilesDbContext>()
             .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())

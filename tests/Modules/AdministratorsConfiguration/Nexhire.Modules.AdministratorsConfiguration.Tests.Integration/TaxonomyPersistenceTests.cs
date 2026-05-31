@@ -1,5 +1,6 @@
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using MediatR;
 using NSubstitute;
 using Nexhire.Modules.AdministratorsConfiguration.Core.Domain.Aggregates;
@@ -18,7 +19,9 @@ public class TaxonomyPersistenceTests
     public TaxonomyPersistenceTests()
     {
         var publisher = Substitute.For<IPublisher>();
-        _interceptor = new PublishDomainEventsInterceptor(publisher);
+        var services = new ServiceCollection();
+        services.AddSingleton(publisher);
+        _interceptor = new PublishDomainEventsInterceptor(services.BuildServiceProvider());
     }
 
     [Fact]
