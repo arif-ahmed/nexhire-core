@@ -40,7 +40,11 @@
       "Bash(gh pr create --title '⬆️ chore: upgrade solution to .NET 10 / C# 14 and fix build errors' --body ' *)",
       "Bash(Get-ChildItem -Path \"d:\\\\Workspace\\\\Lab\\\\nexhire-core\\\\src\\\\Modules\\\\IdentityAccess\" -Recurse -File)",
       "Bash(Sort-Object)",
-      "Bash(dotnet test *)"
+      "Bash(dotnet test *)",
+      "PowerShell(if \\(-not \\(Test-Path \"d:\\\\Workspace\\\\Lab\\\\nexhire-core\\\\docs\"\\)\\) { New-Item -ItemType Directory -Path \"d:\\\\Workspace\\\\Lab\\\\nexhire-core\\\\docs\" })",
+      "PowerShell(Rename-Item -Path \"d:\\\\Workspace\\\\Lab\\\\nexhire-core\\\\src\\\\Modules\\\\EmployerProfiles\\\\Nexhire.Modules.EmployerProfiles.Core\" -NewName \"Nexhire.Modules.EmployerProfiles.Domain\")",
+      "Bash(xargs rm -rf)",
+      "Bash(git commit -m '@ *)"
     ]
   },
   "enabledPlugins": {
