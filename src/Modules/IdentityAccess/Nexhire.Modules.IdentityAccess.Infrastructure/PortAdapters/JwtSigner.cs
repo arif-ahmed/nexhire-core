@@ -12,40 +12,52 @@ public class JwtSigner : IJwtSigner
 {
     private readonly string _issuer;
     private readonly string _audience;
-    private readonly SecurityKey _securityKey;
+    private readonly RsaSecurityKey _signingKey;
+    private readonly RsaSecurityKey _validationKey;
 
     public JwtSigner(IConfiguration configuration)
     {
         var jwtSettings = configuration.GetSection("JwtSettings");
         _issuer = jwtSettings["Issuer"] ?? "Nexhire";
         _audience = jwtSettings["Audience"] ?? "Nexhire.Api";
-        
-        // For development, we'll just use a symmetric key if none provided. 
-        // Real implementation should use RSA.
-        var secret = jwtSettings["Secret"] ?? "SuperSecretKeyForDevelopmentOnlyDoNotUseInProduction!";
-        _securityKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(secret));
+
+        var privateKeyPem = jwtSettings["RsaPrivateKeyPem"]
+            ?? throw new InvalidOperationException(
+                "JwtSettings:RsaPrivateKeyPem is required. Add a PKCS8 PEM-encoded RSA private key to appsettings.Development.json.");
+
+        // Import private key for signing
+        var rsaPrivate = RSA.Create();
+        rsaPrivate.ImportFromPem(privateKeyPem);
+        _signingKey = new RsaSecurityKey(rsaPrivate);
+
+        // Import public key only for validation (prevents private key exposure in validation path)
+        var rsaPublic = RSA.Create();
+        rsaPublic.ImportRSAPublicKey(rsaPrivate.ExportRSAPublicKey(), out _);
+        _validationKey = new RsaSecurityKey(rsaPublic);
     }
 
-    public string SignAccessToken(Nexhire.Modules.IdentityAccess.Domain.ValueObjects.AccessTokenSpec spec)
+    public string SignAccessToken(AccessTokenSpec spec)
     {
         var claims = new List<Claim>
         {
-            new Claim(JwtRegisteredClaimNames.Sub, spec.Subject.ToString()),
-            new Claim(ClaimTypes.Role, spec.Role),
-            new Claim("session_id", spec.SessionId.ToString())
+            new(JwtRegisteredClaimNames.Sub, spec.Subject.ToString()),
+            new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+            new(ClaimTypes.Role, spec.Role),
+            new("session_id", spec.SessionId.ToString())
         };
 
         foreach (var permission in spec.Permissions)
-        {
             claims.Add(new Claim("permission", permission));
-        }
 
-        var credentials = new SigningCredentials(_securityKey, SecurityAlgorithms.HmacSha256);
-        
+        foreach (var scope in spec.Scopes)
+            claims.Add(new Claim("scope", scope));
+
+        var credentials = new SigningCredentials(_signingKey, SecurityAlgorithms.RsaSha256);
+
         var tokenDescriptor = new SecurityTokenDescriptor
         {
             Subject = new ClaimsIdentity(claims),
-            Expires = DateTime.UtcNow.AddHours(1),
+            Expires = spec.ExpiresOnUtc,
             Issuer = _issuer,
             Audience = _audience,
             SigningCredentials = credentials
@@ -53,19 +65,15 @@ public class JwtSigner : IJwtSigner
 
         var tokenHandler = new JwtSecurityTokenHandler();
         var token = tokenHandler.CreateToken(tokenDescriptor);
-        
         return tokenHandler.WriteToken(token);
     }
 
     public (string Token, string TokenHash) IssueRefreshToken()
     {
-        var randomNumber = new byte[32];
-        using var rng = RandomNumberGenerator.Create();
-        rng.GetBytes(randomNumber);
-        var token = Convert.ToBase64String(randomNumber);
-        // Quick hash for token hash
-        using var sha256 = SHA256.Create();
-        var hashBytes = sha256.ComputeHash(System.Text.Encoding.UTF8.GetBytes(token));
+        var randomBytes = new byte[32];
+        RandomNumberGenerator.Fill(randomBytes);
+        var token = Convert.ToBase64String(randomBytes);
+        var hashBytes = SHA256.HashData(System.Text.Encoding.UTF8.GetBytes(token));
         var tokenHash = Convert.ToBase64String(hashBytes);
         return (token, tokenHash);
     }
@@ -80,10 +88,12 @@ public class JwtSigner : IJwtSigner
                 ValidateIssuerSigningKey = true,
                 ValidateIssuer = true,
                 ValidateAudience = true,
+                ValidateLifetime = true,
                 ValidIssuer = _issuer,
                 ValidAudience = _audience,
-                IssuerSigningKey = _securityKey
-            }, out SecurityToken validatedToken);
+                IssuerSigningKey = _validationKey,
+                ClockSkew = TimeSpan.Zero
+            }, out _);
 
             return true;
         }

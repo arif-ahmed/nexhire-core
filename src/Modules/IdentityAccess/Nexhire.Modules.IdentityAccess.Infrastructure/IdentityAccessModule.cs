@@ -17,8 +17,6 @@ public static class IdentityAccessModule
         this IServiceCollection services,
         IConfiguration configuration)
     {
-        var connectionString = configuration.GetConnectionString("Database");
-
         services.AddScoped<PublishDomainEventsInterceptor>();
 
         services.AddDbContext<IdentityAccessDbContext>((sp, options) =>
@@ -33,6 +31,7 @@ public static class IdentityAccessModule
         services.AddScoped<IOtpChallengeRepository, OtpChallengeRepository>();
         services.AddScoped<IRevokedTokenStore, RevokedTokenStore>();
         services.AddScoped<IAdminActionLogRepository, AdminActionLogRepository>();
+        services.AddScoped<IInboxStore, InboxStore>();
 
         // Port adapters
         services.AddScoped<IPasswordHasher, PasswordHasher>();

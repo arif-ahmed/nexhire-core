@@ -13,6 +13,7 @@ public interface IUserAccountRepository
     Task<UserAccount?> GetByPasswordResetTokenHashAsync(string hash, CancellationToken ct = default);
     Task<object> SearchAsync(object criteria, CancellationToken ct = default); // Stubbing PagedResult and UserSearchCriteria for now
     Task AddAsync(UserAccount user, CancellationToken ct = default);
+    Task UpdateAsync(UserAccount user, CancellationToken ct = default);
     Task SaveChangesAsync(CancellationToken ct = default);
     Task<bool> EmailExistsAsync(string email, CancellationToken ct = default);
     Task<bool> MobileExistsAsync(string mobile, CancellationToken ct = default);

@@ -1,39 +1,65 @@
 using MediatR;
-using Nexhire.Modules.IdentityAccess.Domain.Domain;
-using Nexhire.Modules.IdentityAccess.Domain.Domain.Repositories;
+using Microsoft.Extensions.Logging;
 using Nexhire.Modules.IdentityAccess.Application.Ports;
 using Nexhire.Modules.IdentityAccess.Contracts.Events;
+using Nexhire.Modules.IdentityAccess.Domain.Domain;
+using Nexhire.Modules.IdentityAccess.Domain.Domain.Repositories;
 
 namespace Nexhire.Modules.IdentityAccess.Application.Accounts.EventHandlers;
 
-public class IdentityVerifiedByGovernmentEventHandler : INotificationHandler<IdentityVerifiedByGovernmentIntegrationEvent>
+public sealed class IdentityVerifiedByGovernmentEventHandler(
+    IUserAccountRepository repository,
+    IInboxStore inbox)
+    : INotificationHandler<IdentityVerifiedByGovernmentIntegrationEvent>
 {
-    private readonly IUserAccountRepository _repository;
-
-    public IdentityVerifiedByGovernmentEventHandler(IUserAccountRepository repository)
+    public async Task Handle(
+        IdentityVerifiedByGovernmentIntegrationEvent notification,
+        CancellationToken ct)
     {
-        _repository = repository;
-    }
+        // Inbox idempotency: skip if this event was already processed (Shared Foundations §6.3)
+        if (await inbox.IsProcessedAsync(notification.EventId, ct))
+            return;
 
-    public async Task Handle(IdentityVerifiedByGovernmentIntegrationEvent notification, CancellationToken ct)
-    {
-        // Check inbox idempotency (if your context exposes Inbox)
-        // For simplicity, checking if event already processed isn't strictly required if method is idempotent.
-        // UserAccount.ApplyGovernmentIdentityVerified() just sets IdentityVerified = true, which is idempotent.
-        
-        var account = await _repository.GetByIdAsync(new UserAccountId(notification.UserId), ct);
-        if (account == null) return;
+        var account = await repository.GetByIdAsync(new UserAccountId(notification.UserId), ct);
+        account?.ApplyGovernmentIdentityVerified();
 
-        account.ApplyGovernmentIdentityVerified();
-        await _repository.SaveChangesAsync(ct);
+        // Mark processed and persist in the same unit of work as the aggregate change
+        await inbox.MarkProcessedAsync(
+            notification.EventId,
+            nameof(IdentityVerifiedByGovernmentIntegrationEvent),
+            ct);
+
+        await repository.SaveChangesAsync(ct);
     }
 }
 
-public class IdentityVerificationFailedEventHandler : INotificationHandler<IdentityVerificationFailedIntegrationEvent>
+public sealed class IdentityVerificationFailedEventHandler(
+    IUserAccountRepository repository,
+    IInboxStore inbox,
+    ILogger<IdentityVerificationFailedEventHandler> logger)
+    : INotificationHandler<IdentityVerificationFailedIntegrationEvent>
 {
-    // Potentially we just log it or save to audit log, but since we don't have a status field for failed, we do nothing.
-    public Task Handle(IdentityVerificationFailedIntegrationEvent notification, CancellationToken ct)
+    public async Task Handle(
+        IdentityVerificationFailedIntegrationEvent notification,
+        CancellationToken ct)
     {
-        return Task.CompletedTask;
+        // Inbox idempotency
+        if (await inbox.IsProcessedAsync(notification.EventId, ct))
+            return;
+
+        // Spec §9.1: record failure for audit — no account status change
+        logger.LogWarning(
+            "Government identity verification failed for user {UserId} via registry {Registry}. Reason: {Reason}",
+            notification.UserId,
+            notification.Registry,
+            notification.Reason);
+
+        await inbox.MarkProcessedAsync(
+            notification.EventId,
+            nameof(IdentityVerificationFailedIntegrationEvent),
+            ct);
+
+        // Persist the inbox record (repository shares the same DbContext scope as InboxStore)
+        await repository.SaveChangesAsync(ct);
     }
 }

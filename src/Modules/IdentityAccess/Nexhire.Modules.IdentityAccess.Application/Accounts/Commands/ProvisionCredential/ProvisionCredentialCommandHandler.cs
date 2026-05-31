@@ -50,9 +50,14 @@ public class ProvisionCredentialCommandHandler : ICommandHandler<ProvisionCreden
         // 3. Policy & Breach
         var rawPasswordResult = RawPassword.Create(request.Password);
         if (rawPasswordResult.IsFailure)
-            return Result.Failure<Guid>(rawPasswordResult.Error);
+            return Result.Failure<Guid>(rawPasswordResult.Error with { Code = "E-REG-INVALID-PASSWORD" });
 
         var rawPassword = rawPasswordResult.Value;
+
+        var policyResult = PasswordPolicyService.Validate(rawPassword);
+        if (policyResult.IsFailure)
+            return Result.Failure<Guid>(policyResult.Error);
+
         if (await _breachCheckPort.IsBreachedAsync(rawPassword, cancellationToken))
             return Result.Failure<Guid>(new Error("E-REG-BREACHED-PASSWORD", "Password has appeared in a data breach."));
 

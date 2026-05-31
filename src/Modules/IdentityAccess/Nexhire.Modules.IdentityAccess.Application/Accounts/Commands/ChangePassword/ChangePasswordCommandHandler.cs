@@ -1,6 +1,7 @@
 using Nexhire.Modules.IdentityAccess.Application.Ports;
 using Nexhire.Modules.IdentityAccess.Domain.Domain;
 using Nexhire.Modules.IdentityAccess.Domain.Domain.Repositories;
+using Nexhire.Modules.IdentityAccess.Domain.Domain.Services;
 using Nexhire.Modules.IdentityAccess.Domain.ValueObjects;
 using Nexhire.Shared.Core.CQRS;
 using Nexhire.Shared.Core.Results;
@@ -35,9 +36,14 @@ public class ChangePasswordCommandHandler : ICommandHandler<ChangePasswordComman
 
         var newPasswordResult = RawPassword.Create(request.NewPassword);
         if (newPasswordResult.IsFailure)
-            return Result.Failure(newPasswordResult.Error);
+            return Result.Failure(newPasswordResult.Error with { Code = "E-RESET-INVALID-PASSWORD" });
 
         var newPassword = newPasswordResult.Value;
+
+        var policyResult = PasswordPolicyService.Validate(newPassword, "E-RESET");
+        if (policyResult.IsFailure)
+            return Result.Failure(policyResult.Error);
+
         if (await _breachCheckPort.IsBreachedAsync(newPassword, cancellationToken))
             return Result.Failure(new Error("E-CHANGE-BREACHED-PASSWORD", "Password has appeared in a data breach."));
 

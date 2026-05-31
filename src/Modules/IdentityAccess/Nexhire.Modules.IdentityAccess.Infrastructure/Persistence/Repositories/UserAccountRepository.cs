@@ -133,6 +133,12 @@ public class UserAccountRepository : IUserAccountRepository
         await _dbContext.UserAccounts.AddAsync(user, ct);
     }
 
+    public Task UpdateAsync(UserAccount user, CancellationToken ct = default)
+    {
+        _dbContext.UserAccounts.Update(user);
+        return Task.CompletedTask;
+    }
+
     public async Task SaveChangesAsync(CancellationToken ct = default)
     {
         await _dbContext.SaveChangesAsync(ct);

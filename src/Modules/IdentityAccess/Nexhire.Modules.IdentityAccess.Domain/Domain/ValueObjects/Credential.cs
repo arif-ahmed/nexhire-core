@@ -5,26 +5,21 @@ namespace Nexhire.Modules.IdentityAccess.Domain.ValueObjects;
 
 public class Credential : ValueObject
 {
-    public EmailAddress Email { get; }
-    public MobileNumber Mobile { get; }
-    public PasswordHash PasswordHash { get; }
+    public EmailAddress  Email        { get; } = null!;
+    public MobileNumber  Mobile       { get; } = null!;
+    public PasswordHash  PasswordHash { get; } = null!;
 
-    private Credential() { } // EF Core
+    private Credential() { } // EF Core materialisation
 
     private Credential(EmailAddress email, MobileNumber mobile, PasswordHash passwordHash)
     {
-        Email = email!;
-        Mobile = mobile;
+        Email        = email;
+        Mobile       = mobile;
         PasswordHash = passwordHash;
     }
 
     public static Result<Credential> Create(EmailAddress email, MobileNumber mobile, PasswordHash passwordHash)
-    {
-        if (email == null || mobile == null || passwordHash == null)
-            return Result.Failure<Credential>(new Error("Credential.InvalidComponent", "Components cannot be null."));
-
-        return new Credential(email, mobile, passwordHash);
-    }
+        => new Credential(email, mobile, passwordHash);
 
     public override IEnumerable<object> GetEqualityComponents()
     {

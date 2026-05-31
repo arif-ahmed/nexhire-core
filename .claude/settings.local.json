@@ -37,7 +37,10 @@
       "Bash(git add *)",
       "Bash(git commit -m ' *)",
       "Bash(git push *)",
-      "Bash(gh pr create --title '⬆️ chore: upgrade solution to .NET 10 / C# 14 and fix build errors' --body ' *)"
+      "Bash(gh pr create --title '⬆️ chore: upgrade solution to .NET 10 / C# 14 and fix build errors' --body ' *)",
+      "Bash(Get-ChildItem -Path \"d:\\\\Workspace\\\\Lab\\\\nexhire-core\\\\src\\\\Modules\\\\IdentityAccess\" -Recurse -File)",
+      "Bash(Sort-Object)",
+      "Bash(dotnet test *)"
     ]
   },
   "enabledPlugins": {

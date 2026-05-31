@@ -78,8 +78,13 @@ public class UserAccount : AggregateRoot<UserAccountId>
 
     public Result Activate()
     {
-        var transitionResult = AccountStateMachine.EnsureTransitionAllowed(Status, AccountStatus.Active);
-        if (transitionResult.IsFailure) return transitionResult;
+        // Spec §6.1: only from PendingActivation. Idempotent if already Active.
+        if (Status == AccountStatus.Active)
+            return Result.Success();
+
+        if (Status != AccountStatus.PendingActivation)
+            return Result.Failure(new Error("Account.InvalidTransition",
+                $"Cannot activate an account in status {Status}."));
 
         Status = AccountStatus.Active;
         ActivatedOnUtc = DateTime.UtcNow;
