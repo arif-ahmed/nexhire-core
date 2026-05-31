@@ -27,7 +27,11 @@ public class ShortlistConfiguration : IEntityTypeConfiguration<Shortlist>
         builder.Property(s => s.UpdatedOnUtc)
             .IsRequired();
 
-        builder.UseXminAsConcurrencyToken();
+        builder.Property<uint>("xmin")
+            .HasColumnType("xid")
+            .IsRowVersion()
+            .HasColumnName("xmin")
+            .ValueGeneratedOnAddOrUpdate();
 
         builder.HasMany(s => s.Members)
             .WithOne()

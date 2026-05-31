@@ -116,7 +116,11 @@ public class EmployerProfileConfiguration : IEntityTypeConfiguration<EmployerPro
         builder.Property(ep => ep.CreatedOnUtc).IsRequired();
         builder.Property(ep => ep.UpdatedOnUtc).IsRequired();
 
-        builder.UseXminAsConcurrencyToken();
+        builder.Property<uint>("xmin")
+            .HasColumnType("xid")
+            .IsRowVersion()
+            .HasColumnName("xmin")
+            .ValueGeneratedOnAddOrUpdate();
 
         // Navigations using backing fields
         builder.HasMany(ep => ep.Images)

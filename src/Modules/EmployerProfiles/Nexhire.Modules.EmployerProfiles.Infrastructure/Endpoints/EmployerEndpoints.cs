@@ -110,7 +110,7 @@ public static class EmployerEndpoints
         .WithName("CompleteEmployerLevel2")
         .WithSummary("Completes Level 2 profile details for the authenticated employer");
 
-        group.MapPost("me/verification", async (RequestEmployerVerificationRequest request, ClaimsPrincipal principal, ISender sender) =>
+        group.MapPost("me/verification/request", async (RequestEmployerVerificationRequest request, ClaimsPrincipal principal, ISender sender) =>
         {
             var userId = GetUserId(principal);
             if (userId == null) return Results.Unauthorized();
@@ -118,14 +118,14 @@ public static class EmployerEndpoints
             var command = new RequestEmployerVerificationCommand(userId.Value, request.RegistryRef);
             var result = await sender.Send(command);
 
-            return result.IsSuccess 
-                ? Results.Ok() 
+            return result.IsSuccess
+                ? Results.Ok()
                 : Results.BadRequest(result.Error);
         })
         .WithName("RequestEmployerVerification")
         .WithSummary("Requests verification for the authenticated employer");
 
-        group.MapPost("me/resubmit-verification", async (ClaimsPrincipal principal, ISender sender) =>
+        group.MapPost("me/verification/resubmit", async (ClaimsPrincipal principal, ISender sender) =>
         {
             var userId = GetUserId(principal);
             if (userId == null) return Results.Unauthorized();
@@ -133,22 +133,22 @@ public static class EmployerEndpoints
             var command = new ResubmitEmployerVerificationCommand(userId.Value);
             var result = await sender.Send(command);
 
-            return result.IsSuccess 
-                ? Results.Ok() 
+            return result.IsSuccess
+                ? Results.Ok()
                 : Results.BadRequest(result.Error);
         })
         .WithName("ResubmitEmployerVerification")
         .WithSummary("Resubmits verification for the authenticated employer");
 
-        group.MapGet("me/verification-status", async (ClaimsPrincipal principal, ISender sender) =>
+        group.MapGet("me/verification", async (ClaimsPrincipal principal, ISender sender) =>
         {
             var userId = GetUserId(principal);
             if (userId == null) return Results.Unauthorized();
 
             var result = await sender.Send(new GetEmployerVerificationStatusQuery(userId.Value));
 
-            return result.IsSuccess 
-                ? Results.Ok(result.Value) 
+            return result.IsSuccess
+                ? Results.Ok(result.Value)
                 : Results.NotFound(result.Error);
         })
         .WithName("GetEmployerVerificationStatus")
@@ -230,8 +230,8 @@ public static class EmployerEndpoints
             var command = new UploadCompanyImageCommand(userId.Value, content, file.FileName, file.ContentType);
             var result = await sender.Send(command);
 
-            return result.IsSuccess 
-                ? Results.Ok() 
+            return result.IsSuccess
+                ? Results.Created($"/api/employers/me/images/{result.Value}", result.Value)
                 : Results.BadRequest(result.Error);
         })
         .WithName("UploadCompanyImage")
@@ -246,8 +246,8 @@ public static class EmployerEndpoints
             var command = new RemoveCompanyImageCommand(userId.Value, imageId);
             var result = await sender.Send(command);
 
-            return result.IsSuccess 
-                ? Results.Ok() 
+            return result.IsSuccess
+                ? Results.NoContent()
                 : Results.BadRequest(result.Error);
         })
         .WithName("RemoveCompanyImage")
@@ -267,8 +267,8 @@ public static class EmployerEndpoints
             var command = new UploadEmployerDocumentCommand(userId.Value, content, file.FileName, file.ContentType, kind);
             var result = await sender.Send(command);
 
-            return result.IsSuccess 
-                ? Results.Ok() 
+            return result.IsSuccess
+                ? Results.Created($"/api/employers/me/documents/{result.Value}", result.Value)
                 : Results.BadRequest(result.Error);
         })
         .WithName("UploadEmployerDocument")
@@ -283,8 +283,8 @@ public static class EmployerEndpoints
             var command = new RemoveEmployerDocumentCommand(userId.Value, documentId);
             var result = await sender.Send(command);
 
-            return result.IsSuccess 
-                ? Results.Ok() 
+            return result.IsSuccess
+                ? Results.NoContent()
                 : Results.BadRequest(result.Error);
         })
         .WithName("RemoveEmployerDocument")
@@ -357,8 +357,8 @@ public static class EmployerEndpoints
             var command = new DeleteShortlistCommand(userId.Value, shortlistId);
             var result = await sender.Send(command);
 
-            return result.IsSuccess 
-                ? Results.Ok() 
+            return result.IsSuccess
+                ? Results.NoContent()
                 : Results.BadRequest(result.Error);
         })
         .WithName("DeleteShortlist")
@@ -387,20 +387,20 @@ public static class EmployerEndpoints
             var command = new RemoveCandidateFromShortlistCommand(userId.Value, shortlistId, memberId);
             var result = await sender.Send(command);
 
-            return result.IsSuccess 
-                ? Results.Ok() 
+            return result.IsSuccess
+                ? Results.NoContent()
                 : Results.BadRequest(result.Error);
         })
         .WithName("RemoveCandidateFromShortlist")
         .WithSummary("Removes a candidate from a shortlist for the authenticated employer");
 
         // 5. Public Profile
-        group.MapGet("{id:guid}", async (Guid id, ISender sender) =>
+        group.MapGet("{id:guid}/public", async (Guid id, ISender sender) =>
         {
             var result = await sender.Send(new GetPublicEmployerProfileQuery(id));
 
-            return result.IsSuccess 
-                ? Results.Ok(result.Value) 
+            return result.IsSuccess
+                ? Results.Ok(result.Value)
                 : Results.NotFound(result.Error);
         })
         .WithName("GetPublicEmployerProfile")

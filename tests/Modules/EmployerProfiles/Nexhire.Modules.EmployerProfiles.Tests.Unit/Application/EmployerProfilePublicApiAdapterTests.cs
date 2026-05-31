@@ -24,7 +24,7 @@ public class EmployerProfilePublicApiAdapterTests
         var userId = Guid.NewGuid();
         _repository.GetByUserIdAsync(userId, Arg.Any<CancellationToken>()).Returns((EmployerProfile?)null);
 
-        var result = await _adapter.IsVerifiedAsync(userId);
+        var result = await _adapter.IsVerifiedAsync(userId, CancellationToken.None);
 
         result.Should().BeFalse();
     }
@@ -36,7 +36,7 @@ public class EmployerProfilePublicApiAdapterTests
         var profile = CreateVerifiedProfile(userId);
         _repository.GetByUserIdAsync(userId, Arg.Any<CancellationToken>()).Returns(profile);
 
-        var result = await _adapter.IsVerifiedAsync(userId);
+        var result = await _adapter.IsVerifiedAsync(userId, CancellationToken.None);
 
         result.Should().BeTrue();
     }
@@ -47,7 +47,7 @@ public class EmployerProfilePublicApiAdapterTests
         var userId = Guid.NewGuid();
         _repository.GetByUserIdAsync(userId, Arg.Any<CancellationToken>()).Returns((EmployerProfile?)null);
 
-        var result = await _adapter.GetSummaryAsync(userId);
+        var result = await _adapter.GetSummaryAsync(userId, CancellationToken.None);
 
         result.Should().BeNull();
     }
@@ -59,7 +59,7 @@ public class EmployerProfilePublicApiAdapterTests
         var profile = CreateVerifiedProfile(userId);
         _repository.GetByUserIdAsync(userId, Arg.Any<CancellationToken>()).Returns(profile);
 
-        var result = await _adapter.GetSummaryAsync(userId);
+        var result = await _adapter.GetSummaryAsync(userId, CancellationToken.None);
 
         result.Should().NotBeNull();
         result!.UserId.Should().Be(userId);

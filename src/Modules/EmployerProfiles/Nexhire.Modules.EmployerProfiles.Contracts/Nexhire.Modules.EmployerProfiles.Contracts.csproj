@@ -5,6 +5,6 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\Shared\Nexhire.Shared.Core\Nexhire.Shared.Core.csproj" />
+    <ProjectReference Include="..\..\..\Shared\Nexhire.Shared.Core\Nexhire.Shared.Core.csproj" />
   </ItemGroup>
 </Project>
