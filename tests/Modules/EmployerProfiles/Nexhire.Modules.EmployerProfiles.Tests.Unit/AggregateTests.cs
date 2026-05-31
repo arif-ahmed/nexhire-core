@@ -1,4 +1,5 @@
 using FluentAssertions;
+using Nexhire.Modules.EmployerProfiles.Contracts.Events;
 using Nexhire.Modules.EmployerProfiles.Core.Domain.Aggregates;
 using Nexhire.Modules.EmployerProfiles.Core.Domain.Events;
 using Nexhire.Modules.EmployerProfiles.Core.Domain.ValueObjects;

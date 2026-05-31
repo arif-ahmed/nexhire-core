@@ -6,7 +6,7 @@ using Nexhire.Shared.Core.Results;
 
 namespace Nexhire.Modules.EmployerProfiles.Core.EmployerProfiles.Commands.UploadEmployerDocument;
 
-public class UploadEmployerDocumentCommandHandler : ICommandHandler<UploadEmployerDocumentCommand>
+public class UploadEmployerDocumentCommandHandler : ICommandHandler<UploadEmployerDocumentCommand, Guid>
 {
     private readonly IEmployerProfileRepository _repository;
     private readonly IUnitOfWork _unitOfWork;
@@ -25,18 +25,18 @@ public class UploadEmployerDocumentCommandHandler : ICommandHandler<UploadEmploy
         _virusScanner = virusScanner;
     }
 
-    public async Task<Result> Handle(UploadEmployerDocumentCommand request, CancellationToken cancellationToken)
+    public async Task<Result<Guid>> Handle(UploadEmployerDocumentCommand request, CancellationToken cancellationToken)
     {
         var profile = await _repository.GetByUserIdAsync(request.UserId, cancellationToken);
         if (profile == null)
         {
-            return Result.Failure(new Error("EmployerProfile.NotFound", "Employer profile not found."));
+            return Result.Failure<Guid>(new Error("EmployerProfile.NotFound", "Employer profile not found."));
         }
 
         var storeResult = await _objectStorage.StoreAsync(request.Content, request.FileName, request.MimeType, cancellationToken);
         if (storeResult.IsFailure)
         {
-            return Result.Failure(storeResult.Error);
+            return Result.Failure<Guid>(storeResult.Error);
         }
 
         var fileRef = storeResult.Value;
@@ -45,24 +45,24 @@ public class UploadEmployerDocumentCommandHandler : ICommandHandler<UploadEmploy
         if (scanResult.Status == VirusScanStatus.Infected)
         {
             await _objectStorage.DeleteAsync(fileRef.StorageKey, cancellationToken);
-            return Result.Failure(new Error("E-UPLOAD-VIRUS", "The uploaded document is infected."));
+            return Result.Failure<Guid>(new Error("E-UPLOAD-VIRUS", "The uploaded document is infected."));
         }
         if (scanResult.Status == VirusScanStatus.Pending)
         {
             await _objectStorage.DeleteAsync(fileRef.StorageKey, cancellationToken);
-            return Result.Failure(new Error("E-UPLOAD-PENDING", "The document virus scan is pending."));
+            return Result.Failure<Guid>(new Error("E-UPLOAD-PENDING", "The document virus scan is pending."));
         }
 
         var addDocResult = profile.AddSupplementaryDocument(fileRef, request.Kind, scanResult);
         if (addDocResult.IsFailure)
         {
             await _objectStorage.DeleteAsync(fileRef.StorageKey, cancellationToken);
-            return addDocResult;
+            return Result.Failure<Guid>(addDocResult.Error);
         }
 
         await _repository.UpdateAsync(profile, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-        return Result.Success();
+        return Result.Success(addDocResult.Value);
     }
 }

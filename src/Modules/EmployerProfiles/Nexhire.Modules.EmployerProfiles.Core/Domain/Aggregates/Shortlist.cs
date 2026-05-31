@@ -87,12 +87,12 @@ public class Shortlist : AggregateRoot<Guid>
         _members.Add(member);
         UpdatedOnUtc = DateTime.UtcNow;
 
-        RaiseDomainEvent(new CandidateSavedToTalentPoolIntegrationEvent(
+        RaiseDomainEvent(new CandidateAddedToShortlist(
             Guid.NewGuid(),
-            EmployerProfileId, // Will resolve to UserId in event mapping if required, or is passed directly.
-            candidateUserId,
+            EmployerProfileId,
             Id,
-            UpdatedOnUtc,
+            candidateUserId,
+            matchScore,
             UpdatedOnUtc));
 
         return Result.Success();

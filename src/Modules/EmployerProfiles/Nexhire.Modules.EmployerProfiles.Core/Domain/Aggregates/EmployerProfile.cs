@@ -501,23 +501,24 @@ public class EmployerProfile : AggregateRoot<Guid>
         return Result.Success();
     }
 
-    public Result AddCompanyImage(FileReference fileReference, VirusScanResult scanResult)
+    public Result<Guid> AddCompanyImage(FileReference fileReference, VirusScanResult scanResult)
     {
         if (Status == EmployerProfileStatus.Suspended)
         {
-            return Result.Failure(new Error("EmployerProfile.Suspended", "Cannot add company image while suspended."));
+            return Result.Failure<Guid>(new Error("EmployerProfile.Suspended", "Cannot add company image while suspended."));
         }
         if (Status == EmployerProfileStatus.Deactivated)
         {
-            return Result.Failure(new Error("EmployerProfile.Deactivated", "Cannot add company image while deactivated."));
+            return Result.Failure<Guid>(new Error("EmployerProfile.Deactivated", "Cannot add company image while deactivated."));
         }
         var policyResult = UploadPolicyService.ValidateCompanyImage(fileReference, scanResult, _images.Count);
         if (policyResult.IsFailure)
         {
-            return policyResult;
+            return Result.Failure<Guid>(policyResult.Error);
         }
 
-        var image = CompanyImage.Create(Guid.NewGuid(), fileReference, scanResult);
+        var imageId = Guid.NewGuid();
+        var image = CompanyImage.Create(imageId, fileReference, scanResult);
         _images.Add(image);
         UpdatedOnUtc = DateTime.UtcNow;
 
@@ -528,7 +529,7 @@ public class EmployerProfile : AggregateRoot<Guid>
             UpdatedOnUtc,
             UpdatedOnUtc));
 
-        return Result.Success();
+        return Result.Success(imageId);
     }
 
     public Result RemoveCompanyImage(Guid companyImageId)
@@ -552,33 +553,34 @@ public class EmployerProfile : AggregateRoot<Guid>
         return Result.Success();
     }
 
-    public Result AddSupplementaryDocument(FileReference fileReference, DocumentKind kind, VirusScanResult scanResult)
+    public Result<Guid> AddSupplementaryDocument(FileReference fileReference, DocumentKind kind, VirusScanResult scanResult)
     {
         if (Status == EmployerProfileStatus.Suspended)
         {
-            return Result.Failure(new Error("EmployerProfile.Suspended", "Cannot add supplementary document while suspended."));
+            return Result.Failure<Guid>(new Error("EmployerProfile.Suspended", "Cannot add supplementary document while suspended."));
         }
         if (Status == EmployerProfileStatus.Deactivated)
         {
-            return Result.Failure(new Error("EmployerProfile.Deactivated", "Cannot add supplementary document while deactivated."));
+            return Result.Failure<Guid>(new Error("EmployerProfile.Deactivated", "Cannot add supplementary document while deactivated."));
         }
         var policyResult = UploadPolicyService.ValidateSupplementaryDocument(fileReference, scanResult, _documents.Count);
         if (policyResult.IsFailure)
         {
-            return policyResult;
+            return Result.Failure<Guid>(policyResult.Error);
         }
 
-        var document = SupplementaryDocument.Create(Guid.NewGuid(), fileReference, kind, scanResult);
+        var documentId = Guid.NewGuid();
+        var document = SupplementaryDocument.Create(documentId, fileReference, kind, scanResult);
         _documents.Add(document);
         UpdatedOnUtc = DateTime.UtcNow;
 
         RaiseDomainEvent(new SupplementaryDocumentAdded(
             Guid.NewGuid(),
             Id,
-            document.Id,
+            documentId,
             UpdatedOnUtc));
 
-        return Result.Success();
+        return Result.Success(documentId);
     }
 
     public Result RemoveSupplementaryDocument(Guid documentId)

@@ -2,6 +2,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\Shared\Nexhire.Shared.Core\Nexhire.Shared.Core.csproj" />
+    <ProjectReference Include="..\Nexhire.Modules.EmployerProfiles.Contracts\Nexhire.Modules.EmployerProfiles.Contracts.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

@@ -5,6 +5,7 @@
   </Folder>
   <Folder Name="/src/Modules/" />
   <Folder Name="/src/Modules/EmployerProfiles/">
+    <Project Path="src/Modules/EmployerProfiles/Nexhire.Modules.EmployerProfiles.Contracts/Nexhire.Modules.EmployerProfiles.Contracts.csproj" />
     <Project Path="src/Modules/EmployerProfiles/Nexhire.Modules.EmployerProfiles.Core/Nexhire.Modules.EmployerProfiles.Core.csproj" />
     <Project Path="src/Modules/EmployerProfiles/Nexhire.Modules.EmployerProfiles.Infrastructure/Nexhire.Modules.EmployerProfiles.Infrastructure.csproj" />
   </Folder>

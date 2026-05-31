@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Routing;
 using Nexhire.Modules.EmployerProfiles.Core.Domain.ValueObjects;
 using Nexhire.Modules.EmployerProfiles.Core.DTOs;
 using Nexhire.Modules.EmployerProfiles.Core.EmployerProfiles.Commands.AddCandidateToShortlist;
+using Nexhire.Modules.EmployerProfiles.Core.EmployerProfiles.Commands.UpdateEmployerProfile;
 using Nexhire.Modules.EmployerProfiles.Core.EmployerProfiles.Commands.ApproveEmployerVerification;
 using Nexhire.Modules.EmployerProfiles.Core.EmployerProfiles.Commands.CompleteEmployerLevel2;
 using Nexhire.Modules.EmployerProfiles.Core.EmployerProfiles.Commands.CreateShortlist;
@@ -27,6 +28,7 @@ using Nexhire.Modules.EmployerProfiles.Core.EmployerProfiles.Queries.GetEmployer
 using Nexhire.Modules.EmployerProfiles.Core.EmployerProfiles.Queries.GetMatchedCandidates;
 using Nexhire.Modules.EmployerProfiles.Core.EmployerProfiles.Queries.GetMyEmployerProfile;
 using Nexhire.Modules.EmployerProfiles.Core.EmployerProfiles.Queries.GetPublicEmployerProfile;
+using Nexhire.Modules.EmployerProfiles.Core.EmployerProfiles.Queries.GetEmployerJobPostings;
 using Nexhire.Modules.EmployerProfiles.Core.EmployerProfiles.Queries.GetShortlist;
 using Nexhire.Modules.EmployerProfiles.Core.EmployerProfiles.Queries.GetShortlists;
 
@@ -40,12 +42,12 @@ public static class EmployerEndpoints
             .WithTags("Employers");
 
         // 1. Anonymous registration
-        group.MapPost("", async (RegisterEmployerCommand command, ISender sender) =>
+        group.MapPost("register", async (RegisterEmployerCommand command, ISender sender) =>
         {
             var result = await sender.Send(command);
 
-            return result.IsSuccess 
-                ? Results.Created($"/api/employers/me", result.Value) 
+            return result.IsSuccess
+                ? Results.Created($"/api/employers/{result.Value}", result.Value)
                 : Results.BadRequest(result.Error);
         })
         .WithName("RegisterEmployer")
@@ -65,6 +67,26 @@ public static class EmployerEndpoints
         })
         .WithName("GetMyEmployerProfile")
         .WithSummary("Retrieves the authenticated employer's profile");
+
+        group.MapPut("me", async (UpdateEmployerProfileRequest request, ClaimsPrincipal principal, ISender sender) =>
+        {
+            var userId = GetUserId(principal);
+            if (userId == null) return Results.Unauthorized();
+
+            var command = new UpdateEmployerProfileCommand(
+                userId.Value,
+                request.CompanyName,
+                request.Website,
+                request.Industry,
+                request.CompanySize,
+                request.Address,
+                request.Description);
+
+            var result = await sender.Send(command);
+            return result.IsSuccess ? Results.Ok() : MapError(result.Error);
+        })
+        .WithName("UpdateEmployerProfile")
+        .RequireAuthorization();
 
         group.MapPut("me/level2", async (CompleteEmployerLevel2Request request, ClaimsPrincipal principal, ISender sender) =>
         {
@@ -145,6 +167,17 @@ public static class EmployerEndpoints
         })
         .WithName("GetEmployerDashboard")
         .WithSummary("Retrieves the dashboard metrics for the authenticated employer");
+
+        group.MapGet("me/dashboard/postings", async (ClaimsPrincipal principal, ISender sender) =>
+        {
+            var userId = GetUserId(principal);
+            if (userId == null) return Results.Unauthorized();
+
+            var result = await sender.Send(new GetEmployerJobPostingsQuery(userId.Value));
+            return result.IsSuccess ? Results.Ok(result.Value) : Results.NotFound(result.Error);
+        })
+        .WithName("GetEmployerJobPostings")
+        .RequireAuthorization();
 
         group.MapGet("me/matched-candidates", async (ClaimsPrincipal principal, ISender sender) =>
         {
@@ -374,35 +407,37 @@ public static class EmployerEndpoints
         .WithSummary("Retrieves public details of an employer profile");
 
         // 6. Admin operations
-        group.MapPost("{id:guid}/verify/approve", async (Guid id, ApproveEmployerVerificationRequest request, ClaimsPrincipal principal, ISender sender) =>
+        group.MapPost("{id:guid}/verification/approve", async (Guid id, ApproveEmployerVerificationRequest request, ClaimsPrincipal principal, ISender sender) =>
         {
-            var adminId = GetAdminId(principal);
+            var adminId = GetUserId(principal);
             if (adminId == null) return Results.Unauthorized();
 
             var command = new ApproveEmployerVerificationCommand(id, adminId.Value, request.EvidenceRef);
             var result = await sender.Send(command);
 
-            return result.IsSuccess 
-                ? Results.Ok() 
+            return result.IsSuccess
+                ? Results.Ok()
                 : Results.BadRequest(result.Error);
         })
         .WithName("ApproveEmployerVerification")
-        .WithSummary("Approves an employer profile verification (Admin)");
+        .WithSummary("Approves an employer profile verification (Admin)")
+        .RequireAuthorization("RequireUsersManage");
 
-        group.MapPost("{id:guid}/verify/reject", async (Guid id, RejectEmployerVerificationRequest request, ClaimsPrincipal principal, ISender sender) =>
+        group.MapPost("{id:guid}/verification/reject", async (Guid id, RejectEmployerVerificationRequest request, ClaimsPrincipal principal, ISender sender) =>
         {
-            var adminId = GetAdminId(principal);
+            var adminId = GetUserId(principal);
             if (adminId == null) return Results.Unauthorized();
 
             var command = new RejectEmployerVerificationCommand(id, adminId.Value, request.Reason);
             var result = await sender.Send(command);
 
-            return result.IsSuccess 
-                ? Results.Ok() 
+            return result.IsSuccess
+                ? Results.Ok()
                 : Results.BadRequest(result.Error);
         })
         .WithName("RejectEmployerVerification")
-        .WithSummary("Rejects an employer profile verification (Admin)");
+        .WithSummary("Rejects an employer profile verification (Admin)")
+        .RequireAuthorization("RequireUsersManage");
     }
 
     private static Guid? GetUserId(ClaimsPrincipal principal)
@@ -411,14 +446,26 @@ public static class EmployerEndpoints
         return claim != null && Guid.TryParse(claim.Value, out var userId) ? userId : null;
     }
 
-    private static Guid? GetAdminId(ClaimsPrincipal principal)
+    internal static IResult MapError(Nexhire.Shared.Core.Results.Error error)
     {
-        var claim = principal?.FindFirst(ClaimTypes.NameIdentifier) ?? principal?.FindFirst("sub");
-        return claim != null && Guid.TryParse(claim.Value, out var adminId) ? adminId : null;
+        var code = error.Code ?? string.Empty;
+        if (code.Contains("NOT-FOUND", StringComparison.OrdinalIgnoreCase)) return Results.NotFound(error);
+        if (code.Contains("UNAUTHORIZED", StringComparison.OrdinalIgnoreCase)) return Results.Unauthorized();
+        if (code.Contains("FORBIDDEN", StringComparison.OrdinalIgnoreCase) || code.Contains("BANNED", StringComparison.OrdinalIgnoreCase)) return Results.Problem(statusCode: 403, title: error.Message);
+        if (code.Contains("CONFLICT", StringComparison.OrdinalIgnoreCase) || code.Contains("DUPLICATE", StringComparison.OrdinalIgnoreCase)) return Results.Conflict(error);
+        return Results.BadRequest(error);
     }
 }
 
 // Request payloads
+public record UpdateEmployerProfileRequest(
+    string? CompanyName,
+    string? Website,
+    string? Industry,
+    string? CompanySize,
+    AddressDto? Address,
+    string? Description);
+
 public record CompleteEmployerLevel2Request(
     string Website,
     string Industry,
