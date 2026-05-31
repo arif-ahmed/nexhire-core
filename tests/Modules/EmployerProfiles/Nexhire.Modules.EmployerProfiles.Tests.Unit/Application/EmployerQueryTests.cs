@@ -1,16 +1,16 @@
 using FluentAssertions;
 using NSubstitute;
-using Nexhire.Modules.EmployerProfiles.Core.Domain.Aggregates;
-using Nexhire.Modules.EmployerProfiles.Core.Domain.Projections;
-using Nexhire.Modules.EmployerProfiles.Core.Domain.Repositories;
-using Nexhire.Modules.EmployerProfiles.Core.Domain.ValueObjects;
-using Nexhire.Modules.EmployerProfiles.Core.EmployerProfiles.Queries.GetMyEmployerProfile;
-using Nexhire.Modules.EmployerProfiles.Core.EmployerProfiles.Queries.GetEmployerVerificationStatus;
-using Nexhire.Modules.EmployerProfiles.Core.EmployerProfiles.Queries.GetPublicEmployerProfile;
-using Nexhire.Modules.EmployerProfiles.Core.EmployerProfiles.Queries.GetEmployerDashboard;
-using Nexhire.Modules.EmployerProfiles.Core.EmployerProfiles.Queries.GetMatchedCandidates;
-using Nexhire.Modules.EmployerProfiles.Core.EmployerProfiles.Queries.GetShortlists;
-using Nexhire.Modules.EmployerProfiles.Core.EmployerProfiles.Queries.GetShortlist;
+using Nexhire.Modules.EmployerProfiles.Domain.Aggregates;
+using Nexhire.Modules.EmployerProfiles.Domain.Projections;
+using Nexhire.Modules.EmployerProfiles.Domain.Repositories;
+using Nexhire.Modules.EmployerProfiles.Domain.ValueObjects;
+using Nexhire.Modules.EmployerProfiles.Application.EmployerProfiles.Queries.GetMyEmployerProfile;
+using Nexhire.Modules.EmployerProfiles.Application.EmployerProfiles.Queries.GetEmployerVerificationStatus;
+using Nexhire.Modules.EmployerProfiles.Application.EmployerProfiles.Queries.GetPublicEmployerProfile;
+using Nexhire.Modules.EmployerProfiles.Application.EmployerProfiles.Queries.GetEmployerDashboard;
+using Nexhire.Modules.EmployerProfiles.Application.EmployerProfiles.Queries.GetMatchedCandidates;
+using Nexhire.Modules.EmployerProfiles.Application.EmployerProfiles.Queries.GetShortlists;
+using Nexhire.Modules.EmployerProfiles.Application.EmployerProfiles.Queries.GetShortlist;
 using Nexhire.Shared.Core.Results;
 using Xunit;
 

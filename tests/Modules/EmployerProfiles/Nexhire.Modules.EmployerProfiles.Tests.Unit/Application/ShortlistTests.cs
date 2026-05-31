@@ -1,13 +1,15 @@
 using FluentAssertions;
+using MediatR;
 using NSubstitute;
-using Nexhire.Modules.EmployerProfiles.Core.Domain.Aggregates;
-using Nexhire.Modules.EmployerProfiles.Core.Domain.Repositories;
-using Nexhire.Modules.EmployerProfiles.Core.Domain.ValueObjects;
-using Nexhire.Modules.EmployerProfiles.Core.EmployerProfiles.Commands.CreateShortlist;
-using Nexhire.Modules.EmployerProfiles.Core.EmployerProfiles.Commands.RenameShortlist;
-using Nexhire.Modules.EmployerProfiles.Core.EmployerProfiles.Commands.DeleteShortlist;
-using Nexhire.Modules.EmployerProfiles.Core.EmployerProfiles.Commands.AddCandidateToShortlist;
-using Nexhire.Modules.EmployerProfiles.Core.EmployerProfiles.Commands.RemoveCandidateFromShortlist;
+using Nexhire.Modules.EmployerProfiles.Contracts.Events;
+using Nexhire.Modules.EmployerProfiles.Domain.Aggregates;
+using Nexhire.Modules.EmployerProfiles.Domain.Repositories;
+using Nexhire.Modules.EmployerProfiles.Domain.ValueObjects;
+using Nexhire.Modules.EmployerProfiles.Application.EmployerProfiles.Commands.CreateShortlist;
+using Nexhire.Modules.EmployerProfiles.Application.EmployerProfiles.Commands.RenameShortlist;
+using Nexhire.Modules.EmployerProfiles.Application.EmployerProfiles.Commands.DeleteShortlist;
+using Nexhire.Modules.EmployerProfiles.Application.EmployerProfiles.Commands.AddCandidateToShortlist;
+using Nexhire.Modules.EmployerProfiles.Application.EmployerProfiles.Commands.RemoveCandidateFromShortlist;
 using Nexhire.Shared.Core.Results;
 using Xunit;
 
@@ -18,6 +20,7 @@ public class ShortlistTests
     private readonly IEmployerProfileRepository _employerRepository = Substitute.For<IEmployerProfileRepository>();
     private readonly IShortlistRepository _shortlistRepository = Substitute.For<IShortlistRepository>();
     private readonly IUnitOfWork _unitOfWork = Substitute.For<IUnitOfWork>();
+    private readonly IPublisher _publisher = Substitute.For<IPublisher>();
 
     private (Guid UserId, EmployerProfile Profile) CreateActiveProfile()
     {
@@ -118,7 +121,7 @@ public class ShortlistTests
             .Returns(shortlist);
 
         var candidateId = Guid.NewGuid();
-        var handler = new AddCandidateToShortlistCommandHandler(_employerRepository, _shortlistRepository, _unitOfWork);
+        var handler = new AddCandidateToShortlistCommandHandler(_employerRepository, _shortlistRepository, _unitOfWork, _publisher);
         var command = new AddCandidateToShortlistCommand(userId, shortlist.Id, candidateId, 85);
 
         // Act
@@ -130,6 +133,37 @@ public class ShortlistTests
         shortlist.Members.First().CandidateUserId.Should().Be(candidateId);
         shortlist.Members.First().MatchScore.Should().Be(85);
         await _unitOfWork.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task AddCandidateToShortlist_EmitsIntegrationEvent_WithProfileUserId()
+    {
+        // Arrange
+        var (userId, profile) = CreateActiveProfile();
+        _employerRepository.GetByUserIdAsync(userId, Arg.Any<CancellationToken>())
+            .Returns(profile);
+
+        var shortlist = Shortlist.Create(Guid.NewGuid(), profile.Id, "Devs").Value;
+        _shortlistRepository.GetByIdAsync(shortlist.Id, Arg.Any<CancellationToken>())
+            .Returns(shortlist);
+
+        CandidateSavedToTalentPoolIntegrationEvent? captured = null;
+        await _publisher.Publish(
+            Arg.Do<CandidateSavedToTalentPoolIntegrationEvent>(e => captured = e),
+            Arg.Any<CancellationToken>());
+
+        var candidateId = Guid.NewGuid();
+        var handler = new AddCandidateToShortlistCommandHandler(_employerRepository, _shortlistRepository, _unitOfWork, _publisher);
+        var command = new AddCandidateToShortlistCommand(userId, shortlist.Id, candidateId, 90);
+
+        // Act
+        var result = await handler.Handle(command, CancellationToken.None);
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        captured.Should().NotBeNull();
+        captured!.EmployerId.Should().Be(profile.UserId, "EmployerId must be BC-1 UserId, not EmployerProfileId");
+        captured.EmployerId.Should().NotBe(profile.Id);
     }
 
     [Fact]

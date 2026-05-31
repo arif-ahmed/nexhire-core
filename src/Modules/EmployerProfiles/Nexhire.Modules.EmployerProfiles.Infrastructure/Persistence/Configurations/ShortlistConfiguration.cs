@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Nexhire.Modules.EmployerProfiles.Core.Domain.Aggregates;
+using Nexhire.Modules.EmployerProfiles.Domain.Aggregates;
 
 namespace Nexhire.Modules.EmployerProfiles.Infrastructure.Persistence.Configurations;
 
@@ -26,6 +26,12 @@ public class ShortlistConfiguration : IEntityTypeConfiguration<Shortlist>
 
         builder.Property(s => s.UpdatedOnUtc)
             .IsRequired();
+
+        builder.Property<uint>("xmin")
+            .HasColumnType("xid")
+            .IsRowVersion()
+            .HasColumnName("xmin")
+            .ValueGeneratedOnAddOrUpdate();
 
         builder.HasMany(s => s.Members)
             .WithOne()

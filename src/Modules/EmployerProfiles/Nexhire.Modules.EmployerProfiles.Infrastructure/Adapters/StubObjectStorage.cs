@@ -1,5 +1,5 @@
-using Nexhire.Modules.EmployerProfiles.Core.Domain.Ports;
-using Nexhire.Modules.EmployerProfiles.Core.Domain.ValueObjects;
+using Nexhire.Modules.EmployerProfiles.Domain.Ports;
+using Nexhire.Modules.EmployerProfiles.Domain.ValueObjects;
 using Nexhire.Shared.Core.Results;
 using System.Collections.Concurrent;
 

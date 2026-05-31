@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Nexhire.Modules.EmployerProfiles.Core.Domain.Aggregates;
-using Nexhire.Modules.EmployerProfiles.Core.Domain.ValueObjects;
+using Nexhire.Modules.EmployerProfiles.Domain.Aggregates;
+using Nexhire.Modules.EmployerProfiles.Domain.ValueObjects;
 
 namespace Nexhire.Modules.EmployerProfiles.Infrastructure.Persistence.Configurations;
 
@@ -115,6 +115,12 @@ public class EmployerProfileConfiguration : IEntityTypeConfiguration<EmployerPro
 
         builder.Property(ep => ep.CreatedOnUtc).IsRequired();
         builder.Property(ep => ep.UpdatedOnUtc).IsRequired();
+
+        builder.Property<uint>("xmin")
+            .HasColumnType("xid")
+            .IsRowVersion()
+            .HasColumnName("xmin")
+            .ValueGeneratedOnAddOrUpdate();
 
         // Navigations using backing fields
         builder.HasMany(ep => ep.Images)
