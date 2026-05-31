@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Nexhire.Modules.EmployerProfiles.Core.Domain.Aggregates;
-using Nexhire.Modules.EmployerProfiles.Core.Domain.ValueObjects;
+using Nexhire.Modules.EmployerProfiles.Domain.Aggregates;
+using Nexhire.Modules.EmployerProfiles.Domain.ValueObjects;
 
 namespace Nexhire.Modules.EmployerProfiles.Infrastructure.Persistence.Configurations;
 

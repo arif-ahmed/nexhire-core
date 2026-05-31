@@ -6,8 +6,10 @@
   <Folder Name="/src/Modules/" />
   <Folder Name="/src/Modules/EmployerProfiles/">
     <Project Path="src/Modules/EmployerProfiles/Nexhire.Modules.EmployerProfiles.Contracts/Nexhire.Modules.EmployerProfiles.Contracts.csproj" />
-    <Project Path="src/Modules/EmployerProfiles/Nexhire.Modules.EmployerProfiles.Core/Nexhire.Modules.EmployerProfiles.Core.csproj" />
+    <Project Path="src/Modules/EmployerProfiles/Nexhire.Modules.EmployerProfiles.Domain/Nexhire.Modules.EmployerProfiles.Domain.csproj" />
+    <Project Path="src/Modules/EmployerProfiles/Nexhire.Modules.EmployerProfiles.Application/Nexhire.Modules.EmployerProfiles.Application.csproj" />
     <Project Path="src/Modules/EmployerProfiles/Nexhire.Modules.EmployerProfiles.Infrastructure/Nexhire.Modules.EmployerProfiles.Infrastructure.csproj" />
+    <Project Path="src/Modules/EmployerProfiles/Nexhire.Modules.EmployerProfiles.Presentation/Nexhire.Modules.EmployerProfiles.Presentation.csproj" />
   </Folder>
   <Folder Name="/src/Modules/JobSeekerProfile/">
     <Project Path="src/Modules/JobSeekerProfile/Nexhire.Modules.JobSeekerProfile.Core/Nexhire.Modules.JobSeekerProfile.Core.csproj" />

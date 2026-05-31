@@ -1,6 +1,6 @@
 using FluentAssertions;
-using Nexhire.Modules.EmployerProfiles.Core.Domain.Services;
-using Nexhire.Modules.EmployerProfiles.Core.Domain.ValueObjects;
+using Nexhire.Modules.EmployerProfiles.Domain.Services;
+using Nexhire.Modules.EmployerProfiles.Domain.ValueObjects;
 using Xunit;
 
 namespace Nexhire.Modules.EmployerProfiles.Tests.Unit;

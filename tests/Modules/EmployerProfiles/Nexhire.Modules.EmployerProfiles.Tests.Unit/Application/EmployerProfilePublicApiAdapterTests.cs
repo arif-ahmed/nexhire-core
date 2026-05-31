@@ -1,9 +1,9 @@
 using FluentAssertions;
 using NSubstitute;
 using Nexhire.Modules.EmployerProfiles.Contracts;
-using Nexhire.Modules.EmployerProfiles.Core.Domain.Aggregates;
-using Nexhire.Modules.EmployerProfiles.Core.Domain.Repositories;
-using Nexhire.Modules.EmployerProfiles.Core.Domain.ValueObjects;
+using Nexhire.Modules.EmployerProfiles.Domain.Aggregates;
+using Nexhire.Modules.EmployerProfiles.Domain.Repositories;
+using Nexhire.Modules.EmployerProfiles.Domain.ValueObjects;
 using Nexhire.Modules.EmployerProfiles.Infrastructure.PublicApi;
 
 namespace Nexhire.Modules.EmployerProfiles.Tests.Unit.Application;

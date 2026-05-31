@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Nexhire.Modules.EmployerProfiles.Core.Domain.Projections;
+using Nexhire.Modules.EmployerProfiles.Domain.Projections;
 
 namespace Nexhire.Modules.EmployerProfiles.Infrastructure.Persistence.Configurations;
 

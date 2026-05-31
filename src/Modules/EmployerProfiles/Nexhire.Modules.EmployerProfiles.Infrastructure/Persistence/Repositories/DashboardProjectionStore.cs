@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
-using Nexhire.Modules.EmployerProfiles.Core.Domain.Projections;
-using Nexhire.Modules.EmployerProfiles.Core.Domain.Repositories;
+using Nexhire.Modules.EmployerProfiles.Domain.Projections;
+using Nexhire.Modules.EmployerProfiles.Domain.Repositories;
 
 namespace Nexhire.Modules.EmployerProfiles.Infrastructure.Persistence.Repositories;
 

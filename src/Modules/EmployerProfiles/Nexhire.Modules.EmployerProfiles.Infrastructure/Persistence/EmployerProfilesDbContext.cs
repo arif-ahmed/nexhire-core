@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
-using Nexhire.Modules.EmployerProfiles.Core.Domain.Aggregates;
-using Nexhire.Modules.EmployerProfiles.Core.Domain.Projections;
+using Nexhire.Modules.EmployerProfiles.Domain.Aggregates;
+using Nexhire.Modules.EmployerProfiles.Domain.Projections;
 using Nexhire.Shared.Infrastructure.Interceptors;
 using Nexhire.Shared.Infrastructure.Messaging;
 

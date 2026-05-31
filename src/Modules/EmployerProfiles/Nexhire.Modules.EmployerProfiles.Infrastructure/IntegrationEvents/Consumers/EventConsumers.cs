@@ -1,8 +1,8 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Nexhire.Modules.EmployerProfiles.Core.Domain.Aggregates;
-using Nexhire.Modules.EmployerProfiles.Core.Domain.Projections;
-using Nexhire.Modules.EmployerProfiles.Core.Domain.Repositories;
+using Nexhire.Modules.EmployerProfiles.Domain.Aggregates;
+using Nexhire.Modules.EmployerProfiles.Domain.Projections;
+using Nexhire.Modules.EmployerProfiles.Domain.Repositories;
 using Nexhire.Modules.EmployerProfiles.Infrastructure.IntegrationEvents;
 using Nexhire.Modules.EmployerProfiles.Infrastructure.Persistence;
 using Nexhire.Shared.Infrastructure.Messaging;

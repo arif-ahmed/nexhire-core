@@ -1,4 +1,4 @@
-using Nexhire.Modules.EmployerProfiles.Core.Domain.Repositories;
+using Nexhire.Modules.EmployerProfiles.Domain.Repositories;
 
 namespace Nexhire.Modules.EmployerProfiles.Infrastructure.Persistence.Repositories;
 

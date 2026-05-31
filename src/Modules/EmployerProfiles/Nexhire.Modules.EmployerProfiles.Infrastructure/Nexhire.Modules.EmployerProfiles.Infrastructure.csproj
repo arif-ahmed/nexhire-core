@@ -2,7 +2,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Nexhire.Modules.EmployerProfiles.Contracts\Nexhire.Modules.EmployerProfiles.Contracts.csproj" />
-    <ProjectReference Include="..\Nexhire.Modules.EmployerProfiles.Core\Nexhire.Modules.EmployerProfiles.Core.csproj" />
+    <ProjectReference Include="..\Nexhire.Modules.EmployerProfiles.Domain\Nexhire.Modules.EmployerProfiles.Domain.csproj" />
+    <ProjectReference Include="..\Nexhire.Modules.EmployerProfiles.Application\Nexhire.Modules.EmployerProfiles.Application.csproj" />
     <ProjectReference Include="..\..\..\Shared\Nexhire.Shared.Infrastructure\Nexhire.Shared.Infrastructure.csproj" />
   </ItemGroup>
 

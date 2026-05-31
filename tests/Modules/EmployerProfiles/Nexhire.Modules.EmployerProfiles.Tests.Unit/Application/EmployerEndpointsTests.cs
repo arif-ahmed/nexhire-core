@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
-using Nexhire.Modules.EmployerProfiles.Infrastructure.Endpoints;
+using Nexhire.Modules.EmployerProfiles.Presentation.Endpoints;
 using Xunit;
 
 namespace Nexhire.Modules.EmployerProfiles.Tests.Unit.Application;

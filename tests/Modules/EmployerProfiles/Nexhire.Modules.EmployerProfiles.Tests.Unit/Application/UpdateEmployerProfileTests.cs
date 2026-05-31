@@ -1,11 +1,11 @@
 using FluentAssertions;
 using FluentValidation.TestHelper;
 using NSubstitute;
-using Nexhire.Modules.EmployerProfiles.Core.Domain.Aggregates;
-using Nexhire.Modules.EmployerProfiles.Core.Domain.Repositories;
-using Nexhire.Modules.EmployerProfiles.Core.Domain.ValueObjects;
-using Nexhire.Modules.EmployerProfiles.Core.DTOs;
-using Nexhire.Modules.EmployerProfiles.Core.EmployerProfiles.Commands.UpdateEmployerProfile;
+using Nexhire.Modules.EmployerProfiles.Domain.Aggregates;
+using Nexhire.Modules.EmployerProfiles.Domain.Repositories;
+using Nexhire.Modules.EmployerProfiles.Domain.ValueObjects;
+using Nexhire.Modules.EmployerProfiles.Application.DTOs;
+using Nexhire.Modules.EmployerProfiles.Application.EmployerProfiles.Commands.UpdateEmployerProfile;
 
 namespace Nexhire.Modules.EmployerProfiles.Tests.Unit.Application;
 

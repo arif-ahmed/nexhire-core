@@ -1,8 +1,8 @@
 using FluentAssertions;
 using NSubstitute;
-using Nexhire.Modules.EmployerProfiles.Core.Domain.Projections;
-using Nexhire.Modules.EmployerProfiles.Core.Domain.Repositories;
-using Nexhire.Modules.EmployerProfiles.Core.EmployerProfiles.Queries.GetEmployerJobPostings;
+using Nexhire.Modules.EmployerProfiles.Domain.Projections;
+using Nexhire.Modules.EmployerProfiles.Domain.Repositories;
+using Nexhire.Modules.EmployerProfiles.Application.EmployerProfiles.Queries.GetEmployerJobPostings;
 
 namespace Nexhire.Modules.EmployerProfiles.Tests.Unit.Application;
 

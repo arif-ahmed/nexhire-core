@@ -1,14 +1,14 @@
 using FluentAssertions;
 using NSubstitute;
-using Nexhire.Modules.EmployerProfiles.Core.Domain.Aggregates;
-using Nexhire.Modules.EmployerProfiles.Core.Domain.Ports;
-using Nexhire.Modules.EmployerProfiles.Core.Domain.Repositories;
-using Nexhire.Modules.EmployerProfiles.Core.Domain.ValueObjects;
-using Nexhire.Modules.EmployerProfiles.Core.EmployerProfiles.Commands.UploadEmployerLogo;
-using Nexhire.Modules.EmployerProfiles.Core.EmployerProfiles.Commands.UploadCompanyImage;
-using Nexhire.Modules.EmployerProfiles.Core.EmployerProfiles.Commands.RemoveCompanyImage;
-using Nexhire.Modules.EmployerProfiles.Core.EmployerProfiles.Commands.UploadEmployerDocument;
-using Nexhire.Modules.EmployerProfiles.Core.EmployerProfiles.Commands.RemoveEmployerDocument;
+using Nexhire.Modules.EmployerProfiles.Domain.Aggregates;
+using Nexhire.Modules.EmployerProfiles.Domain.Ports;
+using Nexhire.Modules.EmployerProfiles.Domain.Repositories;
+using Nexhire.Modules.EmployerProfiles.Domain.ValueObjects;
+using Nexhire.Modules.EmployerProfiles.Application.EmployerProfiles.Commands.UploadEmployerLogo;
+using Nexhire.Modules.EmployerProfiles.Application.EmployerProfiles.Commands.UploadCompanyImage;
+using Nexhire.Modules.EmployerProfiles.Application.EmployerProfiles.Commands.RemoveCompanyImage;
+using Nexhire.Modules.EmployerProfiles.Application.EmployerProfiles.Commands.UploadEmployerDocument;
+using Nexhire.Modules.EmployerProfiles.Application.EmployerProfiles.Commands.RemoveEmployerDocument;
 using Nexhire.Shared.Core.Results;
 using Xunit;
 

@@ -1,13 +1,13 @@
 using FluentAssertions;
 using NSubstitute;
-using Nexhire.Modules.EmployerProfiles.Core.Domain.Aggregates;
-using Nexhire.Modules.EmployerProfiles.Core.Domain.Repositories;
-using Nexhire.Modules.EmployerProfiles.Core.Domain.ValueObjects;
-using Nexhire.Modules.EmployerProfiles.Core.DTOs;
-using Nexhire.Modules.EmployerProfiles.Core.EmployerProfiles.Commands.RequestEmployerVerification;
-using Nexhire.Modules.EmployerProfiles.Core.EmployerProfiles.Commands.ApproveEmployerVerification;
-using Nexhire.Modules.EmployerProfiles.Core.EmployerProfiles.Commands.RejectEmployerVerification;
-using Nexhire.Modules.EmployerProfiles.Core.EmployerProfiles.Commands.ResubmitEmployerVerification;
+using Nexhire.Modules.EmployerProfiles.Domain.Aggregates;
+using Nexhire.Modules.EmployerProfiles.Domain.Repositories;
+using Nexhire.Modules.EmployerProfiles.Domain.ValueObjects;
+using Nexhire.Modules.EmployerProfiles.Application.DTOs;
+using Nexhire.Modules.EmployerProfiles.Application.EmployerProfiles.Commands.RequestEmployerVerification;
+using Nexhire.Modules.EmployerProfiles.Application.EmployerProfiles.Commands.ApproveEmployerVerification;
+using Nexhire.Modules.EmployerProfiles.Application.EmployerProfiles.Commands.RejectEmployerVerification;
+using Nexhire.Modules.EmployerProfiles.Application.EmployerProfiles.Commands.ResubmitEmployerVerification;
 using Nexhire.Shared.Core.Results;
 using Xunit;
 

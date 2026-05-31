@@ -1,6 +1,8 @@
-using Nexhire.Modules.EmployerProfiles.Core.Domain.Aggregates;
+using Nexhire.Modules.EmployerProfiles.Domain.Aggregates;
 using Nexhire.Modules.IdentityAccess.Infrastructure.Persistence;
+using Nexhire.Modules.EmployerProfiles.Application.EmployerProfiles.Commands.RegisterEmployer;
 using Nexhire.Modules.EmployerProfiles.Infrastructure;
+using Nexhire.Modules.EmployerProfiles.Presentation;
 using Nexhire.Modules.JobApplication.Core.Domain;
 using Nexhire.Modules.JobApplication.Infrastructure;
 using Nexhire.Modules.JobPostings.Core.Domain.Aggregates;
@@ -40,7 +42,9 @@ var moduleAssemblies = new[]
     typeof(IdentityAccessModule).Assembly,
     typeof(Nexhire.Modules.IdentityAccess.Contracts.Events.UserRegisteredIntegrationEvent).Assembly,
     typeof(EmployerProfile).Assembly,
+    typeof(RegisterEmployerCommand).Assembly,
     typeof(EmployerProfilesModule).Assembly,
+    typeof(EmployerProfilesPresentationModule).Assembly,
     typeof(JobPosting).Assembly,
     typeof(JobPostingsModule).Assembly,
     typeof(JobSeekerProfile).Assembly,

@@ -1,4 +1,4 @@
-using Nexhire.Modules.EmployerProfiles.Core.Domain.Ports;
+using Nexhire.Modules.EmployerProfiles.Domain.Ports;
 using Nexhire.Shared.Core.Results;
 
 namespace Nexhire.Modules.EmployerProfiles.Infrastructure.Adapters;
