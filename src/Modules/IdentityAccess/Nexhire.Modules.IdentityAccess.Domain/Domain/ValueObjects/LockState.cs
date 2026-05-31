@@ -9,6 +9,8 @@ public class LockState : ValueObject
     public int FailedLoginCount { get; }
     public int FailedOtpCount { get; }
 
+    private LockState() { } // EF Core
+
     private LockState(bool isLocked, DateTime? lockedUntilUtc, int failedLoginCount, int failedOtpCount)
     {
         IsLocked = isLocked;

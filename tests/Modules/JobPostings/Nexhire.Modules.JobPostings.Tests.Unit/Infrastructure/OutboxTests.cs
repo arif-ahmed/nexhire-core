@@ -1,6 +1,7 @@
 using FluentAssertions;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Nexhire.Modules.JobPostings.Core.Domain.Aggregates;
 using Nexhire.Modules.JobPostings.Core.Domain.ValueObjects;
 using Nexhire.Modules.JobPostings.Infrastructure.Persistence;
@@ -19,7 +20,9 @@ public class OutboxTests
             .Options;
 
         var publisher = Substitute.For<IPublisher>();
-        await using var dbContext = new JobPostingsDbContext(options, new PublishDomainEventsInterceptor(publisher));
+        var services = new ServiceCollection();
+        services.AddSingleton(publisher);
+        await using var dbContext = new JobPostingsDbContext(options, new PublishDomainEventsInterceptor(services.BuildServiceProvider()));
         var posting = JobPosting.CreateDraft(
             Guid.NewGuid(),
             Guid.NewGuid(),

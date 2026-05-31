@@ -8,10 +8,12 @@ public class PasswordHash : ValueObject
     public string Algorithm { get; }
     public string Value { get; }
 
+    private PasswordHash() { } // EF Core
+
     private PasswordHash(string algorithm, string value)
     {
-        Algorithm = algorithm;
-        Value = value;
+        Algorithm = algorithm!;
+        Value = value!;
     }
 
     public static Result<PasswordHash> Create(string hash)

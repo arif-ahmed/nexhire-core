@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
@@ -16,19 +16,21 @@
     <ProjectReference Include="..\..\Modules\IdentityAccess\Nexhire.Modules.IdentityAccess.Application\Nexhire.Modules.IdentityAccess.Application.csproj" />
     <ProjectReference Include="..\..\Modules\IdentityAccess\Nexhire.Modules.IdentityAccess.Infrastructure\Nexhire.Modules.IdentityAccess.Infrastructure.csproj" />
     <ProjectReference Include="..\..\Modules\IdentityAccess\Nexhire.Modules.IdentityAccess.Presentation\Nexhire.Modules.IdentityAccess.Presentation.csproj" />
-    <ProjectReference Include="..\..\Modules\RecommendationEngine\Nexhire.Modules.RecommendationEngine.Infrastructure\Nexhire.Modules.RecommendationEngine.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\Modules\IdentityAccess\Nexhire.Modules.IdentityAccess.Contracts\Nexhire.Modules.IdentityAccess.Contracts.csproj" />
     <ProjectReference Include="..\..\Modules\ExternalJobSync\Nexhire.Modules.ExternalJobSync.Infrastructure\Nexhire.Modules.ExternalJobSync.Infrastructure.csproj" />
     <ProjectReference Include="..\..\Modules\Reporting\Nexhire.Modules.Reporting.Infrastructure\Nexhire.Modules.Reporting.Infrastructure.csproj" />
     <ProjectReference Include="..\..\Modules\AdministratorsConfiguration\Nexhire.Modules.AdministratorsConfiguration.Infrastructure\Nexhire.Modules.AdministratorsConfiguration.Infrastructure.csproj" />
     <ProjectReference Include="..\..\Modules\ContentManagement\Nexhire.Modules.ContentManagement.Infrastructure\Nexhire.Modules.ContentManagement.Infrastructure.csproj" />
     <ProjectReference Include="..\..\Modules\Notification\Nexhire.Modules.Notification.Infrastructure\Nexhire.Modules.Notification.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\Modules\RecommendationEngine\Nexhire.Modules.RecommendationEngine.Infrastructure\Nexhire.Modules.RecommendationEngine.Infrastructure.csproj" />
     <ProjectReference Include="..\..\Shared\Nexhire.Shared.Infrastructure\Nexhire.Shared.Infrastructure.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.8" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.8" />
     <PackageReference Include="Scalar.AspNetCore" Version="2.14.14" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.2">
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.8">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>

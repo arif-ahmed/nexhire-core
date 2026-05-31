@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
 using Nexhire.Modules.JobApplication.Core.Domain;
 using Nexhire.Modules.JobApplication.Core.Domain.ValueObjects;
@@ -28,7 +29,9 @@ public class IntegrationEventConsumerTests
     public IntegrationEventConsumerTests()
     {
         _publisherMock = Substitute.For<IPublisher>();
-        var interceptor = new PublishDomainEventsInterceptor(_publisherMock);
+        var services = new ServiceCollection();
+        services.AddSingleton(_publisherMock);
+        var interceptor = new PublishDomainEventsInterceptor(services.BuildServiceProvider());
 
         var options = new DbContextOptionsBuilder<JobApplicationDbContext>()
             .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())

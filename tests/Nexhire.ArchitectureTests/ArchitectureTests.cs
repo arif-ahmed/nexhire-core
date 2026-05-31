@@ -6,7 +6,7 @@ namespace Nexhire.ArchitectureTests;
 
 public class ArchitectureTests
 {
-    private static readonly Assembly CoreAssembly = typeof(Nexhire.Modules.IdentityAccess.Domain.UserAccount).Assembly;
+    private static readonly Assembly CoreAssembly = typeof(Nexhire.Modules.IdentityAccess.Domain.Domain.UserAccount).Assembly;
     private static readonly Assembly JobPostingsCoreAssembly = typeof(Nexhire.Modules.JobPostings.Core.Domain.Aggregates.JobPosting).Assembly;
 
     [Fact]

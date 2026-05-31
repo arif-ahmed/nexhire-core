@@ -16,6 +16,8 @@ public class MfaConfiguration : ValueObject
     public MfaMethod Method { get; }
     public string? SecretRef { get; }
 
+    private MfaConfiguration() { } // EF Core
+
     private MfaConfiguration(bool enabled, MfaMethod method, string? secretRef)
     {
         Enabled = enabled;
