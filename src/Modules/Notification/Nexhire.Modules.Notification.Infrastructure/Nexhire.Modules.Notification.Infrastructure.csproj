@@ -15,5 +15,6 @@
     <ProjectReference Include="..\Nexhire.Modules.Notification.Application\Nexhire.Modules.Notification.Application.csproj" />
     <ProjectReference Include="..\Nexhire.Modules.Notification.Presentation\Nexhire.Modules.Notification.Presentation.csproj" />
     <ProjectReference Include="..\..\..\Shared\Nexhire.Shared.Infrastructure\Nexhire.Shared.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\IdentityAccess\Nexhire.Modules.IdentityAccess.Contracts\Nexhire.Modules.IdentityAccess.Contracts.csproj" />
   </ItemGroup>
 </Project>

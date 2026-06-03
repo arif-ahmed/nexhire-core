@@ -45,6 +45,7 @@ public static class IdentityAccessModule
         services.AddHostedService<OtpExpirySweepBackgroundService>();
         services.AddHostedService<SessionExpirySweepBackgroundService>();
         services.AddHostedService<CleanupBackgroundService>();
+        services.AddHostedService<IdentityAccessOutboxRelayBackgroundService>();
 
         return services;
     }
