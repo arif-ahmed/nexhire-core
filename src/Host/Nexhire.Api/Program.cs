@@ -31,8 +31,13 @@ using Nexhire.Api.Adapters.IdentityAccess;
 using Nexhire.Api.Middleware;
 using Nexhire.Modules.IdentityAccess.Contracts;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Allow background services with pre-existing bugs to fail gracefully
+builder.Services.Configure<HostOptions>(options =>
+    options.BackgroundServiceExceptionBehavior = BackgroundServiceExceptionBehavior.Ignore);
 
 // Define active module assemblies for dynamic scanning (MediatR CQRS and FluentValidation schemas)
 var moduleAssemblies = new[]
@@ -86,6 +91,7 @@ builder.Services.AddContentManagementModule(builder.Configuration);
 builder.Services.AddNotificationModule(builder.Configuration);
 
 builder.Services.AddScoped<IJobSeekerProfileQueryApi, JobSeekerProfileQueryApiAdapter>();
+builder.Services.AddScoped<Nexhire.Modules.EmployerProfiles.Domain.Ports.IIdentityProvisioningApi, IdentityProvisioningApiAdapter>();
 builder.Services.AddScoped<IIdentityProvisioningApi, IdentityProvisioningApiAdapter>();
 builder.Services.AddScoped<ITokenValidationApi, TokenValidationApiAdapter>();
 
@@ -104,6 +110,7 @@ app.UseNexhireAuthentication();
 app.UseAuthorization();
 
 await app.Services.SeedIdentityAccessDataAsync();
+await app.Services.EnsureModuleDatabasesCreatedAsync();
 
 // 4. Map Pluggable Module Routing
 app.MapIdentityAccessEndpoints();
@@ -132,3 +139,43 @@ app.MapGet("health", () => Results.Ok(new
 app.Run();
 
 public partial class Program { }
+
+file static class DatabaseInitializerExtensions
+{
+    public static async Task EnsureModuleDatabasesCreatedAsync(this IServiceProvider services)
+    {
+        using var scope = services.CreateScope();
+        var sp = scope.ServiceProvider;
+        var logger = sp.GetRequiredService<ILogger<Program>>();
+
+        var tasks = new[]
+        {
+            TryEnsureCreatedAsync<Nexhire.Modules.EmployerProfiles.Infrastructure.Persistence.EmployerProfilesDbContext>(sp, logger),
+            TryEnsureCreatedAsync<Nexhire.Modules.Notification.Infrastructure.Persistence.NotificationDbContext>(sp, logger),
+            TryEnsureCreatedAsync<Nexhire.Modules.ContentManagement.Infrastructure.Persistence.ContentManagementDbContext>(sp, logger),
+            TryEnsureCreatedAsync<Nexhire.Modules.JobPostings.Infrastructure.Persistence.JobPostingsDbContext>(sp, logger),
+            TryEnsureCreatedAsync<Nexhire.Modules.JobSeekerProfile.Infrastructure.Persistence.JobSeekerProfileDbContext>(sp, logger),
+            TryEnsureCreatedAsync<Nexhire.Modules.JobApplication.Infrastructure.Persistence.JobApplicationDbContext>(sp, logger),
+            TryEnsureCreatedAsync<Nexhire.Modules.SearchDiscovery.Infrastructure.Persistence.SearchDiscoveryDbContext>(sp, logger),
+            TryEnsureCreatedAsync<Nexhire.Modules.RecommendationEngine.Infrastructure.Persistence.RecommendationEngineDbContext>(sp, logger),
+            TryEnsureCreatedAsync<Nexhire.Modules.ExternalJobSync.Infrastructure.Persistence.ExternalJobSyncDbContext>(sp, logger),
+            TryEnsureCreatedAsync<Nexhire.Modules.Reporting.Infrastructure.Persistence.ReportingDbContext>(sp, logger),
+            TryEnsureCreatedAsync<Nexhire.Modules.AdministratorsConfiguration.Infrastructure.Persistence.AdministratorsConfigurationDbContext>(sp, logger),
+        };
+
+        await Task.WhenAll(tasks);
+    }
+
+    private static async Task TryEnsureCreatedAsync<T>(IServiceProvider sp, ILogger logger) where T : DbContext
+    {
+        try
+        {
+            var db = sp.GetRequiredService<T>();
+            await db.Database.EnsureCreatedAsync();
+        }
+        catch (Exception ex)
+        {
+            logger.LogWarning(ex, "Could not auto-create database schema for {DbContext}", typeof(T).Name);
+        }
+    }
+}

@@ -36,7 +36,6 @@ public static class EmployerProfilesModule
         services.AddScoped<IDashboardProjectionStore, DashboardProjectionStore>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
 
-        services.AddScoped<IIdentityProvisioningApi, StubIdentityProvisioningApi>();
         services.AddScoped<IVirusScanner, StubVirusScanner>();
         services.AddScoped<IObjectStorage, StubObjectStorage>();
 

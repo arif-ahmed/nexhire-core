@@ -266,6 +266,8 @@ public sealed class TemplateVersion : ValueObject
     public DateTime CreatedOnUtc { get; }
     public Guid CreatedByUserId { get; }
 
+    private TemplateVersion() { Placeholders = []; }
+
     private TemplateVersion(
         int versionNumber,
         string? subject,

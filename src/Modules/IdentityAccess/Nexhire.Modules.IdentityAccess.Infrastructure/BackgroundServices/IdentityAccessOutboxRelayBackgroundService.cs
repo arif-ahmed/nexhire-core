@@ -25,6 +25,7 @@ public sealed class IdentityAccessOutboxRelayBackgroundService : BackgroundServi
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
+        _logger.LogInformation("[IdentityAccessOutboxRelay] Starting outbox relay (interval: 15s)");
         using var timer = new PeriodicTimer(TimeSpan.FromSeconds(15));
         while (!stoppingToken.IsCancellationRequested && await timer.WaitForNextTickAsync(stoppingToken))
         {
@@ -46,8 +47,12 @@ public sealed class IdentityAccessOutboxRelayBackgroundService : BackgroundServi
                 .Take(20)
                 .ToListAsync(cancellationToken);
 
+            _logger.LogInformation("[IdentityAccessOutboxRelay] Found {Count} unprocessed messages", messages.Count);
+
             foreach (var message in messages)
             {
+                _logger.LogInformation("[IdentityAccessOutboxRelay] Processing outbox message {Id} of type {Type}", message.Id, message.Type);
+
                 var type = Type.GetType(message.Type);
                 if (type is null || !typeof(IDomainEvent).IsAssignableFrom(type))
                 {

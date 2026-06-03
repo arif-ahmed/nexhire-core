@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Nexhire.Modules.EmployerProfiles.Domain.Aggregates;
 using Nexhire.Modules.EmployerProfiles.Domain.Repositories;
+using Nexhire.Modules.EmployerProfiles.Domain.ValueObjects;
 
 namespace Nexhire.Modules.EmployerProfiles.Infrastructure.Persistence.Repositories;
 
@@ -31,8 +32,9 @@ public class EmployerProfileRepository : IEmployerProfileRepository
 
     public async Task<bool> CompanyIdentifierExistsAsync(string companyIdentifier, CancellationToken cancellationToken = default)
     {
+        var target = CompanyIdentifier.Create(companyIdentifier).Value;
         return await _dbContext.EmployerProfiles
-            .AnyAsync(ep => ep.CompanyIdentifier.Value == companyIdentifier, cancellationToken);
+            .AnyAsync(ep => ep.CompanyIdentifier == target, cancellationToken);
     }
 
     public async Task AddAsync(EmployerProfile profile, CancellationToken cancellationToken = default)
