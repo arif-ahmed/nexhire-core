@@ -42,15 +42,23 @@ The interesting part: when BC-1 finishes creating the credential, it doesn't cal
 
 ## How to Test
 
-### Step 1: Start the API
+### Step 1: Start the database
+
+```bash
+docker compose up -d nexhire-db
+```
+
+This starts PostgreSQL 16 on `localhost:5432`. Wait a few seconds for the health check to pass.
+
+### Step 2: Start the API
 
 ```bash
 dotnet run --project src/Host/Nexhire.Api
 ```
 
-The server starts at `http://localhost:5001`. No database setup needed — it uses an in-memory database by default.
+The server starts at `http://localhost:5001`.
 
-### Step 2: Register an employer
+### Step 3: Register an employer
 
 ```bash
 curl -s -X POST http://localhost:5001/api/employers/register \
@@ -75,7 +83,7 @@ curl -s -X POST http://localhost:5001/api/employers/register \
 
 This confirms the employer profile was created in BC-2 and the user credential was provisioned in BC-1.
 
-### Step 3: Watch the event cross to BC-9
+### Step 4: Watch the event cross to BC-9
 
 Look at the API console output. Within 15 seconds you'll see two log lines:
 
@@ -93,7 +101,7 @@ This is the proof that:
 - BC-1's outbox relay picked it up and published it
 - BC-9 received and handled it without BC-1 ever knowing about BC-9
 
-### Step 4: Prove idempotency (try registering again)
+### Step 5: Prove idempotency (try registering again)
 
 ```bash
 curl -s -X POST http://localhost:5001/api/employers/register \
