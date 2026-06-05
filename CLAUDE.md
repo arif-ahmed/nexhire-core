@@ -132,6 +132,9 @@ No controllers. Each module's `Endpoints/` directory contains static classes wit
 - Public endpoints (register, login, activate, password-reset) are anonymous.
 - Admin endpoints (`/admin/*`) require the `users:manage` permission, return `403 E-FORBIDDEN` otherwise.
 - Auth middleware consumes `ITokenValidationApi` (in-process, not an HTTP route) to validate access tokens and extract `ClaimsPrincipal`.
+- **OpenAPI / SDK Generation:** All REST API endpoints MUST follow the OpenAPI Specification (OAS). Ensure endpoints are decorated with proper metadata (such as `.WithTags()`, `.WithName()`, `.WithSummary()`, and `Produces<T>()`) to guarantee that robust client SDKs can be automatically generated from the documentation.
+- **CorrelationId:** **ALL** endpoints (both Read and Write) MUST support and log a `CorrelationId` (e.g., via `X-Correlation-Id` header) to ensure end-to-end traceability of requests.
+- **Idempotency:** Mutating endpoints (Commands/Writes: `POST`, `PUT`, `PATCH`, `DELETE`) MUST be designed to be idempotent. Clients should be able to safely retry write operations without causing unintended side effects or duplicate records. Read (`GET`) APIs are naturally idempotent.
 
 ## Security guardrails
 
