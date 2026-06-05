@@ -9,7 +9,7 @@ using System.Text.Json;
 
 namespace Nexhire.Modules.JobSeekerProfile.Core.JobSeekerProfile.Commands.UploadResume;
 
-public class UploadResumeCommandHandler : ICommandHandler<UploadResumeCommand>
+public class UploadResumeCommandHandler : ICommandHandler<UploadResumeCommand, Guid>
 {
     private readonly IJobSeekerProfileRepository _profileRepository;
     private readonly IResumeRepository _resumeRepository;
@@ -34,33 +34,33 @@ public class UploadResumeCommandHandler : ICommandHandler<UploadResumeCommand>
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<Result> Handle(UploadResumeCommand request, CancellationToken cancellationToken)
+    public async Task<Result<Guid>> Handle(UploadResumeCommand request, CancellationToken cancellationToken)
     {
         // 1. Load Profile
         var profile = await _profileRepository.GetByUserIdAsync(request.UserId, cancellationToken);
         if (profile == null)
         {
-            return Result.Failure(new Error("JobSeekerProfile.NotFound", "Job seeker profile not found."));
+            return Result.Failure<Guid>(new Error("JobSeekerProfile.NotFound", "Job seeker profile not found."));
         }
 
         // 2. Validate format and size before storing
         var tempFileRefResult = FileReference.Create("temp_key", request.FileName, request.MimeType, request.Content.Length);
         if (tempFileRefResult.IsFailure)
         {
-            return Result.Failure(tempFileRefResult.Error);
+            return Result.Failure<Guid>(tempFileRefResult.Error);
         }
 
         var tempResumeResult = Resume.Upload(Guid.NewGuid(), profile.Id, tempFileRefResult.Value);
         if (tempResumeResult.IsFailure)
         {
-            return Result.Failure(tempResumeResult.Error);
+            return Result.Failure<Guid>(tempResumeResult.Error);
         }
 
         // 3. Store file in object storage
         var storeResult = await _objectStorage.StoreAsync(request.Content, request.FileName, request.MimeType, cancellationToken);
         if (storeResult.IsFailure)
         {
-            return Result.Failure(storeResult.Error);
+            return Result.Failure<Guid>(storeResult.Error);
         }
 
         var fileRef = storeResult.Value;
@@ -70,7 +70,7 @@ public class UploadResumeCommandHandler : ICommandHandler<UploadResumeCommand>
         if (resumeResult.IsFailure)
         {
             await _objectStorage.DeleteAsync(fileRef.StorageKey, cancellationToken);
-            return Result.Failure(resumeResult.Error);
+            return Result.Failure<Guid>(resumeResult.Error);
         }
 
         var resume = resumeResult.Value;
@@ -94,7 +94,7 @@ public class UploadResumeCommandHandler : ICommandHandler<UploadResumeCommand>
             }
             await _resumeRepository.AddAsync(resume, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
-            return Result.Failure(recordScanResult.Error);
+            return Result.Failure<Guid>(recordScanResult.Error);
         }
 
         // 7. Perform Resume Parsing (with a 30-second timeout)
@@ -131,6 +131,6 @@ public class UploadResumeCommandHandler : ICommandHandler<UploadResumeCommand>
         await _resumeRepository.AddAsync(resume, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-        return Result.Success();
+        return Result.Success(resume.Id);
     }
 }

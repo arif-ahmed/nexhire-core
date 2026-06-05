@@ -3,12 +3,13 @@ using Nexhire.Modules.JobSeekerProfile.Core.Domain.Ports;
 using Nexhire.Modules.JobSeekerProfile.Core.Domain.Repositories;
 using Nexhire.Modules.JobSeekerProfile.Core.Domain.Services;
 using Nexhire.Modules.JobSeekerProfile.Core.Domain.ValueObjects;
+using Nexhire.Modules.JobSeekerProfile.Core.JobSeekerProfile.DTOs;
 using Nexhire.Shared.Core.CQRS;
 using Nexhire.Shared.Core.Results;
 
 namespace Nexhire.Modules.JobSeekerProfile.Core.JobSeekerProfile.Commands.EnablePublicSharing;
 
-public class EnablePublicSharingCommandHandler : ICommandHandler<EnablePublicSharingCommand>
+public class EnablePublicSharingCommandHandler : ICommandHandler<EnablePublicSharingCommand, PublicSharingSettingsDto>
 {
     private readonly IJobSeekerProfileRepository _repository;
     private readonly IQrCodeGenerator _qrCodeGenerator;
@@ -24,12 +25,12 @@ public class EnablePublicSharingCommandHandler : ICommandHandler<EnablePublicSha
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<Result> Handle(EnablePublicSharingCommand request, CancellationToken cancellationToken)
+    public async Task<Result<PublicSharingSettingsDto>> Handle(EnablePublicSharingCommand request, CancellationToken cancellationToken)
     {
         var profile = await _repository.GetByUserIdAsync(request.UserId, cancellationToken);
         if (profile == null)
         {
-            return Result.Failure(new Error("JobSeekerProfile.NotFound", "Job seeker profile not found."));
+            return Result.Failure<PublicSharingSettingsDto>(new Error("JobSeekerProfile.NotFound", "Job seeker profile not found."));
         }
 
         var slugResult = PublicSlugGenerator.Generate(
@@ -38,7 +39,7 @@ public class EnablePublicSharingCommandHandler : ICommandHandler<EnablePublicSha
 
         if (slugResult.IsFailure)
         {
-            return Result.Failure(slugResult.Error);
+            return Result.Failure<PublicSharingSettingsDto>(slugResult.Error);
         }
 
         var slug = slugResult.Value;
@@ -47,18 +48,18 @@ public class EnablePublicSharingCommandHandler : ICommandHandler<EnablePublicSha
         var qrCodeResult = await _qrCodeGenerator.GenerateAsync(publicUrl, cancellationToken);
         if (qrCodeResult.IsFailure)
         {
-            return Result.Failure(qrCodeResult.Error);
+            return Result.Failure<PublicSharingSettingsDto>(qrCodeResult.Error);
         }
 
         var enableResult = profile.EnablePublicSharing(slug, qrCodeResult.Value);
         if (enableResult.IsFailure)
         {
-            return enableResult;
+            return Result.Failure<PublicSharingSettingsDto>(enableResult.Error);
         }
 
         await _repository.UpdateAsync(profile, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-        return Result.Success();
+        return Result.Success(profile.PublicSharing.ToDto());
     }
 }

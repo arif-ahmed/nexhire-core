@@ -39,8 +39,8 @@ public static class JobSeekerEndpoints
 {
     public static void MapEndpoints(IEndpointRouteBuilder app)
     {
-        var group = app.MapGroup("api/jobseekers")
-            .WithTags("JobSeekers");
+        var group = app.MapGroup("api/job-seekers")
+            .WithTags("Job Seekers");
 
         // 1. Anonymous Seeker Registration
         group.MapPost("", async (RegisterJobSeekerCommand command, ISender sender) =>
@@ -48,7 +48,7 @@ public static class JobSeekerEndpoints
             var result = await sender.Send(command);
 
             return result.IsSuccess 
-                ? Results.Created($"/api/jobseekers/me", result.Value) 
+                ? Results.Created($"/api/job-seekers/{result.Value}", new { Id = result.Value })
                 : Results.BadRequest(result.Error);
         })
         .WithName("RegisterJobSeeker")
@@ -88,7 +88,7 @@ public static class JobSeekerEndpoints
             var result = await sender.Send(command);
 
             return result.IsSuccess 
-                ? Results.Ok() 
+                ? Results.NoContent() 
                 : Results.BadRequest(result.Error);
         })
         .WithName("SetJobPreferences")
@@ -118,7 +118,7 @@ public static class JobSeekerEndpoints
             var result = await sender.Send(command);
 
             return result.IsSuccess 
-                ? Results.Ok() 
+                ? Results.NoContent() 
                 : Results.BadRequest(result.Error);
         })
         .WithName("SetAddresses")
@@ -134,7 +134,7 @@ public static class JobSeekerEndpoints
             var result = await sender.Send(command);
 
             return result.IsSuccess 
-                ? Results.Ok() 
+                ? Results.NoContent() 
                 : Results.BadRequest(result.Error);
         })
         .WithName("SetRecentSalary")
@@ -150,7 +150,7 @@ public static class JobSeekerEndpoints
             var result = await sender.Send(command);
 
             return result.IsSuccess 
-                ? Results.Ok() 
+                ? Results.NoContent() 
                 : Results.BadRequest(result.Error);
         })
         .WithName("SetProfileVisibility")
@@ -173,7 +173,7 @@ public static class JobSeekerEndpoints
             var result = await sender.Send(command);
 
             return result.IsSuccess 
-                ? Results.Ok() 
+                ? Results.Created($"/api/job-seekers/me/education", null)
                 : Results.BadRequest(result.Error);
         })
         .WithName("AddEducationEntry")
@@ -197,7 +197,7 @@ public static class JobSeekerEndpoints
             var result = await sender.Send(command);
 
             return result.IsSuccess 
-                ? Results.Ok() 
+                ? Results.NoContent() 
                 : Results.BadRequest(result.Error);
         })
         .WithName("UpdateEducationEntry")
@@ -213,7 +213,7 @@ public static class JobSeekerEndpoints
             var result = await sender.Send(command);
 
             return result.IsSuccess 
-                ? Results.Ok() 
+                ? Results.NoContent() 
                 : Results.BadRequest(result.Error);
         })
         .WithName("RemoveEducationEntry")
@@ -237,7 +237,7 @@ public static class JobSeekerEndpoints
             var result = await sender.Send(command);
 
             return result.IsSuccess 
-                ? Results.Ok() 
+                ? Results.Created($"/api/job-seekers/me/experience", null)
                 : Results.BadRequest(result.Error);
         })
         .WithName("AddExperienceEntry")
@@ -262,7 +262,7 @@ public static class JobSeekerEndpoints
             var result = await sender.Send(command);
 
             return result.IsSuccess 
-                ? Results.Ok() 
+                ? Results.NoContent() 
                 : Results.BadRequest(result.Error);
         })
         .WithName("UpdateExperienceEntry")
@@ -278,7 +278,7 @@ public static class JobSeekerEndpoints
             var result = await sender.Send(command);
 
             return result.IsSuccess 
-                ? Results.Ok() 
+                ? Results.NoContent() 
                 : Results.BadRequest(result.Error);
         })
         .WithName("RemoveExperienceEntry")
@@ -299,7 +299,7 @@ public static class JobSeekerEndpoints
             var result = await sender.Send(command);
 
             return result.IsSuccess 
-                ? Results.Ok() 
+                ? Results.Created($"/api/job-seekers/me/skills", null)
                 : Results.BadRequest(result.Error);
         })
         .WithName("AddSkill")
@@ -315,7 +315,7 @@ public static class JobSeekerEndpoints
             var result = await sender.Send(command);
 
             return result.IsSuccess 
-                ? Results.Ok() 
+                ? Results.NoContent() 
                 : Results.BadRequest(result.Error);
         })
         .WithName("RemoveSkill")
@@ -331,7 +331,7 @@ public static class JobSeekerEndpoints
             var result = await sender.Send(command);
 
             return result.IsSuccess 
-                ? Results.Ok() 
+                ? Results.NoContent() 
                 : Results.BadRequest(result.Error);
         })
         .WithName("MarkProfileSelfAttested")
@@ -347,14 +347,14 @@ public static class JobSeekerEndpoints
             var result = await sender.Send(command);
 
             return result.IsSuccess 
-                ? Results.Ok() 
+                ? Results.Ok(result.Value) 
                 : Results.BadRequest(result.Error);
         })
         .WithName("EnablePublicSharing")
         .WithSummary("Enables public profile sharing and configures custom URL slug");
 
         // 17. Disable Public Sharing
-        group.MapPost("me/sharing/disable", async (ClaimsPrincipal principal, ISender sender) =>
+        group.MapDelete("me/sharing", async (ClaimsPrincipal principal, ISender sender) =>
         {
             var userId = GetUserId(principal);
             if (userId == null) return Results.Unauthorized();
@@ -363,7 +363,7 @@ public static class JobSeekerEndpoints
             var result = await sender.Send(command);
 
             return result.IsSuccess 
-                ? Results.Ok() 
+                ? Results.NoContent() 
                 : Results.BadRequest(result.Error);
         })
         .WithName("DisablePublicSharing")
@@ -379,7 +379,7 @@ public static class JobSeekerEndpoints
             var result = await sender.Send(command);
 
             return result.IsSuccess 
-                ? Results.Ok() 
+                ? Results.Ok(new { Slug = result.Value }) 
                 : Results.BadRequest(result.Error);
         })
         .WithName("RegeneratePublicSlug")
@@ -414,7 +414,7 @@ public static class JobSeekerEndpoints
             var result = await sender.Send(command);
 
             return result.IsSuccess 
-                ? Results.Ok() 
+                ? Results.Accepted($"/api/job-seekers/me/resume/{result.Value}", new { ResumeId = result.Value })
                 : Results.BadRequest(result.Error);
         })
         .DisableAntiforgery()
@@ -450,7 +450,7 @@ public static class JobSeekerEndpoints
             var result = await sender.Send(command);
 
             return result.IsSuccess 
-                ? Results.Ok() 
+                ? Results.NoContent() 
                 : Results.BadRequest(result.Error);
         })
         .WithName("ConfirmParsedResumeFields")
@@ -470,7 +470,7 @@ public static class JobSeekerEndpoints
             var result = await sender.Send(command);
 
             return result.IsSuccess 
-                ? Results.Ok() 
+                ? Results.Created($"/api/job-seekers/me/documents", null)
                 : Results.BadRequest(result.Error);
         })
         .DisableAntiforgery()
@@ -487,7 +487,7 @@ public static class JobSeekerEndpoints
             var result = await sender.Send(command);
 
             return result.IsSuccess 
-                ? Results.Ok() 
+                ? Results.NoContent() 
                 : Results.BadRequest(result.Error);
         })
         .WithName("DeleteSupplementaryDocument")
@@ -518,23 +518,23 @@ public static class JobSeekerEndpoints
             var result = await sender.Send(command);
 
             return result.IsSuccess 
-                ? Results.Ok() 
+                ? Results.NoContent() 
                 : Results.BadRequest(result.Error);
         })
         .WithName("RestoreProfileVersion")
         .WithSummary("Restores the profile state from a historical snapshot version");
 
-        // 27. Public Slug Access (Anonymous PII Secured)
-        group.MapGet("public/{slug}", async (string slug, ISender sender) =>
-        {
-            var result = await sender.Send(new GetPublicProfileQuery(slug));
+        // 27. Anonymous Public Profile Access
+        app.MapGet("p/{slug}", async (string slug, ISender sender) =>
+            {
+                var result = await sender.Send(new GetPublicProfileQuery(slug));
 
-            return result.IsSuccess 
-                ? Results.Ok(result.Value) 
-                : Results.NotFound(result.Error);
-        })
-        .WithName("GetPublicJobSeekerProfile")
-        .WithSummary("Retrieves a public job seeker profile by slug");
+                return result.IsSuccess
+                    ? Results.Ok(result.Value)
+                    : Results.NotFound(result.Error);
+            })
+            .WithName("GetPublicJobSeekerProfile")
+            .WithSummary("Retrieves a public job seeker profile by slug");
     }
 
     private static Guid? GetUserId(ClaimsPrincipal principal)

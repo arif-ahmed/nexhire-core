@@ -1,3 +1,4 @@
+using Nexhire.Modules.JobSeekerProfile.Contracts.Events;
 using Nexhire.Modules.JobSeekerProfile.Core.Domain.Events;
 using Nexhire.Modules.JobSeekerProfile.Core.Domain.ValueObjects;
 using Nexhire.Modules.JobSeekerProfile.Core.Domain.Services;
@@ -85,7 +86,7 @@ public class JobSeekerProfile : AggregateRoot<Guid>
 
         var profile = new JobSeekerProfile(id, userId, name, email, mobile, gender);
         
-        profile.RaiseDomainEvent(new JobSeekerRegisteredEvent(
+        profile.RaiseDomainEvent(new JobSeekerRegisteredIntegrationEvent(
             Guid.NewGuid(),
             profile.Id,
             profile.UserId,
@@ -273,7 +274,7 @@ public class JobSeekerProfile : AggregateRoot<Guid>
 
         RecomputeCompleteness();
 
-        RaiseDomainEvent(new ProfileSkillsUpdatedEvent(
+        RaiseDomainEvent(new ProfileSkillsUpdatedIntegrationEvent(
             Guid.NewGuid(),
             Id,
             new[] { canonicalRef.TaxonomyCode },
@@ -296,7 +297,7 @@ public class JobSeekerProfile : AggregateRoot<Guid>
 
         RecomputeCompleteness();
 
-        RaiseDomainEvent(new ProfileSkillsUpdatedEvent(
+        RaiseDomainEvent(new ProfileSkillsUpdatedIntegrationEvent(
             Guid.NewGuid(),
             Id,
             new string[0],
@@ -360,7 +361,7 @@ public class JobSeekerProfile : AggregateRoot<Guid>
 
         RecomputeCompleteness();
 
-        RaiseDomainEvent(new SupplementaryDocumentUploadedEvent(Guid.NewGuid(), Id, docResult.Value.Id, kind.ToString(), UpdatedOnUtc));
+        RaiseDomainEvent(new SupplementaryDocumentUploadedIntegrationEvent(Guid.NewGuid(), Id, docResult.Value.Id, kind.ToString(), UpdatedOnUtc));
 
         return Result.Success();
     }
@@ -385,7 +386,7 @@ public class JobSeekerProfile : AggregateRoot<Guid>
         Visibility = visibility;
         UpdatedOnUtc = DateTime.UtcNow;
 
-        RaiseDomainEvent(new ProfileVisibilityChangedEvent(Guid.NewGuid(), Id, visibility.ToString(), UpdatedOnUtc));
+        RaiseDomainEvent(new ProfileVisibilityChangedIntegrationEvent(Guid.NewGuid(), Id, visibility.ToString(), UpdatedOnUtc));
 
         return Result.Success();
     }
@@ -529,7 +530,7 @@ public class JobSeekerProfile : AggregateRoot<Guid>
 
         if (oldPercentage != -1 && Completeness.Percentage != oldPercentage)
         {
-            RaiseDomainEvent(new ProfileCompletenessChangedEvent(Guid.NewGuid(), Id, Completeness.Percentage, DateTime.UtcNow));
+            RaiseDomainEvent(new ProfileCompletenessChangedIntegrationEvent(Guid.NewGuid(), Id, Completeness.Percentage, DateTime.UtcNow));
         }
     }
 
@@ -537,7 +538,7 @@ public class JobSeekerProfile : AggregateRoot<Guid>
     {
         if (!wasL2Complete && IsLevel2Complete)
         {
-            RaiseDomainEvent(new ProfileLevel2CompletedEvent(Guid.NewGuid(), Id, Completeness.Percentage, DateTime.UtcNow));
+            RaiseDomainEvent(new ProfileLevel2CompletedIntegrationEvent(Guid.NewGuid(), Id, Completeness.Percentage, DateTime.UtcNow));
         }
     }
 }

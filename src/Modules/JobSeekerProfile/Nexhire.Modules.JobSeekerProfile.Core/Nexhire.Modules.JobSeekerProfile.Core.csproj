@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
+    <ProjectReference Include="..\Nexhire.Modules.JobSeekerProfile.Contracts\Nexhire.Modules.JobSeekerProfile.Contracts.csproj" />
     <ProjectReference Include="..\..\..\Shared\Nexhire.Shared.Core\Nexhire.Shared.Core.csproj" />
   </ItemGroup>
 

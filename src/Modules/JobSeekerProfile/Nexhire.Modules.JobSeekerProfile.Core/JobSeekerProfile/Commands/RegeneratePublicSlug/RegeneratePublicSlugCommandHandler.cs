@@ -8,7 +8,7 @@ using Nexhire.Shared.Core.Results;
 
 namespace Nexhire.Modules.JobSeekerProfile.Core.JobSeekerProfile.Commands.RegeneratePublicSlug;
 
-public class RegeneratePublicSlugCommandHandler : ICommandHandler<RegeneratePublicSlugCommand>
+public class RegeneratePublicSlugCommandHandler : ICommandHandler<RegeneratePublicSlugCommand, string>
 {
     private readonly IJobSeekerProfileRepository _repository;
     private readonly IQrCodeGenerator _qrCodeGenerator;
@@ -24,12 +24,12 @@ public class RegeneratePublicSlugCommandHandler : ICommandHandler<RegeneratePubl
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<Result> Handle(RegeneratePublicSlugCommand request, CancellationToken cancellationToken)
+    public async Task<Result<string>> Handle(RegeneratePublicSlugCommand request, CancellationToken cancellationToken)
     {
         var profile = await _repository.GetByUserIdAsync(request.UserId, cancellationToken);
         if (profile == null)
         {
-            return Result.Failure(new Error("JobSeekerProfile.NotFound", "Job seeker profile not found."));
+            return Result.Failure<string>(new Error("JobSeekerProfile.NotFound", "Job seeker profile not found."));
         }
 
         var slugResult = PublicSlugGenerator.Generate(
@@ -38,7 +38,7 @@ public class RegeneratePublicSlugCommandHandler : ICommandHandler<RegeneratePubl
 
         if (slugResult.IsFailure)
         {
-            return Result.Failure(slugResult.Error);
+            return Result.Failure<string>(slugResult.Error);
         }
 
         var newSlug = slugResult.Value;
@@ -47,18 +47,18 @@ public class RegeneratePublicSlugCommandHandler : ICommandHandler<RegeneratePubl
         var qrCodeResult = await _qrCodeGenerator.GenerateAsync(newPublicUrl, cancellationToken);
         if (qrCodeResult.IsFailure)
         {
-            return Result.Failure(qrCodeResult.Error);
+            return Result.Failure<string>(qrCodeResult.Error);
         }
 
         var regenerateResult = profile.RegeneratePublicSlug(newSlug, qrCodeResult.Value);
         if (regenerateResult.IsFailure)
         {
-            return regenerateResult;
+            return Result.Failure<string>(regenerateResult.Error);
         }
 
         await _repository.UpdateAsync(profile, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-        return Result.Success();
+        return Result.Success(newSlug);
     }
 }

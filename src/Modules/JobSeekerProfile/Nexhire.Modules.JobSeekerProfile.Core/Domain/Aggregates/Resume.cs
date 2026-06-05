@@ -1,3 +1,4 @@
+using Nexhire.Modules.JobSeekerProfile.Contracts.Events;
 using Nexhire.Modules.JobSeekerProfile.Core.Domain.Events;
 using Nexhire.Modules.JobSeekerProfile.Core.Domain.ValueObjects;
 using Nexhire.Shared.Core.Domain;
@@ -68,7 +69,7 @@ public class Resume : AggregateRoot<Guid>
         var uploadedOnUtc = DateTime.UtcNow;
         var resume = new Resume(id, profileId, file, uploadedOnUtc);
 
-        resume.RaiseDomainEvent(new ResumeUploadedEvent(
+        resume.RaiseDomainEvent(new ResumeUploadedIntegrationEvent(
             Guid.NewGuid(),
             resume.ProfileId,
             resume.Id,
@@ -143,13 +144,13 @@ public class Resume : AggregateRoot<Guid>
         ParserName = parserName;
         ParsedOnUtc = DateTime.UtcNow;
 
-        RaiseDomainEvent(new ResumeParsedEvent(
+        RaiseDomainEvent(new ResumeParsedIntegrationEvent(
             Guid.NewGuid(),
             ProfileId,
             Id,
-            ParsedData.Skills.Select(s => s.RawLabel).ToList().AsReadOnly(),
-            ParsedData.Education,
-            ParsedData.Experience,
+            ParsedData.Skills.Select(s => new SkillPayload("", s.RawLabel, s.Confidence.Value)).ToList().AsReadOnly(),
+            ParsedData.Education.Select(e => new ParsedEducationPayload(e.Degree, e.Institution, e.StartDate, e.EndDate)).ToList().AsReadOnly(),
+            ParsedData.Experience.Select(e => new ParsedExperiencePayload(e.Role, e.Company, e.StartDate, e.EndDate)).ToList().AsReadOnly(),
             ParsedOnUtc.Value));
 
         return Result.Success();

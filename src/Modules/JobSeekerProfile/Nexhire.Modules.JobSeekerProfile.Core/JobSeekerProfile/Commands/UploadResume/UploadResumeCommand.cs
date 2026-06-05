@@ -6,4 +6,4 @@ public record UploadResumeCommand(
     Guid UserId,
     byte[] Content,
     string FileName,
-    string MimeType) : ICommand;
+    string MimeType) : ICommand<Guid>;

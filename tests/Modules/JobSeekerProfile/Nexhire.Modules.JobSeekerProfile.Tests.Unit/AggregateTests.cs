@@ -1,4 +1,5 @@
 using FluentAssertions;
+using Nexhire.Modules.JobSeekerProfile.Contracts.Events;
 using Nexhire.Modules.JobSeekerProfile.Core.Domain.Aggregates;
 using Aggregates = Nexhire.Modules.JobSeekerProfile.Core.Domain.Aggregates;
 using Nexhire.Modules.JobSeekerProfile.Core.Domain.Events;
@@ -40,7 +41,7 @@ public class AggregateTests
         profile.Mobile.Should().Be(mobile);
         profile.Gender.Should().Be(Gender.Male);
         profile.Completeness.Percentage.Should().Be(30); // L1 only = 30%
-        profile.DomainEvents.Should().ContainSingle(e => e is JobSeekerRegisteredEvent);
+        profile.DomainEvents.Should().ContainSingle(e => e is JobSeekerRegisteredIntegrationEvent);
     }
 
     [Fact]
@@ -117,14 +118,14 @@ public class AggregateTests
         profile.Education.Should().HaveCount(1);
         profile.IsLevel2Complete.Should().BeTrue();
         profile.Completeness.Percentage.Should().Be(40); // 30 + 10 (Education)
-        profile.DomainEvents.Should().ContainSingle(e => e is ProfileLevel2CompletedEvent);
+        profile.DomainEvents.Should().ContainSingle(e => e is ProfileLevel2CompletedIntegrationEvent);
 
         // Clear events and add another education to verify event is NOT raised again
         profile.ClearDomainEvents();
         var result2 = profile.AddEducation("Master of Science", "University of Dhaka", period, 3.9m);
         result2.IsSuccess.Should().BeTrue();
-        profile.DomainEvents.Should().NotContain(e => e is ProfileLevel2CompletedEvent);
-        profile.DomainEvents.Should().NotContain(e => e is ProfileCompletenessChangedEvent); // Percentage remains 40%
+        profile.DomainEvents.Should().NotContain(e => e is ProfileLevel2CompletedIntegrationEvent);
+        profile.DomainEvents.Should().NotContain(e => e is ProfileCompletenessChangedIntegrationEvent); // Percentage remains 40%
     }
 
     [Fact]
