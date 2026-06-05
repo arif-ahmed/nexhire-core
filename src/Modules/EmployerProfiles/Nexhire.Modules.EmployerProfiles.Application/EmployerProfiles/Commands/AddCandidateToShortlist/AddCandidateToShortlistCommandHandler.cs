@@ -1,5 +1,3 @@
-using MediatR;
-using Nexhire.Modules.EmployerProfiles.Contracts.Events;
 using Nexhire.Modules.EmployerProfiles.Domain.Repositories;
 using Nexhire.Shared.Core.CQRS;
 using Nexhire.Shared.Core.Results;
@@ -11,18 +9,15 @@ public class AddCandidateToShortlistCommandHandler : ICommandHandler<AddCandidat
     private readonly IEmployerProfileRepository _employerRepository;
     private readonly IShortlistRepository _shortlistRepository;
     private readonly IUnitOfWork _unitOfWork;
-    private readonly IPublisher _publisher;
 
     public AddCandidateToShortlistCommandHandler(
         IEmployerProfileRepository employerRepository,
         IShortlistRepository shortlistRepository,
-        IUnitOfWork unitOfWork,
-        IPublisher publisher)
+        IUnitOfWork unitOfWork)
     {
         _employerRepository = employerRepository;
         _shortlistRepository = shortlistRepository;
         _unitOfWork = unitOfWork;
-        _publisher = publisher;
     }
 
     public async Task<Result> Handle(AddCandidateToShortlistCommand request, CancellationToken cancellationToken)
@@ -45,19 +40,11 @@ public class AddCandidateToShortlistCommandHandler : ICommandHandler<AddCandidat
             return addResult;
         }
 
+        // The integration event is raised through the domain event pipeline (outbox)
+        profile.NotifyCandidateSavedToTalentPool(request.CandidateUserId, shortlist.Id, request.MatchScore);
+
         await _shortlistRepository.UpdateAsync(shortlist, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
-
-        // Publish integration event with correct BC-1 UserId
-        var integrationEvent = new CandidateSavedToTalentPoolIntegrationEvent(
-            Guid.NewGuid(),
-            EmployerId: profile.UserId,
-            JobSeekerId: request.CandidateUserId,
-            PoolId: request.ShortlistId,
-            At: DateTime.UtcNow,
-            OccurredOnUtc: DateTime.UtcNow);
-
-        await _publisher.Publish(integrationEvent, cancellationToken);
 
         return Result.Success();
     }

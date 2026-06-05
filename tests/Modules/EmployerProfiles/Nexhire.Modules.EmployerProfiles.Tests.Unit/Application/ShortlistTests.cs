@@ -1,5 +1,4 @@
 using FluentAssertions;
-using MediatR;
 using NSubstitute;
 using Nexhire.Modules.EmployerProfiles.Contracts.Events;
 using Nexhire.Modules.EmployerProfiles.Domain.Aggregates;
@@ -10,6 +9,7 @@ using Nexhire.Modules.EmployerProfiles.Application.EmployerProfiles.Commands.Ren
 using Nexhire.Modules.EmployerProfiles.Application.EmployerProfiles.Commands.DeleteShortlist;
 using Nexhire.Modules.EmployerProfiles.Application.EmployerProfiles.Commands.AddCandidateToShortlist;
 using Nexhire.Modules.EmployerProfiles.Application.EmployerProfiles.Commands.RemoveCandidateFromShortlist;
+using Nexhire.Shared.Core.Domain;
 using Nexhire.Shared.Core.Results;
 using Xunit;
 
@@ -20,7 +20,6 @@ public class ShortlistTests
     private readonly IEmployerProfileRepository _employerRepository = Substitute.For<IEmployerProfileRepository>();
     private readonly IShortlistRepository _shortlistRepository = Substitute.For<IShortlistRepository>();
     private readonly IUnitOfWork _unitOfWork = Substitute.For<IUnitOfWork>();
-    private readonly IPublisher _publisher = Substitute.For<IPublisher>();
 
     private (Guid UserId, EmployerProfile Profile) CreateActiveProfile()
     {
@@ -121,7 +120,7 @@ public class ShortlistTests
             .Returns(shortlist);
 
         var candidateId = Guid.NewGuid();
-        var handler = new AddCandidateToShortlistCommandHandler(_employerRepository, _shortlistRepository, _unitOfWork, _publisher);
+        var handler = new AddCandidateToShortlistCommandHandler(_employerRepository, _shortlistRepository, _unitOfWork);
         var command = new AddCandidateToShortlistCommand(userId, shortlist.Id, candidateId, 85);
 
         // Act
@@ -147,13 +146,8 @@ public class ShortlistTests
         _shortlistRepository.GetByIdAsync(shortlist.Id, Arg.Any<CancellationToken>())
             .Returns(shortlist);
 
-        CandidateSavedToTalentPoolIntegrationEvent? captured = null;
-        await _publisher.Publish(
-            Arg.Do<CandidateSavedToTalentPoolIntegrationEvent>(e => captured = e),
-            Arg.Any<CancellationToken>());
-
         var candidateId = Guid.NewGuid();
-        var handler = new AddCandidateToShortlistCommandHandler(_employerRepository, _shortlistRepository, _unitOfWork, _publisher);
+        var handler = new AddCandidateToShortlistCommandHandler(_employerRepository, _shortlistRepository, _unitOfWork);
         var command = new AddCandidateToShortlistCommand(userId, shortlist.Id, candidateId, 90);
 
         // Act
@@ -161,9 +155,11 @@ public class ShortlistTests
 
         // Assert
         result.IsSuccess.Should().BeTrue();
-        captured.Should().NotBeNull();
-        captured!.EmployerId.Should().Be(profile.UserId, "EmployerId must be BC-1 UserId, not EmployerProfileId");
-        captured.EmployerId.Should().NotBe(profile.Id);
+        var integrationEvent = profile.DomainEvents
+            .OfType<CandidateSavedToTalentPoolIntegrationEvent>()
+            .Should().ContainSingle().Subject;
+        integrationEvent.EmployerId.Should().Be(profile.UserId, "EmployerId must be BC-1 UserId, not EmployerProfileId");
+        integrationEvent.EmployerId.Should().NotBe(profile.Id);
     }
 
     [Fact]

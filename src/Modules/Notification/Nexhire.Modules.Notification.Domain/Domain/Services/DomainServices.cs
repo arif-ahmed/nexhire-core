@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -69,13 +69,13 @@ public sealed class TemplateRenderer : ITemplateRenderer
         // Handle simple conditional blocks: {{#if placeholder}}...{{/if}}
         foreach (var placeholder in version.Placeholders)
         {
-            string ifStartToken = "{{#if " + placeholder + "}}";
-            string ifEndToken = "{{/if}}";
+            string ifStartMarker = "{{#if " + placeholder + "}}";
+            string ifEndMarker = "{{/if}}";
 
             int startIdx;
-            while ((startIdx = html.IndexOf(ifStartToken, StringComparison.OrdinalIgnoreCase)) != -1)
+            while ((startIdx = html.IndexOf(ifStartMarker, StringComparison.OrdinalIgnoreCase)) != -1)
             {
-                int endIdx = html.IndexOf(ifEndToken, startIdx, StringComparison.OrdinalIgnoreCase);
+                int endIdx = html.IndexOf(ifEndMarker, startIdx, StringComparison.OrdinalIgnoreCase);
                 if (endIdx == -1) break;
 
                 bool hasValue = payload.Values.TryGetValue(placeholder, out string? value) && !string.IsNullOrWhiteSpace(value);
@@ -83,17 +83,17 @@ public sealed class TemplateRenderer : ITemplateRenderer
                 string contentToKeep = "";
                 if (hasValue)
                 {
-                    int contentStart = startIdx + ifStartToken.Length;
+                    int contentStart = startIdx + ifStartMarker.Length;
                     contentToKeep = html.Substring(contentStart, endIdx - contentStart);
                 }
 
-                html = html.Remove(startIdx, endIdx + ifEndToken.Length - startIdx);
+                html = html.Remove(startIdx, endIdx + ifEndMarker.Length - startIdx);
                 html = html.Insert(startIdx, contentToKeep);
             }
 
-            while ((startIdx = text.IndexOf(ifStartToken, StringComparison.OrdinalIgnoreCase)) != -1)
+            while ((startIdx = text.IndexOf(ifStartMarker, StringComparison.OrdinalIgnoreCase)) != -1)
             {
-                int endIdx = text.IndexOf(ifEndToken, startIdx, StringComparison.OrdinalIgnoreCase);
+                int endIdx = text.IndexOf(ifEndMarker, startIdx, StringComparison.OrdinalIgnoreCase);
                 if (endIdx == -1) break;
 
                 bool hasValue = payload.Values.TryGetValue(placeholder, out string? value) && !string.IsNullOrWhiteSpace(value);
@@ -101,11 +101,11 @@ public sealed class TemplateRenderer : ITemplateRenderer
                 string contentToKeep = "";
                 if (hasValue)
                 {
-                    int contentStart = startIdx + ifStartToken.Length;
+                    int contentStart = startIdx + ifStartMarker.Length;
                     contentToKeep = text.Substring(contentStart, endIdx - contentStart);
                 }
 
-                text = text.Remove(startIdx, endIdx + ifEndToken.Length - startIdx);
+                text = text.Remove(startIdx, endIdx + ifEndMarker.Length - startIdx);
                 text = text.Insert(startIdx, contentToKeep);
             }
         }

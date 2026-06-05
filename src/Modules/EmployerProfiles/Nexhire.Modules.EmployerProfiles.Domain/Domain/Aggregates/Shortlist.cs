@@ -87,14 +87,6 @@ public class Shortlist : AggregateRoot<Guid>
         _members.Add(member);
         UpdatedOnUtc = DateTime.UtcNow;
 
-        RaiseDomainEvent(new CandidateAddedToShortlist(
-            Guid.NewGuid(),
-            EmployerProfileId,
-            Id,
-            candidateUserId,
-            matchScore,
-            UpdatedOnUtc));
-
         return Result.Success();
     }
 

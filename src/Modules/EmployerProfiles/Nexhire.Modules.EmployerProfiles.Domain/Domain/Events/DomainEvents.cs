@@ -17,5 +17,3 @@ public record EmployerProfileDeactivated(Guid EventId, Guid EmployerProfileId, D
 public record CandidateRemovedFromTalentPool(Guid EventId, Guid ShortlistId, Guid CandidateUserId, DateTime OccurredOnUtc) : IDomainEvent;
 
 public record ShortlistDeleted(Guid EventId, Guid ShortlistId, DateTime OccurredOnUtc) : IDomainEvent;
-
-public record CandidateAddedToShortlist(Guid EventId, Guid EmployerProfileId, Guid ShortlistId, Guid CandidateUserId, int? MatchScore, DateTime OccurredOnUtc) : IDomainEvent;

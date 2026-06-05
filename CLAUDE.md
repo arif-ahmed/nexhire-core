@@ -133,6 +133,10 @@ No controllers. Each module's `Endpoints/` directory contains static classes wit
 - Admin endpoints (`/admin/*`) require the `users:manage` permission, return `403 E-FORBIDDEN` otherwise.
 - Auth middleware consumes `ITokenValidationApi` (in-process, not an HTTP route) to validate access tokens and extract `ClaimsPrincipal`.
 
+## Security guardrails
+
+- **STRICTLY PROHIBITED**: Do not save, hardcode, or log any secrets, passwords, API keys, connection strings, or sensitive credentials anywhere in the codebase. Always use environment variables, secure vaults, or configuration managers.
+
 ## C# conventions
 
 - C# 14, .NET 10. Implicit usings enabled solution-wide.

@@ -2,6 +2,7 @@ using Nexhire.Modules.EmployerProfiles.Domain.Aggregates;
 using Nexhire.Modules.IdentityAccess.Infrastructure.Persistence;
 using Nexhire.Modules.EmployerProfiles.Application.EmployerProfiles.Commands.RegisterEmployer;
 using Nexhire.Modules.EmployerProfiles.Infrastructure;
+using Nexhire.Modules.EmployerProfiles.Infrastructure.Persistence;
 using Nexhire.Modules.EmployerProfiles.Presentation;
 using Nexhire.Modules.JobApplication.Core.Domain;
 using Nexhire.Modules.JobApplication.Infrastructure;
@@ -110,6 +111,7 @@ app.UseNexhireAuthentication();
 app.UseAuthorization();
 
 await app.Services.SeedIdentityAccessDataAsync();
+await app.Services.SeedEmployerProfilesDataAsync();
 await app.Services.EnsureModuleDatabasesCreatedAsync();
 
 // 4. Map Pluggable Module Routing

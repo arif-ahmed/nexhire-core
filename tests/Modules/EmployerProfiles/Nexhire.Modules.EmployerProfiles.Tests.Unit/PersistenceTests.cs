@@ -7,6 +7,7 @@ using Nexhire.Modules.EmployerProfiles.Domain.Aggregates;
 using Nexhire.Modules.EmployerProfiles.Domain.Projections;
 using Nexhire.Modules.EmployerProfiles.Domain.ValueObjects;
 using Nexhire.Modules.EmployerProfiles.Infrastructure.IntegrationEvents;
+using Nexhire.Modules.EmployerProfiles.Infrastructure.IntegrationEvents.Consumers;
 using Nexhire.Modules.EmployerProfiles.Infrastructure.Persistence;
 using Nexhire.Modules.EmployerProfiles.Infrastructure.Persistence.Repositories;
 using Nexhire.Shared.Infrastructure.Interceptors;
@@ -228,5 +229,179 @@ public class PersistenceTests : IAsyncLifetime
         await queryShortlists.Should().NotThrowAsync("shortlists table must exist");
         await queryOutbox.Should().NotThrowAsync("outbox_messages table must exist");
         await queryInbox.Should().NotThrowAsync("inbox_messages table must exist");
+    }
+
+    [Fact]
+    public async Task UserAccountActivatedConsumer_ShouldActivateProfile()
+    {
+        // Arrange
+        var (db, uow) = (CreateFreshContext(), new UnitOfWork(CreateFreshContext()));
+        var repo = new EmployerProfileRepository(db);
+        var profile = EmployerProfile.Register(Guid.NewGuid(), Guid.NewGuid(),
+            CompanyName.Create("ActivateTest Corp").Value,
+            EmailAddress.Create("activate@test.com").Value,
+            MobileNumber.Create("+8801711111101").Value,
+            CompanyIdentifier.Create($"ACT{Guid.NewGuid():N}").Value);
+        await repo.AddAsync(profile);
+        await uow.SaveChangesAsync();
+        profile.Status.Should().Be(EmployerProfileStatus.PendingActivation);
+
+        await using var consumerDb = CreateFreshContext();
+        var consumerRepo = new EmployerProfileRepository(consumerDb);
+        var consumerUow = new UnitOfWork(consumerDb);
+        var consumer = new UserAccountActivatedConsumer(consumerRepo, consumerUow, consumerDb);
+        var evt = new UserAccountActivatedIntegrationEvent(Guid.NewGuid(), DateTime.UtcNow, profile.UserId);
+
+        // Act
+        await consumer.Handle(evt, CancellationToken.None);
+
+        // Assert
+        var activated = await consumerRepo.GetByIdAsync(profile.Id);
+        activated.Should().NotBeNull();
+        activated!.Status.Should().Be(EmployerProfileStatus.PendingVerification);
+    }
+
+    [Fact]
+    public async Task UserAccountActivatedConsumer_ShouldBeIdempotent()
+    {
+        // Arrange
+        var (db, uow) = (CreateFreshContext(), new UnitOfWork(CreateFreshContext()));
+        var repo = new EmployerProfileRepository(db);
+        var profile = EmployerProfile.Register(Guid.NewGuid(), Guid.NewGuid(),
+            CompanyName.Create("Idempotent Corp").Value,
+            EmailAddress.Create("idempotent@test.com").Value,
+            MobileNumber.Create("+8801711111102").Value,
+            CompanyIdentifier.Create($"IDEM{Guid.NewGuid():N}").Value);
+        await repo.AddAsync(profile);
+        await uow.SaveChangesAsync();
+
+        // Act — deliver twice
+        var consumerDb = CreateFreshContext();
+        var consumerRepo = new EmployerProfileRepository(consumerDb);
+        var consumerUow = new UnitOfWork(consumerDb);
+        var consumer = new UserAccountActivatedConsumer(consumerRepo, consumerUow, consumerDb);
+        var evt = new UserAccountActivatedIntegrationEvent(Guid.NewGuid(), DateTime.UtcNow, profile.UserId);
+
+        await consumer.Handle(evt, CancellationToken.None);
+        var inboxCountAfterFirst = await consumerDb.InboxMessages.CountAsync(m => m.Id == evt.EventId);
+        inboxCountAfterFirst.Should().Be(1);
+
+        // Deliver the same EventId again
+        await consumer.Handle(evt, CancellationToken.None);
+        var inboxCountAfterSecond = await consumerDb.InboxMessages.CountAsync(m => m.Id == evt.EventId);
+        inboxCountAfterSecond.Should().Be(1, "duplicate delivery must not create a second inbox row");
+    }
+
+    [Fact]
+    public async Task EmployerVerifiedByGovernmentConsumer_ShouldPassAutoVerification()
+    {
+        // Arrange
+        var (db, uow) = (CreateFreshContext(), new UnitOfWork(CreateFreshContext()));
+        var repo = new EmployerProfileRepository(db);
+        var profile = EmployerProfile.Register(Guid.NewGuid(), Guid.NewGuid(),
+            CompanyName.Create("GovVerify Corp").Value,
+            EmailAddress.Create("govverify@test.com").Value,
+            MobileNumber.Create("+8801711111103").Value,
+            CompanyIdentifier.Create($"GOV{Guid.NewGuid():N}").Value);
+        profile.Activate();
+        profile.CompleteLevel2(
+            WebsiteUrl.Create("https://govverify.test").Value, "Finance",
+            CompanySize.Create(CompanySizeEnum.Medium).Value,
+            Address.Create("1 Main St", null, "Dhaka", "Dhaka", "1212", "Bangladesh").Value,
+            CompanyDescription.Create("Test company for gov verification").Value);
+        await repo.AddAsync(profile);
+        await uow.SaveChangesAsync();
+        profile.Status.Should().Be(EmployerProfileStatus.PendingVerification);
+
+        await using var consumerDb = CreateFreshContext();
+        var consumerRepo = new EmployerProfileRepository(consumerDb);
+        var consumerUow = new UnitOfWork(consumerDb);
+        var consumer = new EmployerVerifiedByGovernmentConsumer(consumerRepo, consumerUow, consumerDb);
+        var evt = new EmployerVerifiedByGovernmentIntegrationEvent(
+            Guid.NewGuid(), DateTime.UtcNow, profile.Id, "gov-evidence-001");
+
+        // Act
+        await consumer.Handle(evt, CancellationToken.None);
+
+        // Assert
+        var verified = await consumerRepo.GetByIdAsync(profile.Id);
+        verified.Should().NotBeNull();
+        verified!.Status.Should().Be(EmployerProfileStatus.Verified);
+    }
+
+    [Fact]
+    public async Task JobPostingPublishedConsumer_ShouldAddDashboardPosting()
+    {
+        // Arrange
+        var employerUserId = Guid.NewGuid();
+        await using var consumerDb = CreateFreshContext();
+        var store = new DashboardProjectionStore(consumerDb);
+        var consumer = new JobPostingPublishedConsumer(store, consumerDb);
+        var evt = new JobPostingPublishedIntegrationEvent(
+            Guid.NewGuid(), DateTime.UtcNow,
+            Guid.NewGuid(), employerUserId, "Senior .NET Engineer");
+
+        // Act
+        await consumer.Handle(evt, CancellationToken.None);
+
+        // Assert
+        var postings = await store.GetPostingsAsync(employerUserId);
+        postings.Should().HaveCount(1);
+        postings.First().Title.Should().Be("Senior .NET Engineer");
+        postings.First().EmployerUserId.Should().Be(employerUserId);
+    }
+
+    [Fact]
+    public async Task ApplicationSubmittedConsumer_ShouldAddDashboardApplication()
+    {
+        // Arrange
+        var employerUserId = Guid.NewGuid();
+        var postingId = Guid.NewGuid();
+        var applicationId = Guid.NewGuid();
+        await using var consumerDb = CreateFreshContext();
+        var store = new DashboardProjectionStore(consumerDb);
+        var consumer = new ApplicationSubmittedConsumer(store, consumerDb);
+        var evt = new ApplicationSubmittedIntegrationEvent(
+            Guid.NewGuid(), DateTime.UtcNow,
+            applicationId, employerUserId, postingId, Guid.NewGuid());
+
+        // Act
+        await consumer.Handle(evt, CancellationToken.None);
+
+        // Assert
+        var applications = await store.GetApplicationsAsync(employerUserId);
+        applications.Should().HaveCount(1);
+        applications.First().ApplicationId.Should().Be(applicationId);
+    }
+
+    [Fact]
+    public async Task UserAccountSuspendedConsumer_ShouldSuspendProfile()
+    {
+        // Arrange
+        var (db, uow) = (CreateFreshContext(), new UnitOfWork(CreateFreshContext()));
+        var repo = new EmployerProfileRepository(db);
+        var profile = EmployerProfile.Register(Guid.NewGuid(), Guid.NewGuid(),
+            CompanyName.Create("SuspendTest Corp").Value,
+            EmailAddress.Create("suspend@test.com").Value,
+            MobileNumber.Create("+8801711111104").Value,
+            CompanyIdentifier.Create($"SUS{Guid.NewGuid():N}").Value);
+        profile.Activate();
+        await repo.AddAsync(profile);
+        await uow.SaveChangesAsync();
+
+        await using var consumerDb = CreateFreshContext();
+        var consumerRepo = new EmployerProfileRepository(consumerDb);
+        var consumerUow = new UnitOfWork(consumerDb);
+        var consumer = new UserAccountSuspendedConsumer(consumerRepo, consumerUow, consumerDb);
+        var evt = new UserAccountSuspendedIntegrationEvent(
+            Guid.NewGuid(), DateTime.UtcNow, profile.UserId, "Policy violation");
+
+        // Act
+        await consumer.Handle(evt, CancellationToken.None);
+
+        // Assert
+        var suspended = await consumerRepo.GetByIdAsync(profile.Id);
+        suspended.Should().NotBeNull();
+        suspended!.Status.Should().Be(EmployerProfileStatus.Suspended);
     }
 }

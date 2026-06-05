@@ -1,3 +1,4 @@
+using Nexhire.Modules.EmployerProfiles.Contracts.Events;
 using Nexhire.Modules.EmployerProfiles.Domain.Events;
 using Nexhire.Modules.EmployerProfiles.Domain.Services;
 using Nexhire.Modules.EmployerProfiles.Domain.ValueObjects;
@@ -601,6 +602,17 @@ public class EmployerProfile : AggregateRoot<Guid>
             UpdatedOnUtc));
 
         return Result.Success();
+    }
+
+    public void NotifyCandidateSavedToTalentPool(Guid candidateUserId, Guid shortlistId, int? matchScore)
+    {
+        RaiseDomainEvent(new CandidateSavedToTalentPoolIntegrationEvent(
+            Guid.NewGuid(),
+            UserId,
+            candidateUserId,
+            shortlistId,
+            DateTime.UtcNow,
+            DateTime.UtcNow));
     }
 
     public Result Suspend(string reason)

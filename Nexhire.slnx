@@ -1,5 +1,7 @@
 <Solution>
-  <Folder Name="/src/" />
+  <Folder Name="/src/">
+    <Project Path="src/Nexhire.Analyzers/Nexhire.Analyzers.csproj" />
+  </Folder>
   <Folder Name="/src/Host/">
     <Project Path="src/Host/Nexhire.Api/Nexhire.Api.csproj" />
   </Folder>
