@@ -64,10 +64,8 @@ public sealed class JobPostingConfiguration : IEntityTypeConfiguration<JobPostin
             .HasColumnType("jsonb")
             .IsRequired();
 
-        builder.Property<DateTime>("deadline_date_utc")
-            .HasComputedColumnSql("(deadline->>'dateUtc')::timestamp with time zone", stored: true);
-        builder.HasIndex("Status", "deadline_date_utc")
-            .HasDatabaseName("ix_job_postings_status_deadline_date_utc");
+        builder.Property<DateTime?>("deadline_date_utc")
+            .HasColumnType("timestamp with time zone");
 
         builder.Property(x => x.JobLink)
             .HasConversion(v => v == null ? null : v.Url, v => string.IsNullOrWhiteSpace(v) ? null : JobPostingLink.Create(v).Value)
@@ -79,10 +77,8 @@ public sealed class JobPostingConfiguration : IEntityTypeConfiguration<JobPostin
             .HasColumnType("jsonb")
             .IsRequired();
 
-        builder.Property<string>("visibility_level")
-            .HasComputedColumnSql("visibility->>'level'", stored: true);
-        builder.HasIndex("visibility_level")
-            .HasDatabaseName("ix_job_postings_visibility_level");
+        builder.Property<string?>("visibility_level")
+            .HasMaxLength(50);
 
         builder.Property(x => x.SchemaOrg)
             .HasConversion(JsonConversion.NullableConverter<SchemaOrgJobPosting>())

@@ -77,8 +77,6 @@ public class ResumeConfiguration : IEntityTypeConfiguration<Resume>
             ))
             .HasColumnType("jsonb");
 
-        builder.Navigation(x => x.MergedFieldKeys)
-            .UsePropertyAccessMode(PropertyAccessMode.Field);
     }
 
     #region ParsedResumeData DTO Mappings

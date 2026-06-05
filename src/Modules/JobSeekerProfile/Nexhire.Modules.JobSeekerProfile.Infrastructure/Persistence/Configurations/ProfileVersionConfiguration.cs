@@ -32,9 +32,6 @@ public class ProfileVersionConfiguration : IEntityTypeConfiguration<ProfileVersi
             .IsRequired()
             .HasColumnType("jsonb");
 
-        builder.Navigation(x => x.ChangedFields)
-            .UsePropertyAccessMode(PropertyAccessMode.Field);
-
         builder.Property(x => x.Action)
             .HasConversion<string>()
             .IsRequired()

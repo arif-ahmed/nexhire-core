@@ -122,8 +122,6 @@ public class ReportScheduleConfiguration : IEntityTypeConfiguration<ReportSchedu
             v => JsonSerializer.Deserialize<List<ExportFormat>>(v, (JsonSerializerOptions?)null) ?? new()).HasColumnType("TEXT");
         builder.Property(x => x.Status).HasConversion<string>().IsRequired().HasMaxLength(20);
         builder.Property(x => x.RowVersion).IsRowVersion();
-        builder.Navigation(x => x.DistributionList).UsePropertyAccessMode(PropertyAccessMode.Field);
-        builder.Navigation(x => x.ExportFormats).UsePropertyAccessMode(PropertyAccessMode.Field);
         builder.HasIndex(x => x.NextRunOnUtc);
     }
 }
@@ -192,7 +190,6 @@ public class AlertRuleConfiguration : IEntityTypeConfiguration<AlertRule>
         builder.Property(x => x.RowVersion).IsRowVersion();
         builder.HasMany(x => x.Incidents).WithOne().HasForeignKey(i => i.AlertRuleId).OnDelete(DeleteBehavior.Cascade);
         builder.Navigation(x => x.Incidents).UsePropertyAccessMode(PropertyAccessMode.Field);
-        builder.Navigation(x => x.Channels).UsePropertyAccessMode(PropertyAccessMode.Field);
         builder.HasIndex(x => x.MetricKey);
     }
 }

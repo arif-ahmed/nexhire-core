@@ -32,6 +32,9 @@ public class RecommendationEngineDbContext : DbContext, IOutboxInboxDbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.HasDefaultSchema("recommendation_engine");
+        modelBuilder.Ignore<Core.Domain.Aggregates.ThresholdChangeEntry>();
+        modelBuilder.Ignore<Core.Domain.ValueObjects.ConfidenceScore>();
+        modelBuilder.Ignore<Core.Domain.ValueObjects.SkillRequirement>();
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(RecommendationEngineDbContext).Assembly);
         base.OnModelCreating(modelBuilder);
     }

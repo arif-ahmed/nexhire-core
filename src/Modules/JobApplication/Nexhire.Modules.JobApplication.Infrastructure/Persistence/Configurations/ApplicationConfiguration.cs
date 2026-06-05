@@ -64,7 +64,7 @@ public sealed class ApplicationConfiguration : IEntityTypeConfiguration<Applicat
         builder.HasIndex(x => new { x.JobSeekerId, x.JobPostingId })
             .HasDatabaseName("IX_applications_seeker_posting_active")
             .IsUnique()
-            .HasFilter("status IN ('Submitted', 'UnderReview', 'Shortlisted', 'Interview', 'Offered')");
+            .HasFilter("\"Status\" IN ('Submitted', 'UnderReview', 'Shortlisted', 'Interview', 'Offered')");
 
         // Owned entity collection for Stages
         builder.OwnsMany(x => x.Stages, stageBuilder =>

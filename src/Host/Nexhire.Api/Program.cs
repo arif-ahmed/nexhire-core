@@ -35,6 +35,8 @@ using Nexhire.Modules.IdentityAccess.Contracts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 
+using Microsoft.EntityFrameworkCore.Infrastructure;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Allow background services with pre-existing bugs to fail gracefully
@@ -111,10 +113,10 @@ app.UseAuthentication();
 app.UseNexhireAuthentication();
 app.UseAuthorization();
 
+await app.Services.EnsureModuleDatabasesCreatedAsync();
 await app.Services.SeedIdentityAccessDataAsync();
 await app.Services.SeedEmployerProfilesDataAsync();
 await app.Services.SeedJobSeekerProfileDataAsync();
-await app.Services.EnsureModuleDatabasesCreatedAsync();
 
 // 4. Map Pluggable Module Routing
 app.MapIdentityAccessEndpoints();
@@ -152,22 +154,17 @@ file static class DatabaseInitializerExtensions
         var sp = scope.ServiceProvider;
         var logger = sp.GetRequiredService<ILogger<Program>>();
 
-        var tasks = new[]
-        {
-            TryEnsureCreatedAsync<Nexhire.Modules.EmployerProfiles.Infrastructure.Persistence.EmployerProfilesDbContext>(sp, logger),
-            TryEnsureCreatedAsync<Nexhire.Modules.Notification.Infrastructure.Persistence.NotificationDbContext>(sp, logger),
-            TryEnsureCreatedAsync<Nexhire.Modules.ContentManagement.Infrastructure.Persistence.ContentManagementDbContext>(sp, logger),
-            TryEnsureCreatedAsync<Nexhire.Modules.JobPostings.Infrastructure.Persistence.JobPostingsDbContext>(sp, logger),
-            TryEnsureCreatedAsync<Nexhire.Modules.JobSeekerProfile.Infrastructure.Persistence.JobSeekerProfileDbContext>(sp, logger),
-            TryEnsureCreatedAsync<Nexhire.Modules.JobApplication.Infrastructure.Persistence.JobApplicationDbContext>(sp, logger),
-            TryEnsureCreatedAsync<Nexhire.Modules.SearchDiscovery.Infrastructure.Persistence.SearchDiscoveryDbContext>(sp, logger),
-            TryEnsureCreatedAsync<Nexhire.Modules.RecommendationEngine.Infrastructure.Persistence.RecommendationEngineDbContext>(sp, logger),
-            TryEnsureCreatedAsync<Nexhire.Modules.ExternalJobSync.Infrastructure.Persistence.ExternalJobSyncDbContext>(sp, logger),
-            TryEnsureCreatedAsync<Nexhire.Modules.Reporting.Infrastructure.Persistence.ReportingDbContext>(sp, logger),
-            TryEnsureCreatedAsync<Nexhire.Modules.AdministratorsConfiguration.Infrastructure.Persistence.AdministratorsConfigurationDbContext>(sp, logger),
-        };
-
-        await Task.WhenAll(tasks);
+        await TryEnsureCreatedAsync<Nexhire.Modules.EmployerProfiles.Infrastructure.Persistence.EmployerProfilesDbContext>(sp, logger);
+        await TryEnsureCreatedAsync<Nexhire.Modules.Notification.Infrastructure.Persistence.NotificationDbContext>(sp, logger);
+        await TryEnsureCreatedAsync<Nexhire.Modules.ContentManagement.Infrastructure.Persistence.ContentManagementDbContext>(sp, logger);
+        await TryEnsureCreatedAsync<Nexhire.Modules.JobPostings.Infrastructure.Persistence.JobPostingsDbContext>(sp, logger);
+        await TryEnsureCreatedAsync<Nexhire.Modules.JobSeekerProfile.Infrastructure.Persistence.JobSeekerProfileDbContext>(sp, logger);
+        await TryEnsureCreatedAsync<Nexhire.Modules.JobApplication.Infrastructure.Persistence.JobApplicationDbContext>(sp, logger);
+        await TryEnsureCreatedAsync<Nexhire.Modules.SearchDiscovery.Infrastructure.Persistence.SearchDiscoveryDbContext>(sp, logger);
+        await TryEnsureCreatedAsync<Nexhire.Modules.RecommendationEngine.Infrastructure.Persistence.RecommendationEngineDbContext>(sp, logger);
+        await TryEnsureCreatedAsync<Nexhire.Modules.ExternalJobSync.Infrastructure.Persistence.ExternalJobSyncDbContext>(sp, logger);
+        await TryEnsureCreatedAsync<Nexhire.Modules.Reporting.Infrastructure.Persistence.ReportingDbContext>(sp, logger);
+        await TryEnsureCreatedAsync<Nexhire.Modules.AdministratorsConfiguration.Infrastructure.Persistence.AdministratorsConfigurationDbContext>(sp, logger);
     }
 
     private static async Task TryEnsureCreatedAsync<T>(IServiceProvider sp, ILogger logger) where T : DbContext
@@ -175,7 +172,32 @@ file static class DatabaseInitializerExtensions
         try
         {
             var db = sp.GetRequiredService<T>();
-            await db.Database.EnsureCreatedAsync();
+            var schema = db.Model.GetDefaultSchema() ?? "public";
+            var conn = db.Database.GetDbConnection();
+
+            await conn.OpenAsync();
+            await using var schemaCmd = conn.CreateCommand();
+            schemaCmd.CommandText = $"CREATE SCHEMA IF NOT EXISTS \"{schema}\"";
+            await schemaCmd.ExecuteNonQueryAsync();
+
+            await using var checkCmd = conn.CreateCommand();
+            checkCmd.CommandText = $@"
+                SELECT COUNT(*) FROM pg_class cls
+                JOIN pg_namespace ns ON ns.oid = cls.relnamespace
+                WHERE cls.relkind IN ('r','v','m','f','p') AND ns.nspname = '{schema}'";
+            var count = (long)(await checkCmd.ExecuteScalarAsync())!;
+
+            if (count == 0)
+            {
+                var sp2 = ((IInfrastructure<IServiceProvider>)db).Instance;
+                var creator = sp2.GetRequiredService<Microsoft.EntityFrameworkCore.Storage.IRelationalDatabaseCreator>();
+                await creator.CreateTablesAsync();
+                logger.LogInformation("Created tables for {DbContext} in schema {Schema}", typeof(T).Name, schema);
+            }
+            else
+            {
+                logger.LogInformation("Schema {Schema} for {DbContext} already has {Count} tables", schema, typeof(T).Name, count);
+            }
         }
         catch (Exception ex)
         {

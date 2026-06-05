@@ -143,6 +143,10 @@ public sealed record SkillRequirement
     public int Proficiency { get; private init; } // 1-5
     public ConfidenceScore Confidence { get; private init; }
 
+#pragma warning disable CS8618
+    private SkillRequirement() { }
+#pragma warning restore CS8618
+
     private SkillRequirement(string taxonomyCode, string displayLabel, int proficiency, ConfidenceScore confidence)
     {
         TaxonomyCode = taxonomyCode;

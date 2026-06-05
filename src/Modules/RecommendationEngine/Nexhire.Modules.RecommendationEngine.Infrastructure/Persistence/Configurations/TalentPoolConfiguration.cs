@@ -56,6 +56,10 @@ public class TalentPoolCandidateConfiguration : IEntityTypeConfiguration<TalentP
         builder.Property(e => e.AddedAtUtc).IsRequired();
         builder.Property(e => e.RemovedAtUtc);
 
+        builder.HasOne<TalentPool>()
+            .WithMany(e => e.Members)
+            .HasForeignKey("TalentPoolId");
+
         builder.HasIndex("TalentPoolId", nameof(TalentPoolCandidate.JobSeekerId)).IsUnique();
     }
 }
