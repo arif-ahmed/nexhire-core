@@ -117,6 +117,15 @@ If you prefer running the application outside of Docker:
    ```
 3. The API will start up on `http://localhost:5001`. Browse to [http://localhost:5001/scalar/v1](http://localhost:5001/scalar/v1) for developer documentation.
 
+### Managing Local Development Secrets
+Hardcoding secrets (like database passwords) in source code or `appsettings.json` is strictly prohibited. To run the application locally, you must configure your local secrets using the .NET Secret Manager:
+
+```bash
+cd src/Host/Nexhire.Api
+dotnet user-secrets init
+dotnet user-secrets set "ConnectionStrings:Database" "Host=localhost;Port=5432;Database=nexhire_db;Username=postgres;Password=YOUR_LOCAL_DB_PASSWORD;Include Error Detail=true"
+```
+
 ### 3. Run the Verification Tests
 To run both the architectural compliance tests and unit tests:
 ```bash
