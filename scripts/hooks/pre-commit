@@ -1,33 +1,5 @@
-#!/bin/sh
-# Pre-commit hook to detect potential secrets in staged files
-# Prevents accidental commits of API keys and passwords.
-
-# Define the regex pattern for secrets. 
-# This catches:
-# 1. OpenAI keys: sk-[a-zA-Z0-9]{20,}
-# 2. Hardcoded passwords/secrets in json/yaml/code (basic heuristic)
-SECRET_PATTERN="(sk-[a-zA-Z0-9]{20,})"
-
-# Get the list of staged files
-STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACM)
-
-if [ -z "$STAGED_FILES" ]; then
-    exit 0
-fi
-
-# Check for secrets in the staged changes
-echo "Checking for secrets in staged files..."
-
-for FILE in $STAGED_FILES; do
-    # Only check text files
-    if git diff --cached "$FILE" | grep -E -q "$SECRET_PATTERN"; then
-        echo "======================================================================"
-        echo "❌ ERROR: Commit blocked!"
-        echo "Found potential secret (e.g., OpenAI API key) in staged file: $FILE"
-        echo "Please remove the dummy or real secret before committing."
-        echo "======================================================================"
-        exit 1
-    fi
-done
-
-exit 0
+#!/usr/bin/env sh
+# Git pre-commit hook entry point.
+# Dispatches to the Credential Guard secret scanner.
+# To add more pre-commit checks in the future, chain them here.
+exec "$(dirname "$0")/credential-guard" "$@"

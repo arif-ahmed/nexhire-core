@@ -432,3 +432,17 @@ FodyWeavers.xsd
 vault/.obsidian/workspace.json
 vault/.obsidian/workspace-mobile.json
 
+# Credential Guard — defensive ignores
+# Keep secret-bearing files out of the working tree by default.
+# Use `git add -f` only when you have an explicit reason; the
+# pre-commit hook (scripts/hooks/credential-guard) will still
+# block the commit at the gate.
+.env
+.env.*
+*.pem
+*.key
+*.pfx
+secrets
+secrets/*
+secrets.*
+
